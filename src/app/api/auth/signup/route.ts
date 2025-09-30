@@ -1,23 +1,37 @@
 import { NextResponse } from "next/server";
-import type { SignupBody } from "../../../../types/auth";
+import prisma from "../../../../lib/prisma";
+import { hashPassword } from "../../../../lib/hash";
+import { signJwt } from "../../../../lib/jwt";
+import { setTokenCookie } from "../../../../lib/cookies";
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as SignupBody;
-    const { name, email, password, confirmPassword } = body;
+    const { name, email, password, confirmPassword } = await req.json();
 
-    if (!name || !email || !password || !confirmPassword) {
-      return NextResponse.json({ error: "All fields are required." }, { status: 400 });
-    }
+    if (!name || !email || !password || !confirmPassword)
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
 
-    if (password !== confirmPassword) {
-      return NextResponse.json({ error: "Passwords do not match." }, { status: 400 });
-    }
+    if (password !== confirmPassword)
+      return NextResponse.json({ error: "Passwords do not match" }, { status: 400 });
 
-    // 👉 Forward to your friend’s OTP service here
-    return NextResponse.json({ message: "otp_sent" }, { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) return NextResponse.json({ error: "User already exists" }, { status: 400 });
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create user only AFTER OTP verification in your frontend
+    const user = await prisma.user.create({ data: { name, email, password: hashedPassword } });
+
+    const token = signJwt({ userId: user.id, name: user.name, email: user.email });
+    const safeUser = { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt.toISOString() };
+
+    const response = NextResponse.json({ user: safeUser });
+    response.headers.set("Set-Cookie", setTokenCookie(token));
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,0 +1,92 @@
+import prisma from "@/lib/prisma";
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyJwt } from "@/lib/jwt";
+
+type Params = { params: { id: string } };
+
+// GET product by ID
+export async function GET(_: Request, { params }: Params) {
+  const product = await prisma.products.findUnique({
+    where: { id: params.id },
+    include: { reviews: true },
+  });
+
+  if (!product)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  return NextResponse.json(product);
+}
+
+// UPDATE product
+
+interface updateProductBody {
+  title: string;
+  description: string;
+  images: string[];
+  details: string;
+  insideBox: string[];
+  userId?: string;
+}
+
+export async function PUT(req: Request, { params }: Params) {
+  try {
+    const product = await prisma.products.findUnique({
+      where: { id: params.id }
+    });
+
+    if (!product)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    const requestCookies = cookies();
+    const token = (await requestCookies).get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const payload = verifyJwt(token);
+    if (!payload) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = payload.userId.toString();
+    if (product.userId !== userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const body = (await req.json()) as updateProductBody;
+
+    // Destructure only allowed fields from body
+    const {
+      title,
+      description,
+      images,
+      details,
+      insideBox,
+    } = body;
+
+    const updated = await prisma.products.update({
+      where: { id: params.id },
+      data: {
+        title,
+        description,
+        images,
+        details,
+        insideBox,
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE product
+export async function DELETE(_: Request, { params }: Params) {
+  try {
+    await prisma.products.delete({ where: { id: params.id } });
+    return NextResponse.json({ message: "Product deleted" });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

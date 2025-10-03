@@ -1,3 +1,5 @@
+import { DecodedUser } from "@/types/auth";
+import { NextRequest } from "next/server";
 import jwt, { SignOptions } from "jsonwebtoken";
 
 const JWT_SECRET: string = process.env.JWT_SECRET || "super_secret_key";
@@ -18,3 +20,17 @@ export const verifyJwt = (token: string): AuthPayload | null => {
     return null;
   }
 };
+
+export function authenticate(req: NextRequest): DecodedUser | null {
+  const token = req.cookies.get("token")?.value;
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedUser;
+    console.log("decoded", decoded);
+    return decoded;
+  } catch (err) {
+    console.error(err)
+    return null;
+  }
+}

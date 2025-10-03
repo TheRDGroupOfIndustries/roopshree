@@ -24,7 +24,7 @@ interface CreateProductBody {
 
 export async function POST(req: Request) {
   try {
-const requestCookies = cookies();
+    const requestCookies = cookies();
     const body = await req.json() as CreateProductBody;
     const token = (await requestCookies).get("token")?.value;
     if (!token) {
@@ -40,10 +40,10 @@ const requestCookies = cookies();
     }
 
     const userId = payload.userId.toString();
-    const { title, description, images, details, insideBox} = body;
+    const { title, description, images, details, insideBox } = body;
 
     const product = await prisma.products.create({
-     data:  {
+      data: {
         title,
         description,
         images,

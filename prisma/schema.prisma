@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -21,17 +15,24 @@ enum Role {
   DELIVERY_BOY
 }
 
-model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
 
-  reviews   Review[]
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  role      Role       @default(USER)
+  updatedAt DateTime   @updatedAt
+  Employee  Employee[]
   products  Products[] @relation("UserProducts")
+  reviews   Review[]
+  cart      Cart?
 }
 
 model Products {
@@ -43,9 +44,37 @@ model Products {
   insideBox   String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation("UserProducts", fields: [userId], references: [id])
+
   reviews Review[]
-  userId      String
-  user        User      @relation("UserProducts", fields: [userId], references: [id])
+  cart    CartItem[]
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String    @id @default(cuid())
+  quantity  Int       @default(1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  cartId    String
+  productId String
+
+  cart      Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 
@@ -55,10 +84,28 @@ model Review {
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   productId String
-  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
+
+model Employee {
+  id          String    @id
+  firstName   String
+  lastName    String
+  email       String    @unique
+  phone       String?
+  dateOfBirth DateTime?
+  gender      Gender?
+  hireDate    DateTime  @default(now())
+  position    String
+  salary      Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  userId      String
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

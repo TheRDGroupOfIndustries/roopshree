@@ -4,19 +4,24 @@ import Link from "next/link";
 const WelcomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-50 to-white">
-      {/* Header with gradient and animated wave */}
-      <div className="relative h-96 bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 flex items-center justify-center overflow-hidden">
+       <div className="h-50 flex flex-col justify-center items-center bg-orange-600 relative"></div>
+      {/* SVG Wave */}
+      <div className="w-full">
         <svg
-          className="absolute bottom-0 w-full"
-          viewBox="0 0 1440 320"
+          data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
           preserveAspectRatio="none"
+          className="w-full h-40"
         >
           <path
-            fill="#ffffff"
-            fillOpacity="1"
-            d="M0,224L48,218.7C96,213,192,203,288,197.3C384,192,480,192,576,197.3C672,203,768,213,864,197.3C960,181,1056,139,1152,133.3C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
+            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,
+            82.39-16.72,168.19-17.73,250.45-.39C823.78,31,
+            906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,
+            214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,
+            56.44Z"
+            className="fill-orange-600"
+          />
         </svg>
       </div>
 

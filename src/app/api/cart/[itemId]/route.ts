@@ -9,9 +9,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { itemId: st
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const { quantity } = await req.json();
+        const { itemId } = await params;
 
         const item = await prisma.cartItem.findUnique({
-            where: { id: params.itemId },
+            where: { id: itemId },
             include: { cart: true },
         });
 
@@ -20,7 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { itemId: st
         }
 
         const updatedItem = await prisma.cartItem.update({
-            where: { id: params.itemId },
+            where: { id: itemId },
             data: { quantity: item.quantity + quantity }
         });
 

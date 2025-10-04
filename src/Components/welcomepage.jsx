@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,7 +10,8 @@ const WelcomePage = () => {
       <Image
         src="/Vector 2.svg"
         alt="wave"
-        fill
+        width={200}
+        height={300}
         className="absolute "
         priority
       />
@@ -26,7 +28,7 @@ const WelcomePage = () => {
         </p>
       </div>
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-20">
-        <Link href="/ShineUp">
+        <Link href="/signup">
           <button className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 text-orange-600 font-bold rounded-full hover:bg-orange-50 transition group shadow-lg">
             <span className="text-sm sm:text-base">Continue</span>
             <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-orange-600 text-white rounded-full transition-transform group-hover:scale-110">

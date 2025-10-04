@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-
+ import Image from "next/image";
 const ShineIn = () => {
   // State for login form
   const [loginData, setLoginData] = useState({
@@ -31,77 +31,89 @@ const ShineIn = () => {
 
   return (
     <>
-      <div className="h-36 flex flex-col justify-center items-center bg-orange-600 relative"></div>
-      {/* SVG Wave */}
-      <div className="w-full">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          className="w-full h-40"
-        >
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,
-            82.39-16.72,168.19-17.73,250.45-.39C823.78,31,
-            906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,
-            214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,
-            56.44Z"
-            className="fill-orange-600"
+      <Image
+            src="/Vector 2.svg"
+            alt="wave"
+            fill
+            className="  object-cover relative w-full"
+            priority
           />
-        </svg>
-      </div>
 
-      <h1 className="text-4xl text-black font-bold">Shin In</h1>
-      <div className="border-b-2 border-amber-600 w-24 "></div>
+       <h1 className="text-4xl text-black font-bold pt-[75vh] pl-[5vw]">Sign In</h1>
+      <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="w-screen max-w-md bg-white p-8 rounded-lg shadow-lg space-y-6 mx-auto mt-6"
+     <form
+  onSubmit={handleSubmit}
+  className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg space-y-6 mx-auto mt-8"
+>
+  {/* Email */}
+  <div className="relative">
+    <label htmlFor="email" className="block text-gray-700 font-semibold mb-1">
+      Email
+    </label>
+    <input
+      type="email"
+      name="email"
+      placeholder="Email Address"
+      value={loginData.email}
+      onChange={handleChange}
+      className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
+      required
+    />
+  </div>
+
+  {/* Password */}
+  <div className="relative">
+    <label htmlFor="password" className="block text-gray-700 font-semibold mb-1">
+      Password
+    </label>
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      value={loginData.password}
+      onChange={handleChange}
+      className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
+      required
+    />
+  </div>
+
+  {/* Remember Me / Forgot Password */}
+  <div className="flex items-center justify-between mt-2">
+    <label className="flex items-center gap-2 text-gray-700">
+      <input
+        type="checkbox"
+        className="w-4 h-4 accent-[#F49F00]"
+      />
+      Remember me
+    </label>
+    <Link href="/ForgotPassword" className="text-[#F49F00] font-semibold hover:underline text-sm">
+      Forgot password?
+    </Link>
+  </div>
+
+  {/* Submit Button */}
+  <button
+    type="submit"
+    className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300"
+  >
+    Login
+  </button>
+
+  {/* Signup Link */}
+  <div className="mt-6 text-center">
+    <p className="text-gray-600 text-sm">
+      Don't have an account?{' '}
+      <Link
+        href="/ShineUp"
+        className="text-[#F49F00] font-semibold hover:underline transition-colors"
       >
-        <div className="relative">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={loginData.email}
-            onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
-            required
-          />
-        </div>
+        Sign up here
+      </Link>
+    </p>
+  </div>
+</form>
 
-        <div className="relative">
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={loginData.password}
-            onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all"
-        >
-          Login
-        </button>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
-            Don't have an account?{' '}
-            <Link
-              href="/ShineUp"
-              className="text-orange-600 font-semibold hover:text-orange-700 transition-colors"
-            >
-              Sign up here
-            </Link>
-          </p>
-        </div>
-      </form>
     </>
   );
 };

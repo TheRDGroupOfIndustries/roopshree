@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const ShineUppage = () => {
   // State for form inputs
@@ -46,107 +47,87 @@ const ShineUppage = () => {
 
   return (
     <>
-      <div className="h-20 flex flex-col justify-center items-center bg-orange-600 relative"></div>
       {/* SVG Wave */}
-      <div className="w-full">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          className="w-full h-40"
-        >
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,
-            82.39-16.72,168.19-17.73,250.45-.39C823.78,31,
-            906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,
-            214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,
-            56.44Z"
-            className="fill-orange-600"
-          />
-        </svg>
-      </div>
+      <Image
+        src="/Vector 2.svg"
+        alt="wave"
+        fill
+        className="object-cover relative w-full"
+        priority
+      />
 
-      <h1 className="text-4xl text-black font-bold">Shin Up</h1>
-      <div className="border-b-2 border-amber-600 w-24 "></div>
+      <h1 className="text-4xl text-black font-bold pt-[75vh] pl-[5vw]">Sign Up</h1>
+      <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
 
       <form
         onSubmit={handleSubmit}
         className="w-screen max-w-md bg-white p-8 rounded-lg shadow-lg space-y-6 mx-auto mt-6"
       >
         <div className="relative">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
-            required
-          />
-        </div>
-
-        <div className="relative">
+          <label htmlFor="Email">Email</label>
           <input
             type="email"
             name="email"
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
+            className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
             required
           />
         </div>
 
         <div className="relative">
+          <label htmlFor="Phone">Phone No</label>
           <input
             type="tel"
             name="phone"
             placeholder="Phone Number"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
+            className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
             required
           />
         </div>
 
         <div className="relative">
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             name="password"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
+            className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
             required
           />
         </div>
 
         <div className="relative">
+          <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-orange-500 outline-none py-2 placeholder-gray-400 transition"
+            className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
             required
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all"
+          className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all"
         >
           Create Account
         </button>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link
               href="/ShineIn"
-              className="text-orange-600 font-semibold hover:text-orange-700 transition-colors"
+              className="text-orange-600 font-semibold hover:border-[#F49F00] transition-colors"
             >
               Login here
             </Link>

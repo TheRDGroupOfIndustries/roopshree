@@ -1,68 +1,101 @@
+'use client'
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const WelcomePage = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-orange-50 to-white">
-       <div className="h-50 flex flex-col justify-center items-center bg-orange-600 relative"></div>
-      {/* SVG Wave */}
-      <div className="w-full">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          className="w-full h-40"
-        >
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,
-            82.39-16.72,168.19-17.73,250.45-.39C823.78,31,
-            906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,
-            214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,
-            56.44Z"
-            className="fill-orange-600"
-          />
-        </svg>
-      </div>
+  <>
+  
+       <div className="relative w-screen h-[70vh]  ">
 
-      {/* Content Section */}
-      <div className="flex-1 bg-white px-8  md:px-16   relative">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Welcome
-          </h2>
-          <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-2xl">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil quis recusandae enim accusantium sed atque labore rerum pariatur soluta quia!  
-          </p>
- 
+      <Image
+        src="/Vector 2.svg"
+        alt="wave"
+<<<<<<< HEAD
+        fill
+        className="object-cover absolute h-screen w-full"
+=======
+        width={200}
+        height={300}
+        className="absolute "
+>>>>>>> 8ed0d59bdb4abc1bde3a664640f8296e6dbb253a
+        priority
+        />
         </div>
 
-        {/* Button in bottom-right corner */}
-       <div className="fixed bottom-2 right-2 z-20">
-  <Link href="/ShineUp">
-    <button className="flex items-center gap-4 px-6 py-3 text-orange-600 font-bold rounded-full   hover:bg-orange-50 transition">
-      Continue
-      <span className="flex items-center justify-center w-8 h-8 bg-orange-600 text-white rounded-full transition-transform group-hover:scale-110">
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 7l5 5m0 0l-5 5m5-5H6"
-          />
-        </svg>
-      </span>
-    </button>
-  </Link>
+
+
+
+
+
+       <div className="pl-[5vw] ">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
+          Welcome
+        </h2>
+      </div>
+      <div className=" pl-[5vw] pb-16">
+        <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed  max-w-2xl">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil quis
+          recusandae enim accusantium sed atque labore rerum pariatur soluta
+          quia!
+        </p>
+      </div>
+<<<<<<< HEAD
+    <div className="relative">
+  {/* Your page content here */}
+
+  <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20">
+    <Link href="/ShineUp">
+      <button className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 text-orange-600 font-bold rounded-full hover:bg-orange-50 transition group shadow-lg">
+        <span className="text-sm sm:text-base">Continue</span>
+        <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-orange-600 text-white rounded-full transition-transform group-hover:scale-110">
+          <svg
+            className="w-3 h-3 sm:w-4 sm:h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
+          </svg>
+        </span>
+      </button>
+    </Link>
+  </div>
 </div>
 
+ 
+    </>
+=======
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-20">
+        <Link href="/signup">
+          <button className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 text-orange-600 font-bold rounded-full hover:bg-orange-50 transition group shadow-lg">
+            <span className="text-sm sm:text-base">Continue</span>
+            <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-orange-600 text-white rounded-full transition-transform group-hover:scale-110">
+              <svg
+                className="w-3 h-3 sm:w-4 sm:h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </span>
+          </button>
+        </Link>
       </div>
     </div>
+>>>>>>> 8ed0d59bdb4abc1bde3a664640f8296e6dbb253a
   );
 };
 

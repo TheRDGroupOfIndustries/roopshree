@@ -3,32 +3,49 @@ import prisma from "../../../../lib/prisma";
 import { hashPassword } from "../../../../lib/hash";
 import { signJwt } from "../../../../lib/jwt";
 import { setTokenCookie } from "../../../../lib/cookies";
+import { signupSchema } from "../../../../lib/validations/Signup";
+import { Role } from "../../../../generated/prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, confirmPassword } = await req.json();
+    const body = await req.json();
+    if (body.role) {
+  body.role = Role[body.role.toUpperCase() as keyof typeof Role];
+}
 
-    if (!name || !email || !password || !confirmPassword)
-      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    // ✅ validate using Zod
+    const parsed = signupSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { errors: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
 
-    if (password !== confirmPassword)
-      return NextResponse.json({ error: "Passwords do not match" }, { status: 400 });
+    const { name, email, password, role} = parsed.data;
 
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    if (existing) {
+      return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    }
 
-    // Hash password
     const hashedPassword = await hashPassword(password);
-
-    // Create user only AFTER OTP verification in your frontend
-    const user = await prisma.user.create({ data: { name, email, password: hashedPassword } });
+    const user = await prisma.user.create({
+      data: { name, email, password: hashedPassword, role },
+    });
 
     const token = signJwt({ userId: user.id, name: user.name, email: user.email, role: user.role });
-    const safeUser = { id: user.id, name: user.name, email: user.email, role: user.role ,createdAt: user.createdAt.toISOString() };
+
+    const safeUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt.toISOString(),
+    };
 
     const response = NextResponse.json({ user: safeUser });
     response.headers.set("Set-Cookie", setTokenCookie(token));
-
     return response;
   } catch (error) {
     console.error(error);

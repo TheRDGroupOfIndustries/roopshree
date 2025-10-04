@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { emailSchema } from "../../../../lib/validations/Signup"; // path as per your project
 
 function generateOTP(limit: number) {
   const digits = "0123456789";
@@ -12,9 +13,18 @@ function generateOTP(limit: number) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-    if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    const body = await req.json();
 
+    // ✅ Validate email with Zod
+    const parsed = emailSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { errors: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const { email } = parsed.data;
     const otp = generateOTP(6);
 
     const transporter = nodemailer.createTransport({

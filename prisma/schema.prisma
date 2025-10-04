@@ -28,22 +28,22 @@ enum Status {
   CANCELLED
 }
 
-
 model User {
-  id        String     @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  email     String     @unique
+  email     String   @unique
   password  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  reviews   Review[]
-  products  Products[] @relation("UserProducts")
-  
-  cart      Cart?
-  employees Employee[]
-  orders    Order[]
+  reviews  Review[]
+  products Products[] @relation("UserProducts")
+
+  cart         Cart?
+  employees    Employee[]
+  orders       Order[]
+  stockHistory StockHistory[]
 }
 
 model Employee {
@@ -81,31 +81,34 @@ model Products {
   reviews Review[]
   cart    CartItem[]
   orders  Order[]
+  stock   Stock?
 }
 
 model Cart {
-  id        String     @id @default(cuid())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userId    String     @unique
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  items     CartItem[]
+  items CartItem[]
 }
 
 model CartItem {
-  id        String    @id @default(cuid())
-  quantity  Int       @default(1)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  quantity  Int      @default(1)
+  color     String?
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   cartId    String
   productId String
 
-  cart      Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cart    Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Review {
@@ -122,14 +125,13 @@ model Review {
   product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
-
 model Order {
   id           String   @id @default(cuid())
   productId    String
   userId       String
   quantity     Int
   totalAmount  Float
-  status       Status @default(CONFIRMED)
+  status       Status   @default(CONFIRMED)
   address      String
   paymentMode  String   @default("COD")
   referralCode String?
@@ -137,4 +139,26 @@ model Order {
 
   product Products? @relation(fields: [productId], references: [id])
   user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Stock {
+  id           String @id @default(cuid())
+  productId    String @unique
+  currentStock Int    @default(0)
+
+  product Products       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  history StockHistory[]
+}
+
+model StockHistory {
+  id           String   @id @default(cuid())
+  fromQuantity Int
+  toQuantity   Int
+  createdAt    DateTime @default(now())
+
+  updatedBy String?
+  user      User?   @relation(fields: [updatedBy], references: [id], onDelete: SetNull)
+
+  stockId String
+  stock   Stock  @relation(fields: [stockId], references: [id], onDelete: Cascade)
 }

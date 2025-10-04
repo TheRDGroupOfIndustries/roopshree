@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
         const user: DecodedUser | null = await authenticate(req);
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-        const { productId, quantity } = await req.json();
+        const { productId, quantity, color, size } = await req.json();
 
         // find or create a cart
         let cart = await prisma.cart.findUnique({ where: { userId: user.userId } });
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
         // check if product already in cart
         const existingItem = await prisma.cartItem.findFirst({
-            where: { cartId: cart.id, productId },
+            where: { cartId: cart.id, productId, color, size },
         });
 
         if (existingItem) {
@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
                     cartId: cart.id,
                     productId,
                     quantity,
+                    color,
+                    size,
                 },
             });
         }

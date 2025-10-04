@@ -11,7 +11,7 @@ export async function GET() {
   return NextResponse.json(products);
 }
 
-// CREATE product 
+// CREATE product
 
 interface CreateProductBody {
   title: string;
@@ -20,12 +20,13 @@ interface CreateProductBody {
   details: string;
   insideBox: string[];
   userId: string;
+  initialStock: number;
 }
 
 export async function POST(req: Request) {
   try {
     const requestCookies = cookies();
-    const body = await req.json() as CreateProductBody;
+    const body = (await req.json()) as CreateProductBody;
     const token = (await requestCookies).get("token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -36,11 +37,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     if (!payload.role.includes("ADMIN")) {
-      return NextResponse.json({ error: "Unauthorized admin" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized admin" },
+        { status: 401 }
+      );
     }
 
     const userId = payload.userId.toString();
-    const { title, description, images, details, insideBox } = body;
+    const { title, description, images, details, insideBox, initialStock } =
+      body;
 
     const product = await prisma.products.create({
       data: {
@@ -50,6 +55,24 @@ export async function POST(req: Request) {
         details,
         userId,
         insideBox,
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product creation failed" }, { status: 500 });
+    }
+
+    await prisma.stock.create({
+      data: {
+        productId: product.id,
+        currentStock: initialStock,
+        history: {
+          create: {
+            fromQuantity: 0,
+            toQuantity: initialStock,
+            updatedBy: userId,
+          },
+        },
       },
     });
 

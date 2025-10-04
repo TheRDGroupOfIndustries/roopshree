@@ -53,6 +53,15 @@ export async function POST(
         referralCode,
       },
     });
+
+    // Update stock on order
+    await prisma.stock.update({
+      where: { productId: id },
+      data: {
+        currentStock: { decrement: quantity },
+      },
+    });
+
     return NextResponse.json(order);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -89,6 +98,13 @@ export async function DELETE(
         where: { id },
         data: { status: Status.CANCELLED },
       });
+      await prisma.stock.update({
+        where: { productId: order.productId },
+        data: {
+          currentStock: { increment: order.quantity },
+        },
+      });
+
       return NextResponse.json(cancelledOrder);
     }
 
@@ -110,9 +126,15 @@ export async function DELETE(
         data: { status: Status.CANCELLED },
       });
 
+      await prisma.stock.update({
+        where: { productId: order.productId },
+        data: {
+          currentStock: { increment: order.quantity },
+        },
+      });
+
       return NextResponse.json(cancelledOrder);
     }
-    
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

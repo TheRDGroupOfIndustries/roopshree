@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Role } from "../../generated/prisma/client";
 
 // Email schema
 export const emailSchema = z.object({
@@ -12,6 +13,7 @@ export const signupSchema = z
     email: z.string().email("Invalid email address"), // ✅ built-in email validation
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters"),
+    role: z.nativeEnum(Role).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

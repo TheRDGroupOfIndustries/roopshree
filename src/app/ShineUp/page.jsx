@@ -46,18 +46,24 @@ const ShineUppage = () => {
   };
 
   return (
-    <>
+    <div className="-translate-y-72 absolute">
       {/* SVG Wave */}
+      <div className="relative w-screen h-[70vh]  ">
+
       <Image
         src="/Vector 2.svg"
         alt="wave"
         fill
-        className="object-cover relative w-full"
-        priority
-      />
+        className="object-cover absolute h-full w-full"
+        
+        />
+        </div>
 
-      <h1 className="text-4xl text-black font-bold pt-[75vh] pl-[5vw]">Sign Up</h1>
+      <h1 className="text-4xl text-black font-bold  pl-[5vw]">Sign Up</h1>
       <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
+
+
+
 
       <form
         onSubmit={handleSubmit}
@@ -134,7 +140,7 @@ const ShineUppage = () => {
           </p>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

@@ -181,7 +181,7 @@ export default function HomePage() {
                 {/* Price and Add Button */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-orange-400">
                       ₹1,299
                     </span>
                     <span className="text-xs text-gray-400 line-through">
@@ -233,7 +233,7 @@ export default function HomePage() {
                 {/* Price and Add Button */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-orange-400">
                       ₹1,299
                     </span>
                     <span className="text-xs text-gray-400 line-through">
@@ -283,7 +283,7 @@ export default function HomePage() {
                 {/* Price and Add Button */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-orange-400">
                       ₹1,299
                     </span>
                     <span className="text-xs text-gray-400 line-through">
@@ -331,7 +331,7 @@ export default function HomePage() {
                 {/* Price and Add Button */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-orange-400">
                       ₹1,299
                     </span>
                     <span className="text-xs text-gray-400 line-through">

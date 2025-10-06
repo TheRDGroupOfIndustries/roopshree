@@ -27,7 +27,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = verifyJwt(token);
+    const payload = await verifyJwt(token);
     if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -80,7 +80,7 @@ export async function DELETE(
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const payload = verifyJwt(token);
+    const payload = await verifyJwt(token);
     if (!payload)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

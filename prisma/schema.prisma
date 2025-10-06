@@ -26,6 +26,7 @@ enum Status {
   DISPATCH
   OUTOFDELIVERY
   CANCELLED
+  DELIVERED
 }
 
 model User {
@@ -40,11 +41,12 @@ model User {
   reviews  Review[]
   products Products[] @relation("UserProducts")
 
-  cart         Cart?
-  employees    Employee[]
-  orders       Order[]
-  wishlist     Wishlist[]
-  stockHistory StockHistory[]
+  cart                Cart?
+  employees           Employee[]
+  ordersAsUser        Order[]        @relation("OrderUser") // orders where user is the customer
+  ordersAsDeliveryBoy Order[]        @relation("OrderDeliveryBoy") // orders assigned as delivery boy
+  wishlist            Wishlist[]
+  stockHistory        StockHistory[]
 }
 
 model Employee {
@@ -128,19 +130,24 @@ model Review {
 }
 
 model Order {
-  id           String   @id @default(cuid())
-  productId    String
-  userId       String
-  quantity     Int
-  totalAmount  Float
-  status       Status   @default(CONFIRMED)
-  address      String
-  paymentMode  String   @default("COD")
-  referralCode String?
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid())
+  productId     String
+  userId        String
+  quantity      Int
+  totalAmount   Float
+  status        Status   @default(CONFIRMED)
+  address       String
+  paymentMode   String   @default("COD")
+  referralCode  String?
+  createdAt     DateTime @default(now())
+  deliveryBoyId String?
 
-  product Products? @relation(fields: [productId], references: [id])
-  user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations
+  product     Products? @relation(fields: [productId], references: [id])
+  user        User?     @relation(name: "OrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  deliveryBoy User?     @relation(name: "OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+
+  orderOtp OrderOtp?
 }
 
 model Stock {
@@ -175,4 +182,15 @@ model Wishlist {
   product Products @relation(fields: [productId], references: [id])
 
   @@unique([userId, productId]) // Prevent duplicates
+}
+
+model OrderOtp {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  createdBy String // delivery boy ID
+
+  order Order @relation(fields: [orderId], references: [id])
 }

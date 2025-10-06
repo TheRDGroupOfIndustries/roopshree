@@ -27,7 +27,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = verifyJwt(token);
+    const payload = await verifyJwt(token);
     if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -70,7 +70,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = verifyJwt(token);
+    const payload = await verifyJwt(token);
     if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -127,7 +127,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = verifyJwt(token);
+    const payload = await verifyJwt(token);
     if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -6,7 +6,7 @@ import { verifyJwt } from "@/lib/jwt";
 // GET all products
 export async function GET() {
   const products = await prisma.products.findMany({
-    include: { reviews: true },
+    include: { reviews: true, stock: true},
   });
   return NextResponse.json(products);
 }
@@ -46,6 +46,19 @@ export async function POST(req: Request) {
     const userId = payload.userId.toString();
     const { title, description, images, details, insideBox, initialStock } =
       body;
+    if (
+      !title ||
+      !description ||
+      !images ||
+      !details ||
+      !insideBox ||
+      !initialStock
+    ) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
     const product = await prisma.products.create({
       data: {
@@ -59,7 +72,10 @@ export async function POST(req: Request) {
     });
 
     if (!product) {
-      return NextResponse.json({ error: "Product creation failed" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Product creation failed" },
+        { status: 500 }
+      );
     }
 
     await prisma.stock.create({

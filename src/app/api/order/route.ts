@@ -4,7 +4,6 @@ import { verifyJwt } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
 import { Status } from "@/generated/prisma/client";
 
-
 //all order
 export async function GET() {
   try {
@@ -18,26 +17,29 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     if (payload.role.includes("ADMIN")) {
-      const orders = await prisma.order.findMany({orderBy: { createdAt: "desc" }, include: {
-    product: true,
-    user: true,
-  },});
+      const orders = await prisma.order.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          product: true,
+          user: true,
+        },
+      });
       return NextResponse.json(orders);
-        
     }
 
     const userId = payload.userId.toString();
     const orders = await prisma.order.findMany({
       where: {
         userId: userId,
-      }, orderBy: { createdAt: "desc" }, include: {
-    product: true,
-    user: true,
-  },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        product: true,
+        user: true,
+      },
     });
     return NextResponse.json(orders);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

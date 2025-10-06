@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const user = await authenticate(req);
-    
 
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -59,8 +58,22 @@ export async function GET(req: NextRequest) {
         createdBy: true,
       },
     });
+    const expensesWithUsers = await Promise.all(
+      expenses.map(async (expense) => {
+        const createdByUser = await prisma.user.findUnique({
+          where: { id: expense.createdBy },
+          select: { id: true, name: true, email: true },
+        });
+        return {
+          ...expense,
+          createdBy: createdByUser,
+        };
+      })
+    );
 
-    return NextResponse.json(expenses);
+    return NextResponse.json(expensesWithUsers);
+
+    // return NextResponse.json(expenses);
   } catch (err: any) {
     console.error("Error fetching expenses:", err);
     return NextResponse.json(

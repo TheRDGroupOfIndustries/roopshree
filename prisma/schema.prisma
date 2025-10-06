@@ -8,6 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 enum Role {
   USER
   ADMIN
@@ -26,6 +27,7 @@ enum Status {
   DISPATCH
   OUTOFDELIVERY
   CANCELLED
+  DELIVERED
 }
 
 enum ExpenseCategory {
@@ -36,23 +38,24 @@ enum ExpenseCategory {
   OTHER
 }
 
+
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  reviews  Review[]
-  products Products[] @relation("UserProducts")
-
-  cart         Cart?
-  employees    Employee[]
-  orders       Order[]
-  stockHistory StockHistory[]
-  Expense      Expense[]
+  id                              String         @id @default(cuid())
+  name                            String
+  email                           String         @unique
+  password                        String
+  createdAt                       DateTime       @default(now())
+  role                            Role           @default(USER)
+  updatedAt                       DateTime       @updatedAt
+  cart                            Cart?
+  employees                       Employee[]
+  Order_Order_deliveryBoyIdToUser Order[]        @relation("Order_deliveryBoyIdToUser")
+  orders                          Order[]
+  products                        Products[]     @relation("UserProducts")
+  reviews                         Review[]
+  stockHistory                    StockHistory[]
+  Wishlist                        Wishlist[]
+  expenses                        Expense[]
 }
 
 model Employee {
@@ -66,58 +69,50 @@ model Employee {
   hireDate    DateTime  @default(now())
   position    String
   salary      Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Products {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   images      String[]
   details     String?
   insideBox   String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userId String
-  user   User   @relation("UserProducts", fields: [userId], references: [id])
-
-  reviews Review[]
-  cart    CartItem[]
-  orders  Order[]
-  stock   Stock?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      String
+  cart        CartItem[]
+  orders      Order[]
+  user        User       @relation("UserProducts", fields: [userId], references: [id])
+  reviews     Review[]
+  stock       Stock?
+  Wishlist    Wishlist[]
 }
 
 model Cart {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  items CartItem[]
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
 }
 
 model CartItem {
   id        String   @id @default(cuid())
   quantity  Int      @default(1)
-  color     String?
-  size      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // Relations
   cartId    String
   productId String
-
-  cart    Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     String?
+  size      String?
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Review {
@@ -127,36 +122,35 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   productId String
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Order {
-  id           String   @id @default(cuid())
-  productId    String
-  userId       String
-  quantity     Int
-  totalAmount  Float
-  status       Status   @default(CONFIRMED)
-  address      String
-  paymentMode  String   @default("COD")
-  referralCode String?
-  createdAt    DateTime @default(now())
-
-  product Products? @relation(fields: [productId], references: [id])
-  user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                             String    @id @default(cuid())
+  productId                      String
+  userId                         String
+  quantity                       Int
+  totalAmount                    Float
+  status                         Status    @default(CONFIRMED)
+  address                        String
+  paymentMode                    String    @default("COD")
+  referralCode                   String?
+  createdAt                      DateTime  @default(now())
+  deliveryBoyId                  String?
+  User_Order_deliveryBoyIdToUser User?     @relation("Order_deliveryBoyIdToUser", fields: [deliveryBoyId], references: [id])
+  product                        Products  @relation(fields: [productId], references: [id])
+  user                           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  OrderOtp                       OrderOtp?
 }
 
 model Stock {
-  id           String @id @default(cuid())
-  productId    String @unique
-  currentStock Int    @default(0)
-
-  product Products       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  history StockHistory[]
+  id           String         @id @default(cuid())
+  productId    String         @unique
+  currentStock Int            @default(0)
+  product      Products       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  history      StockHistory[]
 }
 
 model StockHistory {
@@ -164,12 +158,31 @@ model StockHistory {
   fromQuantity Int
   toQuantity   Int
   createdAt    DateTime @default(now())
+  updatedBy    String?
+  stockId      String
+  stock        Stock    @relation(fields: [stockId], references: [id], onDelete: Cascade)
+  user         User?    @relation(fields: [updatedBy], references: [id])
+}
 
-  updatedBy String?
-  user      User?   @relation(fields: [updatedBy], references: [id], onDelete: SetNull)
+model OrderOtp {
+  id        String   @id
+  orderId   String   @unique
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  createdBy String
+  Order     Order    @relation(fields: [orderId], references: [id])
+}
 
-  stockId String
-  stock   Stock  @relation(fields: [stockId], references: [id], onDelete: Cascade)
+model Wishlist {
+  id        String   @id
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  Products  Products @relation(fields: [productId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, productId])
 }
 
 model Expense {

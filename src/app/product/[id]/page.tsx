@@ -65,7 +65,7 @@ export default function ProductDetails() {
       {
         id: 1,
         name: "Priya Sharma",
-        rating: 5,
+        rating: 4,
         comment:
           "Amazing foundation! Perfect coverage and lasts all day. Highly recommend for oily skin.",
       },
@@ -90,7 +90,7 @@ export default function ProductDetails() {
   const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-32">
+    <div className="flex flex-col min-h-screen bg-gray-100 pb-32">
       {/* Header */}
       <header
         className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-10"
@@ -142,7 +142,7 @@ export default function ProductDetails() {
       </header>
 
       {/* Product Image */}
-      <div className="relative w-full h-56 bg-white mt-2">
+      <div className="relative w-full h-56 bg-white mt-1">
         <Image
           src={product.imageUrl}
           alt={product.title}
@@ -158,7 +158,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Product Info */}
-      <div className="flex-1 bg-white px-3 py-6 shadow-sm my-2">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         {product.badge && (
           <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded text-xs font-medium">
             {product.badge}
@@ -169,7 +169,7 @@ export default function ProductDetails() {
         <p className="text-gray-500 mt-2">{product.description}</p>
 
         {/* Rating and Price */}
-        <div className="flex flex-col gap-2 mt-2">
+        <div className="flex flex-col gap-3 mt-2">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <IoStarSharp
@@ -207,7 +207,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Shades & Quantity */}
-      <div className="flex-1 bg-white px-3 py-6 shadow-sm my-2">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         <h2 className="text-lg font-semibold mb-2">Select Shade</h2>
         <div className="flex space-x-2 mb-4" role="radiogroup">
           {product.shades.map((shade) => (
@@ -226,9 +226,9 @@ export default function ProductDetails() {
         </div>
 
         <h2 className="text-lg font-semibold mb-2">Quantity</h2>
-        <div className="flex items-center space-x-2 mb-4">
+        <div className="flex items-center space-x-6 mb-4">
           <button
-            className="w-8 h-8 bg-gray-200 rounded-xl flex items-center justify-center"
+            className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
             onClick={handleDecrement}
             disabled={quantity === 1}
           >
@@ -236,7 +236,7 @@ export default function ProductDetails() {
           </button>
           <span className="text-lg">{quantity}</span>
           <button
-            className="w-8 h-8 bg-gray-200 rounded-xl flex items-center justify-center"
+            className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
             onClick={handleIncrement}
           >
             <AiOutlinePlus className="text-sm" />
@@ -245,7 +245,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Description */}
-      <div className="flex-1 bg-white px-3 py-6 shadow-sm my-2">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         <h2 className="text-lg font-semibold mb-2">Description</h2>
         <p className="text-gray-700 text-sm">
           {product.description}
@@ -266,7 +266,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Key Ingredients */}
-      <div className="flex-1 bg-white px-3 py-6 shadow-sm my-2">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         <h2 className="text-lg font-semibold mb-3 text-gray-800">
           Key Ingredients
         </h2>
@@ -281,7 +281,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Reviews */}
-      <div className="p-4 bg-white shadow-sm">
+      <div className="p-4 bg-white shadow-sm my-1" >
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold text-gray-800">
             Reviews ({product.totalReviews})

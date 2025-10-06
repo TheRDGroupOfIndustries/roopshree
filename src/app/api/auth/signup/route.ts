@@ -10,8 +10,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     if (body.role) {
-  body.role = Role[body.role.toUpperCase() as keyof typeof Role];
-}
+      body.role = Role[body.role.toUpperCase() as keyof typeof Role];
+    }
 
     // ✅ validate using Zod
     const parsed = signupSchema.safeParse(body);
@@ -22,11 +22,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, password, role} = parsed.data;
+    const { name, email, password, role } = parsed.data;
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.json({ error: "User already exists" }, { status: 400 });
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
+      );
     }
 
     const hashedPassword = await hashPassword(password);
@@ -34,7 +37,12 @@ export async function POST(req: Request) {
       data: { name, email, password: hashedPassword, role },
     });
 
-    const token = signJwt({ userId: user.id, name: user.name, email: user.email, role: user.role });
+    const token = signJwt({
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
 
     const safeUser = {
       id: user.id,
@@ -49,6 +57,9 @@ export async function POST(req: Request) {
     return response;
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Signup Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Signup Internal server error" },
+      { status: 500 }
+    );
   }
 }

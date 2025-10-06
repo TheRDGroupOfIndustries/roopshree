@@ -16,3 +16,12 @@ export type SafeUser = {
   email: string;
   createdAt: string;
 };
+
+export interface DecodedUser {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+

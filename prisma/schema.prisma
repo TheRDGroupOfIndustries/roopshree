@@ -26,6 +26,7 @@ enum Status {
   DISPATCH
   OUTOFDELIVERY
   CANCELLED
+  DELIVERED
 }
 
 model User {
@@ -40,10 +41,12 @@ model User {
   reviews  Review[]
   products Products[] @relation("UserProducts")
 
-  cart         Cart?
-  employees    Employee[]
-  orders       Order[]
-  stockHistory StockHistory[]
+  cart                Cart?
+  employees           Employee[]
+  ordersAsUser        Order[]        @relation("OrderUser") // orders where user is the customer
+  ordersAsDeliveryBoy Order[]        @relation("OrderDeliveryBoy") // orders assigned as delivery boy
+  wishlist            Wishlist[]
+  stockHistory        StockHistory[]
 }
 
 model Employee {
@@ -78,10 +81,11 @@ model Products {
   userId String
   user   User   @relation("UserProducts", fields: [userId], references: [id])
 
-  reviews Review[]
-  cart    CartItem[]
-  orders  Order[]
-  stock   Stock?
+  reviews  Review[]
+  cart     CartItem[]
+  orders   Order[]
+  wishlist Wishlist[]
+  stock    Stock?
 }
 
 model Cart {
@@ -126,19 +130,24 @@ model Review {
 }
 
 model Order {
-  id           String   @id @default(cuid())
-  productId    String
-  userId       String
-  quantity     Int
-  totalAmount  Float
-  status       Status   @default(CONFIRMED)
-  address      String
-  paymentMode  String   @default("COD")
-  referralCode String?
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid())
+  productId     String
+  userId        String
+  quantity      Int
+  totalAmount   Float
+  status        Status   @default(CONFIRMED)
+  address       String
+  paymentMode   String   @default("COD")
+  referralCode  String?
+  createdAt     DateTime @default(now())
+  deliveryBoyId String?
 
-  product Products? @relation(fields: [productId], references: [id])
-  user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations
+  product     Products? @relation(fields: [productId], references: [id])
+  user        User?     @relation(name: "OrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  deliveryBoy User?     @relation(name: "OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+
+  orderOtp OrderOtp?
 }
 
 model Stock {
@@ -161,4 +170,27 @@ model StockHistory {
 
   stockId String
   stock   Stock  @relation(fields: [stockId], references: [id], onDelete: Cascade)
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  product Products @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId]) // Prevent duplicates
+}
+
+model OrderOtp {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  createdBy String // delivery boy ID
+
+  order Order @relation(fields: [orderId], references: [id])
 }

@@ -28,14 +28,20 @@ export async function PATCH(
 
     // Check if user is admin
     if (!payload.role.includes("ADMIN")) {
-      return NextResponse.json({ error: "Forbidden: Admin only" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden: Admin only" },
+        { status: 403 }
+      );
     }
 
     const body: AssignDeliveryBody = await req.json();
     const { deliveryBoyId } = body;
 
     if (!deliveryBoyId) {
-      return NextResponse.json({ error: "deliveryBoyId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "deliveryBoyId is required" },
+        { status: 400 }
+      );
     }
 
     // Check if order exists
@@ -45,14 +51,20 @@ export async function PATCH(
     }
 
     // Check if delivery boy exists and has DELIVERY_BOY role
-    const deliveryBoy = await prisma.user.findUnique({ 
-      where: { id: deliveryBoyId } 
+    const deliveryBoy = await prisma.user.findUnique({
+      where: { id: deliveryBoyId },
     });
     if (!deliveryBoy) {
-      return NextResponse.json({ error: "Delivery boy not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Delivery boy not found" },
+        { status: 404 }
+      );
     }
     if (!deliveryBoy.role.includes("DELIVERY_BOY")) {
-      return NextResponse.json({ error: "User is not a delivery boy" }, { status: 400 });
+      return NextResponse.json(
+        { error: "User is not a delivery boy" },
+        { status: 400 }
+      );
     }
 
     // Assign delivery boy to order
@@ -62,7 +74,17 @@ export async function PATCH(
       include: { product: true, user: true, deliveryBoy: true },
     });
 
-    return NextResponse.json(updatedOrder);
+    const safeOrder = {
+      ...updatedOrder,
+      user: updatedOrder.user
+        ? { ...updatedOrder.user, password: undefined }
+        : undefined,
+      deliveryBoy: updatedOrder.deliveryBoy
+        ? { ...updatedOrder.deliveryBoy, password: undefined }
+        : undefined,
+    };
+
+    return NextResponse.json(safeOrder, { status: 200 });
   } catch (error: any) {
     console.error("assign-delivery error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

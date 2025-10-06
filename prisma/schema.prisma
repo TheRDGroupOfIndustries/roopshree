@@ -43,6 +43,7 @@ model User {
   cart         Cart?
   employees    Employee[]
   orders       Order[]
+  wishlist     Wishlist[]
   stockHistory StockHistory[]
 }
 
@@ -78,10 +79,11 @@ model Products {
   userId String
   user   User   @relation("UserProducts", fields: [userId], references: [id])
 
-  reviews Review[]
-  cart    CartItem[]
-  orders  Order[]
-  stock   Stock?
+  reviews  Review[]
+  cart     CartItem[]
+  orders   Order[]
+  wishlist Wishlist[]
+  stock    Stock?
 }
 
 model Cart {
@@ -161,4 +163,16 @@ model StockHistory {
 
   stockId String
   stock   Stock  @relation(fields: [stockId], references: [id], onDelete: Cascade)
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  product Products @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId]) // Prevent duplicates
 }

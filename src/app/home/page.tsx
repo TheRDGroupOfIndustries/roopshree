@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { BiHeart, BiPlus } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import TrendingCard from "@/Components/TrendingNow";
-
+import Link from "next/link";
 export default function HomePage() {
   const cartCount = 3;
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
@@ -108,19 +108,24 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             {/* Cart with Badge */}
             <div className="relative">
+              <Link href={"/cart"}>
               <FiShoppingCart size={22} />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                   {cartCount}
                 </span>
               )}
+              </Link>
             </div>
+            <Link href={"/Wishlist"}>
+            <BiHeart size={22}/>
+            </Link>
             <FiUser size={22} />
           </div>
         </header>
 
         <div className="flex items-center bg-gray-100 rounded-xl mx-4 mb-3 px-3 py-2">
-          <AiOutlineSearch size={20} className="text-gray-500" />
+          <AiOutlineSearch size={20} className="text-red-500" />
           <input
             type="text"
             placeholder="Search cosmetics..."

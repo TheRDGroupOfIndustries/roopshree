@@ -211,32 +211,39 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Total and Checkout - Fixed at Bottom */}
-              <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-gray-200 p-4 md:p-6 z-40">
-                <div className="max-w-6xl mx-auto">
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div className="text-center sm:text-left">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-lg sm:text-xl font-semibold text-gray-700">
-                          Total:
-                        </h3>
-                        <span className="text-2xl sm:text-3xl font-bold text-amber-600">
-                          ₹{total.toLocaleString()}
-                        </span>
-                      </div>
-                      {totalSavings > 0 && (
-                        <p className="text-sm text-green-600 font-medium">
-                          You saved ₹{totalSavings.toLocaleString()}
-                        </p>
-                      )}
-                    </div>
+             <div className="w-full bg-white shadow-2xl border-t border-gray-200 p-4 sm:p-6 md:p-8 rounded-t-2xl">
+  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    {/* Total Info */}
+    <div className="text-center md:text-left w-full md:w-auto">
+      <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 mb-2">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700">
+          Total:
+        </h3>
+        <span className="text-2xl sm:text-3xl font-bold text-amber-600">
+          ₹{total.toLocaleString()}
+        </span>
+      </div>
+      {totalSavings > 0 && (
+        <p className="text-sm sm:text-base text-green-600 font-medium">
+          You saved ₹{totalSavings.toLocaleString()}
+        </p>
+      )}
+    </div>
 
-                    <button className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg hover:shadow-xl hover:scale-105">
-                      Proceed to Checkout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>
+    {/* Checkout Button */}
+    <button
+      className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 
+      text-white px-8 py-3 rounded-full font-bold text-lg
+      hover:from-amber-600 hover:to-amber-700 transition-all
+      shadow-lg hover:shadow-xl hover:scale-105 
+      active:scale-95 duration-200"
+    >
+      Proceed to Checkout
+    </button>
+  </div>
+</div>
+
+             </>
           )}
         </div>
       </div>

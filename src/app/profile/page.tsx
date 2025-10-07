@@ -75,7 +75,7 @@ export default function ProfilePage() {
             </button>
             {cartCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
-                text-[10px] font-bold text-white bg-orange-500 rounded-full w-[16px] h-[16px]">
+                text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full w-[16px] h-[16px]">
                 {cartCount}
               </span>
             )}
@@ -87,7 +87,7 @@ export default function ProfilePage() {
       <div className="flex-1 shadow-lg">
         <div className="relative overflow-hidden">
           <Image width={200} height={300} src="/images/image.png" alt="Background" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-orange-400/30"></div>
+          <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
           <div className="relative z-10 flex flex-col items-center py-8 px-14 text-white">
             <div className="relative w-24 h-24">
               <Image src="/images/profile_img.png" alt="Profile Picture" fill className="rounded-full shadow-md object-cover" />
@@ -181,7 +181,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-sm font-bold mb-2">{item.price}</span>
-                <span className="text-orange-500 text-xs">{item.action}</span>
+                <span className="text-[var(--color-brand)] text-xs">{item.action}</span>
               </div>
             </div>
           ))}
@@ -212,7 +212,7 @@ export default function ProfilePage() {
 
         {/* Logout */}
         <Section>
-          <button className="w-full flex items-center justify-center gap-2 py-3 text-orange-700 hover:bg-orange-50 rounded-lg">
+          <button className="w-full flex items-center justify-center gap-2 py-3 text-orange-700 hover:bg-[var(--color-brand-hover)]/20 rounded-lg">
             <RiLogoutBoxLine className="text-lg" />
             <span className="font-semibold">Logout</span>
           </button>

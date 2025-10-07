@@ -45,7 +45,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "New",
       badgeColor: "bg-orange-400",
-      rating:4,
+      rating: 4,
     },
     {
       id: 2,
@@ -56,7 +56,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "Sale",
       badgeColor: "bg-red-600",
-       rating:5,
+      rating: 5,
     },
     {
       id: 3,
@@ -67,7 +67,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "Best Seller",
       badgeColor: "bg-green-600",
-       rating:4,
+      rating: 4,
     },
     {
       id: 4,
@@ -78,11 +78,11 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "",
       badgeColor: "",
-       rating:5,
+      rating: 5,
     },
   ];
 
-   const trendingProducts = [
+  const trendingProducts = [
     {
       id: 1,
       name: "Moisturizer",
@@ -113,16 +113,16 @@ export default function HomePage() {
             {/* Cart with Badge */}
             <div className="relative">
               <Link href={"/cart"}>
-              <FiShoppingCart size={22} />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {cartCount}
-                </span>
-              )}
+                <FiShoppingCart size={22} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </div>
             <Link href={"/Wishlist"}>
-            <BiHeart size={22}/>
+              <BiHeart size={22} />
             </Link>
             <FiUser size={22} />
           </div>
@@ -207,27 +207,24 @@ export default function HomePage() {
 
         {/* Featured Products */}
 
-       <div className="mt-6 px-4">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-lg text-gray-900">
-          Featured Products
-        </h3>
-        <button className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]">
-          View All   
-        </button>
-      </div>
+        <div className="mt-6 px-4">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold text-lg text-gray-900">
+              Featured Products
+            </h3>
+            <button className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]">
+              View All
+            </button>
+          </div>
 
-      {/* Product Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
-        ))}
+          {/* Product Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} {...product} />
+            ))}
+          </div>
         </div>
-
-
-    </div>
-
 
         {/* Special Offers */}
         <div className="mt-6 px-4">
@@ -254,25 +251,23 @@ export default function HomePage() {
               </button>
             </div>
           </div>
-
-        
         </div>
 
         {/* Trending Now */}
 
-         <div className="mt-6 relative px-4">
-      {/* Header */}
-      <div className="mb-4">
-        <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
-      </div>
+        <div className="mt-6 relative px-4">
+          {/* Header */}
+          <div className="mb-4">
+            <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+          </div>
 
-      {/* Horizontal Scrollable Container */}
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {trendingProducts.map((product) => (
-          <TrendingCard key={product.id} {...product} />
-        ))}
-      </div>
-    </div>
+          {/* Horizontal Scrollable Container */}
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {trendingProducts.map((product) => (
+              <TrendingCard key={product.id} {...product} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

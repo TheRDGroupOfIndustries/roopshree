@@ -9,3 +9,12 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;             /* Chrome, Safari, Opera */
 }
+
+
+@layer base {
+  :root {
+    --color-brand: #ff8904;
+    /* --color-brand: #f54a00; */
+    --color-brand-hover: #f2ae55;
+  }
+}

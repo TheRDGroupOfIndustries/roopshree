@@ -21,13 +21,16 @@ import {
 } from "react-icons/io";
 import { CiGlobe } from "react-icons/ci";
 import { CgDarkMode } from "react-icons/cg";
+import Link from "next/link";
 export default function ProfilePage() {
   const [cartCount] = useState(3);
 
   // 🔹 Reusable Components
   const Section = ({ title, children }: any) => (
     <div className="p-4 bg-white my-2">
-      {title && <h3 className="text-md font-semibold text-gray-800 mb-4">{title}</h3>}
+      {title && (
+        <h3 className="text-md font-semibold text-gray-800 mb-4">{title}</h3>
+      )}
       {children}
     </div>
   );
@@ -46,13 +49,17 @@ export default function ProfilePage() {
         {icon}
       </span>
       <span className="font-medium">{label}</span>
-      <span className="ml-auto text-gray-400 flex items-center gap-1">{right}</span>
+      <span className="ml-auto text-gray-400 flex items-center gap-1">
+        {right}
+      </span>
     </button>
   );
 
   const QuickAction = ({ icon, label, bg }: any) => (
     <button className="flex flex-col items-center text-gray-700">
-      <div className={`w-12 h-12 ${bg} rounded-full flex items-center justify-center`}>
+      <div
+        className={`w-12 h-12 ${bg} rounded-full flex items-center justify-center`}
+      >
         {icon}
       </div>
       <span className="text-sm mt-2">{label}</span>
@@ -63,22 +70,34 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col pb-16">
       {/* Header */}
-      <header className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-20"
-        style={{ boxShadow: "0 2px 4px -1px rgba(0,0,0,0.1)" }}>
-        <button aria-label="Back" className="text-gray-600 text-xl"><IoArrowBackOutline /></button>
+      <header className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-20">
+        <button aria-label="Back" className="text-gray-600 text-xl">
+          <IoArrowBackOutline />
+        </button>
         <h2 className="font-semibold text-lg flex-1 text-center">Profile</h2>
         <div className="flex items-center space-x-4">
-          <button aria-label="Share" className="text-gray-600 text-xl hover:text-orange-500"><GoShareAndroid /></button>
+          <button
+            aria-label="Share"
+            className="text-gray-600 text-xl hover:text-orange-500"
+          >
+            <GoShareAndroid />
+          </button>
           <div className="relative">
-            <button aria-label="View cart" className="text-gray-600 text-xl hover:text-orange-500">
+            <Link
+              href="/cart"
+              aria-label="View cart"
+              className="text-gray-600 text-xl hover:text-orange-500 relative"
+            >
               <FiShoppingCart />
-            </button>
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
-                text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full w-[16px] h-[16px]">
-                {cartCount}
-              </span>
-            )}
+              {cartCount > 0 && (
+                <span
+                  className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center
+              text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full w-[16px] h-[16px]"
+                >
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       </header>
@@ -86,11 +105,22 @@ export default function ProfilePage() {
       {/* Profile Section */}
       <div className="flex-1 shadow-lg">
         <div className="relative overflow-hidden">
-          <Image width={200} height={300} src="/images/image.png" alt="Background" className="absolute inset-0 w-full h-full object-cover" />
+          <Image
+            width={200}
+            height={300}
+            src="/images/image.png"
+            alt="Background"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
           <div className="relative z-10 flex flex-col items-center py-8 px-14 text-white">
             <div className="relative w-24 h-24">
-              <Image src="/images/profile_img.png" alt="Profile Picture" fill className="rounded-full shadow-md object-cover" />
+              <Image
+                src="/images/profile_img.png"
+                alt="Profile Picture"
+                fill
+                className="rounded-full shadow-md object-cover"
+              />
             </div>
             <h1 className="text-xl font-bold mt-2">Priya Sharma</h1>
             <p className="text-sm">Premium Member</p>
@@ -113,27 +143,75 @@ export default function ProfilePage() {
         {/* Quick Actions */}
         <Section title="Quick Actions">
           <div className="grid grid-cols-4 gap-4">
-            <QuickAction icon={<FiShoppingCart className="text-xl text-orange-600" />} label="My Orders" bg="bg-orange-50" />
-            <QuickAction icon={<AiOutlineHeart className="text-xl text-orange-600" />} label="Wishlist" bg="bg-orange-50" />
-            <QuickAction icon={<AiOutlineGift className="text-xl text-purple-600" />} label="Rewards" bg="bg-purple-200" />
-            <QuickAction icon={<RiWalletLine className="text-xl text-green-500" />} label="Wallet" bg="bg-green-100" />
+            <QuickAction
+              icon={<FiShoppingCart className="text-xl text-orange-600" />}
+              label="My Orders"
+              bg="bg-orange-50"
+            />
+            <QuickAction
+              icon={<AiOutlineHeart className="text-xl text-orange-600" />}
+              label="Wishlist"
+              bg="bg-orange-50"
+            />
+            <QuickAction
+              icon={<AiOutlineGift className="text-xl text-purple-600" />}
+              label="Rewards"
+              bg="bg-purple-200"
+            />
+            <QuickAction
+              icon={<RiWalletLine className="text-xl text-green-500" />}
+              label="Wallet"
+              bg="bg-green-100"
+            />
           </div>
         </Section>
 
         {/* Account Settings */}
         <Section title="Account Settings">
-          <SettingButton icon={<GoPerson />} label="Personal Information" right={<FaAngleRight />} />
-          <SettingButton icon={<LuMapPin />} label="Delivery Addresses" right={<FaAngleRight />} />
-          <SettingButton icon={<RiWalletLine />} label="Payment Methods" right={<FaAngleRight />} />
-          <SettingButton icon={<RiNotification2Line />} label="Notifications" right={<FaAngleRight />} />
+          <SettingButton
+            icon={<GoPerson />}
+            label="Personal Information"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<LuMapPin />}
+            label="Delivery Addresses"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<RiWalletLine />}
+            label="Payment Methods"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<RiNotification2Line />}
+            label="Notifications"
+            right={<FaAngleRight />}
+          />
         </Section>
 
         {/* Support & Help */}
         <Section title="Support & Help">
-          <SettingButton icon={<MdOutlineHeadsetMic />} label="Customer Support" right={<FaAngleRight />} />
-          <SettingButton icon={<BsQuestionCircle />} label="FAQ" right={<FaAngleRight />} />
-          <SettingButton icon={<IoMdStarOutline />} label="Rate App" right={<FaAngleRight />} />
-          <SettingButton icon={<IoIosInformationCircleOutline />} label="About Us" right={<FaAngleRight />} />
+          <SettingButton
+            icon={<MdOutlineHeadsetMic />}
+            label="Customer Support"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<BsQuestionCircle />}
+            label="FAQ"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<IoMdStarOutline />}
+            label="Rate App"
+            right={<FaAngleRight />}
+          />
+          <SettingButton
+            icon={<IoIosInformationCircleOutline />}
+            label="About Us"
+            right={<FaAngleRight />}
+          />
         </Section>
 
         {/* Premium Section */}
@@ -141,8 +219,12 @@ export default function ProfilePage() {
           <div className="bg-purple-50 p-4 rounded-lg mb-4 shadow-sm">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-md font-semibold text-gray-800 mb-1">Premium Membership</h3>
-                <p className="text-sm text-gray-600">Get exclusive benefits and offers</p>
+                <h3 className="text-md font-semibold text-gray-800 mb-1">
+                  Premium Membership
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Get exclusive benefits and offers
+                </p>
               </div>
               <span className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                 <LuCrown />
@@ -150,7 +232,12 @@ export default function ProfilePage() {
             </div>
 
             <ul className="grid grid-cols-2 gap-4 text-sm list-none mt-4 mb-4">
-              {["Free delivery", "Early access", "Extra rewards", "Priority support"].map((item) => (
+              {[
+                "Free delivery",
+                "Early access",
+                "Extra rewards",
+                "Priority support",
+              ].map((item) => (
                 <li key={item} className="flex items-center">
                   <IoMdCheckmark className="mr-2 text-green-600" /> {item}
                 </li>
@@ -165,23 +252,51 @@ export default function ProfilePage() {
         {/* Recent Orders */}
         <Section title="Recent Orders">
           {[
-            { name: "Luxury Foundation", order: "#RP2044001", status: "Delivered", price: "₹1,299", color: "text-green-600", action: "Reorder" },
-            { name: "Matte Lipstick", order: "#RP2044002", status: "In Transit", price: "₹700", color: "text-orange-600", action: "Track" },
+            {
+              name: "Luxury Foundation",
+              order: "#RP2044001",
+              status: "Delivered",
+              price: "₹1,299",
+              color: "text-green-600",
+              action: "Reorder",
+            },
+            {
+              name: "Matte Lipstick",
+              order: "#RP2044002",
+              status: "In Transit",
+              price: "₹700",
+              color: "text-orange-600",
+              action: "Track",
+            },
           ].map((item) => (
-            <div key={item.order} className="flex items-center justify-between mb-4">
+            <div
+              key={item.order}
+              className="flex items-center justify-between mb-4"
+            >
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-xl mr-2 overflow-hidden">
-                  <Image src="/images/image.png" alt={item.name} width={40} height={40} layout="responsive" objectFit="cover" />
+                  <Image
+                    src="/images/image.png"
+                    alt={item.name}
+                    width={40}
+                    height={40}
+                    layout="responsive"
+                    objectFit="cover"
+                  />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-800 font-semibold">{item.name}</p>
+                  <p className="text-sm text-gray-800 font-semibold">
+                    {item.name}
+                  </p>
                   <p className="text-xs text-gray-500">{item.order}</p>
                   <p className={`text-xs ${item.color}`}>{item.status}</p>
                 </div>
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-sm font-bold mb-2">{item.price}</span>
-                <span className="text-[var(--color-brand)] text-xs">{item.action}</span>
+                <span className="text-[var(--color-brand)] text-xs">
+                  {item.action}
+                </span>
               </div>
             </div>
           ))}
@@ -192,7 +307,12 @@ export default function ProfilePage() {
           <SettingButton
             icon={<CiGlobe />}
             label="Language"
-            right={<><span>English</span><FaAngleRight /></>}
+            right={
+              <>
+                <span>English</span>
+                <FaAngleRight />
+              </>
+            }
           />
           <SettingButton
             icon={<CgDarkMode />}
@@ -200,14 +320,20 @@ export default function ProfilePage() {
             right={
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500
+                <div
+                  className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500
                   after:content-[''] after:absolute after:top-[2px] after:left-[2px]
                   after:bg-white after:border-gray-300 after:border after:rounded-full
-                  after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                  after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"
+                ></div>
               </label>
             }
           />
-          <SettingButton icon={<LuShieldCheck />} label="Privacy Settings" right={<FaAngleRight />} />
+          <SettingButton
+            icon={<LuShieldCheck />}
+            label="Privacy Settings"
+            right={<FaAngleRight />}
+          />
         </Section>
 
         {/* Logout */}
@@ -221,7 +347,6 @@ export default function ProfilePage() {
     </div>
   );
 }
-
 
 // "use client";
 // import { useState } from "react";
@@ -288,8 +413,8 @@ export default function ProfilePage() {
 
 //             {cartCount > 0 && (
 //               <span
-//                 className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
-//              text-[10px] font-bold text-white bg-orange-500 rounded-full 
+//                 className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center
+//              text-[10px] font-bold text-white bg-orange-500 rounded-full
 //              w-[16px] h-[16px]"
 //               >
 //                 {cartCount}
@@ -612,4 +737,3 @@ export default function ProfilePage() {
 //     </div>
 //   );
 // }
-

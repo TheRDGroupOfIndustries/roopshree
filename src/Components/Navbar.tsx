@@ -27,14 +27,14 @@ export default function Navbar() {
       {/* Support Icon */}
       <Link
         href="/support"
-        className="fixed bottom-20 right-5 bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 z-50"
+        className="fixed bottom-20 right-5 bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 z-100"
         title="Support"
       >
         <RiCustomerService2Line size={24} />
       </Link>
 
       {/* Bottom Navbar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md flex justify-around items-center h-16 z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md flex justify-around items-center h-16 z-100">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (

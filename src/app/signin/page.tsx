@@ -3,8 +3,11 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react"; // ✅ added missing imports
 
 const ShineIn: React.FC = () => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   // State for login form
   const [loginData, setLoginData] = useState({
     email: "",
@@ -69,21 +72,24 @@ const ShineIn: React.FC = () => {
 
         {/* Password */}
         <div className="relative">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-semibold mb-1"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={loginData.password}
-            onChange={handleChange}
-            className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
-            required
-          />
+          <label className="block text-gray-700 font-semibold mb-1">Password</label>
+          <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#F49F00] transition">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Enter password"
+              value={loginData.password}  
+              onChange={handleChange}
+              className="w-full py-2 outline-none placeholder-gray-400"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-600 ml-2"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
         </div>
 
         {/* Remember Me / Forgot Password */}

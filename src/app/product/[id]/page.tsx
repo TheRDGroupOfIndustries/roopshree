@@ -123,7 +123,7 @@ export default function ProductDetails() {
           <div className="relative">
             <button
               aria-label="View cart"
-              className="text-gray-600 text-xl hover:text-orange-500"
+              className="text-gray-600 text-xl hover:text-[var(--color-brand-hover)]"
             >
               <FiShoppingCart />
             </button>
@@ -131,7 +131,7 @@ export default function ProductDetails() {
             {product.cartQuantity > 0 && (
               <span
                 className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
-          text-[10px] font-bold text-white bg-orange-500 rounded-full 
+          text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full 
           w-[16px] h-[16px]"
               >
                 {product.cartQuantity}
@@ -160,7 +160,7 @@ export default function ProductDetails() {
       {/* Product Info */}
       <div className="flex-1 bg-white px-3 py-6  my-1">
         {product.badge && (
-          <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded text-xs font-medium">
+          <span className="bg-orange-100 text-[var(--color-brand)] px-3 py-1 rounded text-xs font-medium">
             {product.badge}
           </span>
         )}
@@ -188,7 +188,7 @@ export default function ProductDetails() {
           </div>
 
           <div className="flex gap-3 items-center">
-            <h2 className="text-2xl font-bold text-orange-500">
+            <h2 className="text-2xl font-bold text-[var(--color-brand)]">
               ₹{product.price}
             </h2>
             <span className="line-through text-gray-500 font-semibold">
@@ -258,7 +258,7 @@ export default function ProductDetails() {
           )}
         </p>
         <button
-          className="text-orange-400 text-sm font-semibold "
+          className="text-[var(--color-brand)] text-sm font-semibold "
           onClick={toggleDescription}
         >
           {isDescriptionExpanded ? "Read Less" : "Read More"}
@@ -273,7 +273,7 @@ export default function ProductDetails() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-gray-700 text-sm mb-6">
           {product.ingredients.map((item, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
+              <span className="w-2 h-2 bg-[var(--color-brand)] rounded-full"></span>
               {item}
             </div>
           ))}
@@ -286,7 +286,7 @@ export default function ProductDetails() {
           <h2 className="text-lg font-semibold text-gray-800">
             Reviews ({product.totalReviews})
           </h2>
-          <a href="#" className="text-orange-600 text-sm font-medium">
+          <a href="#" className="text-[var(--color-brand)] text-sm font-medium">
             View All
           </a>
         </div>
@@ -294,7 +294,7 @@ export default function ProductDetails() {
         {product.reviews.map((review) => (
           <div key={review.id} className="mb-5">
             <div className="flex gap-3 items-center mb-1">
-              <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-600 font-semibold flex items-center justify-center flex-shrink-0">
+              <span className="w-9 h-9 rounded-full bg-orange-100 text-[var(--color-brand)] font-semibold flex items-center justify-center flex-shrink-0">
                 {review.name.charAt(0)}
               </span>
               <p className="text-gray-800 text-sm font-semibold flex-1">
@@ -328,7 +328,7 @@ export default function ProductDetails() {
           <FiShoppingCart className="text-lg flex-shrink-0" />
           <span className="truncate">Add to Cart</span>
         </button>
-        <button className="flex items-center justify-center gap-2 w-[48%] py-3 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-400 min-w-0">
+        <button className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-orange-400 min-w-0">
           <FaBolt className="text-lg flex-shrink-0" />
           <span className="truncate">Buy Now</span>
         </button>

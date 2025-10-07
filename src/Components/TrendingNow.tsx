@@ -38,8 +38,8 @@ export default function TrendingCard({ name, price, image }: TrendingCardProps) 
 
         {/* Price and Add Button */}
         <div className="flex items-center justify-between">
-          <span className="text-base font-bold text-orange-400">{price}</span>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-1.5 shadow-sm transition-colors">
+          <span className="text-base font-bold text-[var(--color-brand)]">{price}</span>
+          <button className="bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white rounded-lg p-1.5 shadow-sm transition-colors">
             <BiPlus className="w-3.5 h-3.5" />
           </button>
         </div>

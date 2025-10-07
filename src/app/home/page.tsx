@@ -45,6 +45,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "New",
       badgeColor: "bg-orange-400",
+      rating:4,
     },
     {
       id: 2,
@@ -55,6 +56,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "Sale",
       badgeColor: "bg-red-600",
+       rating:5,
     },
     {
       id: 3,
@@ -65,6 +67,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "Best Seller",
       badgeColor: "bg-green-600",
+       rating:4,
     },
     {
       id: 4,
@@ -75,6 +78,7 @@ export default function HomePage() {
       image: "/images/image.png",
       badge: "",
       badgeColor: "",
+       rating:5,
     },
   ];
 
@@ -110,7 +114,7 @@ export default function HomePage() {
             <div className="relative">
               <FiShoppingCart size={22} />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                   {cartCount}
                 </span>
               )}
@@ -142,7 +146,7 @@ export default function HomePage() {
           />
 
           {/* Semi-transparent orange overlay for faded effect */}
-          <div className="absolute inset-0 bg-orange-400/30"></div>
+          <div className="absolute inset-0 bg-[var(--color-brand)]/20"></div>
 
           {/* Content container */}
           <div className="relative z-10 p-6 flex flex-col items-start">
@@ -152,7 +156,7 @@ export default function HomePage() {
             <p className="text-sm mb-4 text-white/90">
               Premium cosmetics delivered across Varanasi
             </p>
-            <button className="px-4 py-2 bg-white text-orange-500 rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
+            <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
               Shop Now
             </button>
           </div>
@@ -185,7 +189,7 @@ export default function HomePage() {
         </div>
 
         {/* Flash Sale */}
-        <div className="mx-4 mt-6 bg-gradient-to-r from-orange-400 to-orange-600 text-white p-4 rounded-xl flex justify-between items-center">
+        <div className="mx-4 mt-6 bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] text-white p-4 rounded-xl flex justify-between items-center">
           <div>
             <h4 className="font-semibold">Flash Sale</h4>
             <p className="text-sm">Up to 50% off on selected items</p>
@@ -204,8 +208,8 @@ export default function HomePage() {
         <h3 className="font-semibold text-lg text-gray-900">
           Featured Products
         </h3>
-        <button className="text-orange-600 text-sm font-medium hover:text-orange-700">
-          View All
+        <button className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]">
+          View All   
         </button>
       </div>
 

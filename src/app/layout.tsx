@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/Components/Navbar";
-import "@/lib/cronJobs"; // or whatever path your cron file is at
+import Navbar from "@/Components/Navbar";// or whatever path your cron file is at
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

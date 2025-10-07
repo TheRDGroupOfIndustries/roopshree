@@ -38,22 +38,23 @@ enum ExpenseCategory {
 }
 
 model User {
-  id              String         @id @default(cuid())
-  name            String
-  email           String         @unique
-  password        String
-  createdAt       DateTime       @default(now())
-  role            Role           @default(USER)
-  updatedAt       DateTime       @updatedAt
-  cart            Cart?
-  employees       Employee[]
-  orders          Order[]        @relation("OrderUser")
-  ordersAsDeliveryBoy Order[]    @relation("OrderDeliveryBoy")
-  products        Products[]     @relation("UserProducts")
-  wishlist        Wishlist[]
-  stockHistory    StockHistory[]
-  expenses        Expense[]
-  reviews         Review[]       @relation("ReviewUser")
+  id                  String         @id @default(cuid())
+  name                String
+  email               String         @unique
+  password            String
+  createdAt           DateTime       @default(now())
+  role                Role           @default(USER)
+  updatedAt           DateTime       @updatedAt
+  profileImage        String?
+  cart                Cart?
+  employees           Employee[]
+  orders              Order[]        @relation("OrderUser")
+  ordersAsDeliveryBoy Order[]        @relation("OrderDeliveryBoy")
+  products            Products[]     @relation("UserProducts")
+  wishlist            Wishlist[]
+  stockHistory        StockHistory[]
+  expenses            Expense[]
+  reviews             Review[]       @relation("ReviewUser")
 }
 
 model Employee {
@@ -140,9 +141,9 @@ model Order {
   createdAt     DateTime @default(now())
   deliveryBoyId String?
 
-  product     Products  @relation(fields: [productId], references: [id])
-  user        User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
-  deliveryBoy User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+  product     Products @relation(fields: [productId], references: [id])
+  user        User     @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  deliveryBoy User?    @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
 
   orderOtp OrderOtp?
 }

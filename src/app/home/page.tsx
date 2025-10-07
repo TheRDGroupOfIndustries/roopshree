@@ -4,6 +4,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BiHeart, BiPlus } from "react-icons/bi";
+import ProductCard from "@/Components/ProductCard";
+import TrendingCard from "@/Components/TrendingNow";
 
 export default function HomePage() {
   const cartCount = 3;
@@ -31,6 +33,70 @@ export default function HomePage() {
     { name: "Hair Care", img: "/images/image.png" },
     { name: "Fragrance", img: "/images/image.png" },
     { name: "Accessories", img: "/images/image.png" },
+  ];
+
+  const products = [
+    {
+      id: 1,
+      name: "Luxury Foundation",
+      description: "Perfect coverage for all skin types",
+      price: "₹1,299",
+      oldPrice: "₹1,599",
+      image: "/images/image.png",
+      badge: "New",
+      badgeColor: "bg-orange-400",
+    },
+    {
+      id: 2,
+      name: "Luxury Foundation",
+      description: "Perfect coverage for all skin types",
+      price: "₹1,299",
+      oldPrice: "₹1,599",
+      image: "/images/image.png",
+      badge: "Sale",
+      badgeColor: "bg-red-600",
+    },
+    {
+      id: 3,
+      name: "Luxury Foundation",
+      description: "Perfect coverage for all skin types",
+      price: "₹1,299",
+      oldPrice: "₹1,599",
+      image: "/images/image.png",
+      badge: "Best Seller",
+      badgeColor: "bg-green-600",
+    },
+    {
+      id: 4,
+      name: "Luxury Foundation",
+      description: "Perfect coverage for all skin types",
+      price: "₹1,299",
+      oldPrice: "₹1,599",
+      image: "/images/image.png",
+      badge: "",
+      badgeColor: "",
+    },
+  ];
+
+   const trendingProducts = [
+    {
+      id: 1,
+      name: "Moisturizer",
+      price: "₹799",
+      image: "/images/image.png",
+    },
+    {
+      id: 2,
+      name: "Lipstick",
+      price: "₹499",
+      image: "/images/image.png",
+    },
+    {
+      id: 3,
+      name: "Perfume",
+      price: "₹1299",
+      image: "/images/image.png",
+    },
   ];
 
   return (
@@ -63,7 +129,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Main Scrollable Content */}
       <div className="pt-1">
         {/* Banner */}
         <div className="mx-4 rounded-2xl overflow-hidden relative">
@@ -132,220 +197,31 @@ export default function HomePage() {
         </div>
 
         {/* Featured Products */}
+
+       <div className="mt-6 px-4">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-lg text-gray-900">
+          Featured Products
+        </h3>
+        <button className="text-orange-600 text-sm font-medium hover:text-orange-700">
+          View All
+        </button>
+      </div>
+
+      {/* Product Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} {...product} />
+        ))}
+        </div>
+
+
+    </div>
+
+
+        {/* Special Offers */}
         <div className="mt-6 px-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg text-gray-900">
-              Featured Products
-            </h3>
-            <button className="text-orange-600 text-sm font-medium hover:text-orange-700">
-              View All
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Product Card 1 - New */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Image Section with Badges */}
-              <div className="relative">
-                {/* New Badge */}
-                <span className="absolute top-2 left-2 bg-orange-400 text-white text-xs font-semibold px-3 py-1 rounded-lg">
-                  New
-                </span>
-                {/* Wishlist Icon */}
-                <button className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-sm hover:bg-gray-50">
-                  <BiHeart className="w-4 h-4 text-gray-600" />
-                </button>
-
-                {/* Product Image */}
-                <div className="w-full flex items-center justify-center h-auto">
-                  <Image
-                    src="/images/image.png"
-                    alt="Luxury Foundation"
-                    width={0} 
-                    height={0}
-                    sizes="100vw" 
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Product Info Section */}
-              <div className="p-3">
-                <h4 className="font-semibold text-lg text-gray-900 mb-1">
-                  Luxury Foundation
-                </h4>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-                  Perfect coverage for all skin types
-                </p>
-
-                {/* Price and Add Button */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-orange-400">
-                      ₹1,299
-                    </span>
-                    <span className="text-xs text-gray-400 line-through">
-                      ₹1,599
-                    </span>
-                  </div>
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-2 shadow-md transition-colors">
-                    <BiPlus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Card 2 - Sale */}
-             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Image Section with Badges */}
-              <div className="relative">
-                {/* New Badge */}
-                <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
-                  Sale
-                </span>
-                {/* Wishlist Icon */}
-                <button className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-sm hover:bg-gray-50">
-                  <BiHeart className="w-4 h-4 text-gray-600" />
-                </button>
-
-                {/* Product Image */}
-                <div className="w-full flex items-center justify-center h-auto">
-                  <Image
-                    src="/images/image.png"
-                    alt="Luxury Foundation"
-                    width={0}
-                    height={0}
-                    sizes="100vw" 
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Product Info Section */}
-              <div className="p-3">
-                <h4 className="font-semibold text-lg text-gray-900 mb-1">
-                  Luxury Foundation
-                </h4>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-                  Perfect coverage for all skin types
-                </p>
-
-                {/* Price and Add Button */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-orange-400">
-                      ₹1,299
-                    </span>
-                    <span className="text-xs text-gray-400 line-through">
-                      ₹1,599
-                    </span>
-                  </div>
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-2 shadow-md transition-colors">
-                    <BiPlus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Image Section with Badges */}
-              <div className="relative">
-                {/* New Badge */}
-                <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
-                  Best Seller
-                </span>
-                {/* Wishlist Icon */}
-                <button className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-sm hover:bg-gray-50">
-                  <BiHeart className="w-4 h-4 text-gray-600" />
-                </button>
-
-                {/* Product Image */}
-                <div className="w-full flex items-center justify-center h-auto">
-                  <Image
-                    src="/images/image.png"
-                    alt="Luxury Foundation"
-                    width={0}
-                    height={0}
-                    sizes="100vw" 
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Product Info Section */}
-              <div className="p-3">
-                <h4 className="font-semibold text-lg text-gray-900 mb-1">
-                  Luxury Foundation
-                </h4>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-                  Perfect coverage for all skin types
-                </p>
-
-                {/* Price and Add Button */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-orange-400">
-                      ₹1,299
-                    </span>
-                    <span className="text-xs text-gray-400 line-through">
-                      ₹1,599
-                    </span>
-                  </div>
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-2 shadow-md transition-colors">
-                    <BiPlus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Image Section with Badges */}
-              <div className="relative">
-            
-
-                {/* Wishlist Icon */}
-                <button className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-sm hover:bg-gray-50">
-                  <BiHeart className="w-4 h-4 text-gray-600" />
-                </button>
-
-                {/* Product Image */}
-                <div className="w-full flex items-center justify-center h-auto">
-                  <Image
-                    src="/images/image.png"
-                    alt="Luxury Foundation"
-                    width={0}
-                    height={0}
-                    sizes="100vw" 
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Product Info Section */}
-              <div className="p-3">
-                <h4 className="font-semibold text-lg text-gray-900 mb-1">
-                  Luxury Foundation
-                </h4>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-                  Perfect coverage for all skin types
-                </p>
-
-                {/* Price and Add Button */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-orange-400">
-                      ₹1,299
-                    </span>
-                    <span className="text-xs text-gray-400 line-through">
-                      ₹1,599
-                    </span>
-                  </div>
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-2 shadow-md transition-colors">
-                    <BiPlus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="mt-6 ">
             <h3 className="font-semibold text-lg">Special Offers</h3>
             <div className="bg-purple-100 rounded-xl p-4 flex justify-between items-center mt-2">
@@ -370,77 +246,24 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-6 relative">
-            {/* Header */}
-            <div className="mb-4">
-              <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
-            </div>
-
-            {/* Horizontal Scrollable Container */}
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {[
-                {
-                  id: 1,
-                  name: "Moisturizer",
-                  price: "₹799",
-                  image: "/images/image.png",
-                },
-                {
-                  id: 2,
-                  name: "Lipstick",
-                  price: "₹499",
-                  image: "/images/image.png",
-                },
-                {
-                  id: 3,
-                  name: "Perfume",
-                  price: "₹1299",
-                  image: "/images/image.png",
-                },
-              ].map((product) => (
-                <div
-                  key={product.id}
-                  className="flex-shrink-0 w-[140px] bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100"
-                >
-                  {/* Image Section */}
-                  <div className="relative w-full h-28">
-                    {/* Wishlist Icon */}
-                    <button className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-sm hover:bg-gray-100 z-10">
-                      <BiHeart className="w-3.5 h-3.5 text-gray-600" />
-                    </button>
-
-                    {/* Product Image */}
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      sizes="140px"
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-
-                  {/* Product Info Section */}
-                  <div className="p-2">
-                    <h4 className="font-medium text-sm text-gray-900 mb-1 truncate">
-                      {product.name}
-                    </h4>
-
-                    {/* Price and Add Button */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-base font-bold text-orange-400">
-                        {product.price}
-                      </span>
-                      <button className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg p-1.5 shadow-sm transition-colors">
-                        <BiPlus className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        
         </div>
+
+        {/* Trending Now */}
+
+         <div className="mt-6 relative px-4">
+      {/* Header */}
+      <div className="mb-4">
+        <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+      </div>
+
+      {/* Horizontal Scrollable Container */}
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+        {trendingProducts.map((product) => (
+          <TrendingCard key={product.id} {...product} />
+        ))}
+      </div>
+    </div>
       </div>
     </div>
   );

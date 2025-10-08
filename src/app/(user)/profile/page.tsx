@@ -1,739 +1,308 @@
 "use client";
 import { useState } from "react";
-import { FiShoppingCart } from "react-icons/fi";
-import { AiOutlineHeart, AiOutlineGift } from "react-icons/ai";
-import Image from "next/image";
-import { GoPerson, GoShareAndroid } from "react-icons/go";
-import { IoArrowBackOutline } from "react-icons/io5";
-import {
-  RiLogoutBoxLine,
-  RiNotification2Line,
-  RiWalletLine,
-} from "react-icons/ri";
-import { FaAngleRight } from "react-icons/fa";
-import { LuCrown, LuMapPin, LuShieldCheck } from "react-icons/lu";
-import { MdOutlineHeadsetMic } from "react-icons/md";
-import { BsQuestionCircle } from "react-icons/bs";
-import {
-  IoIosInformationCircleOutline,
-  IoMdCheckmark,
-  IoMdStarOutline,
-} from "react-icons/io";
-import { CiGlobe } from "react-icons/ci";
-import { CgDarkMode } from "react-icons/cg";
 import Link from "next/link";
-export default function ProfilePage() {
-  const [cartCount] = useState(3);
+import Image from "next/image";
+import {
+  ShoppingCart,
+  Heart,
+  Gift,
+  ArrowLeft,
+  Share2,
+  User,
+  MapPin,
+  CreditCard,
+  Bell,
+  Headphones,
+  HelpCircle,
+  Star,
+  Info,
+  Globe,
+  Moon,
+  Shield,
+  LogOut,
+  ChevronRight,
+  Crown,
+  Check,
+  Wallet,
+} from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
-  // 🔹 Reusable Components
-  const Section = ({ title, children }: any) => (
-    <div className="p-4 bg-white my-2">
-      {title && (
-        <h3 className="text-md font-semibold text-gray-800 mb-4">{title}</h3>
-      )}
+// Type Definitions
+interface ProfileStat {
+  label: string;
+  value: string;
+}
+interface QuickAction {
+  icon: LucideIcon;
+  label: string;
+  bg: string;
+  iconColor: string;
+  link: string;
+  count?: number;
+  badge?: string;
+}
+interface AccountSetting {
+  icon: LucideIcon;
+  label: string;
+  link: string;
+  info: string;
+}
+interface AppSetting {
+  icon: LucideIcon;
+  label: string;
+  right?: string;
+  link?: string;
+  hasToggle?: boolean;
+}
+interface RecentOrder {
+  name: string;
+  order: string;
+  status: string;
+  price: string;
+  statusColor: string;
+  action: string;
+  image: string;
+}
+interface SectionProps {
+  title?: string;
+  children: React.ReactNode;
+  className?: string;
+}
+interface SettingButtonProps {
+  icon: LucideIcon;
+  label: string;
+  right?: string;
+  hasToggle?: boolean;
+  onClick?: () => void;
+  info?: string;
+}
+interface QuickActionProps {
+  icon: LucideIcon;
+  label: string;
+  bg: string;
+  iconColor: string;
+  link: string;
+  count?: number;
+  badge?: string;
+}
+interface OrderCardProps {
+  order: RecentOrder;
+}
+
+export default function ProfilePage() {
+  const [cartCount] = useState<number>(3);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+
+  const profileStats: ProfileStat[] = [
+    { label: "Orders", value: "28" },
+    { label: "Points", value: "156" },
+    { label: "Saved", value: "₹12,480" },
+  ];
+
+  const quickActions: QuickAction[] = [
+    { icon: ShoppingCart, label: "My Orders", bg: "bg-orange-50", iconColor: "text-orange-600", link: "/cart", count: 28 },
+    { icon: Heart, label: "Wishlist", bg: "bg-orange-50", iconColor: "text-orange-600", link: "/Wishlist", count: 12 },
+    { icon: Gift, label: "Rewards", bg: "bg-purple-100", iconColor: "text-purple-600", link: "/rewards", badge: "156 pts" },
+    { icon: Wallet, label: "Wallet", bg: "bg-green-100", iconColor: "text-green-600", link: "/wallet", badge: "₹2,450" },
+  ];
+
+  const accountSettings: AccountSetting[] = [
+    { icon: User, label: "Personal Information", link: "/profile/personal", info: "priya.sharma@email.com" },
+    { icon: MapPin, label: "Delivery Addresses", link: "/profile/addresses", info: "3 saved addresses" },
+    { icon: CreditCard, label: "Payment Methods", link: "/profile/payments", info: "2 cards saved" },
+    { icon: Bell, label: "Notifications", link: "/profile/notifications", info: "All enabled" },
+  ];
+
+  const recentOrders: RecentOrder[] = [
+    {
+      name: "Luxury Foundation",
+      order: "#RP2044001",
+      status: "Delivered",
+      price: "₹1,299",
+      statusColor: "text-green-600",
+      action: "Reorder",
+      image: "/images/image.png",
+    },
+    {
+      name: "Matte Lipstick",
+      order: "#RP2044002",
+      status: "In Transit",
+      price: "₹700",
+      statusColor: "text-orange-600",
+      action: "Track",
+      image: "/images/image.png",
+    },
+  ];
+
+  const appSettings: AppSetting[] = [
+    { icon: Globe, label: "Language", right: "English", link: "/settings/language" },
+    { icon: Moon, label: "Dark Mode", hasToggle: true },
+    { icon: Shield, label: "Privacy Settings", link: "/settings/privacy" },
+  ];
+
+  const Section: React.FC<SectionProps> = ({ title, children, className = "" }) => (
+    <div className={`p-4 sm:p-6 bg-white my-2 ${className}`}>
+      {title && <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">{title}</h3>}
       {children}
     </div>
   );
 
-  const SettingButton = ({
-    icon,
-    label,
-    right,
-  }: {
-    icon: any;
-    label: string;
-    right?: any;
-  }) => (
-    <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-      <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-        {icon}
+  const SettingButton: React.FC<SettingButtonProps> = ({ icon: Icon, label, right, hasToggle, info, onClick }) => (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center p-3 sm:p-4 bg-white rounded-lg text-gray-700 hover:bg-gray-50 transition-colors mb-2 active:bg-gray-100"
+    >
+      <span className="w-5 h-5 mr-3 sm:mr-4 text-gray-500 flex items-center justify-center flex-shrink-0">
+        <Icon size={20} />
       </span>
-      <span className="font-medium">{label}</span>
-      <span className="ml-auto text-gray-400 flex items-center gap-1">
-        {right}
-      </span>
-    </button>
-  );
-
-  const QuickAction = ({ icon, label, bg }: any) => (
-    <button className="flex flex-col items-center text-gray-700">
-      <div
-        className={`w-12 h-12 ${bg} rounded-full flex items-center justify-center`}
-      >
-        {icon}
+      <div className="flex-1 text-left">
+        <span className="font-medium text-sm sm:text-base block">{label}</span>
+        {info && <span className="text-xs text-gray-500 block mt-0.5">{info}</span>}
       </div>
-      <span className="text-sm mt-2">{label}</span>
+      <span className="ml-auto text-gray-400 flex items-center gap-2">
+        {hasToggle ? (
+          <label className="relative inline-flex items-center cursor-pointer" onClick={(e) => e.stopPropagation()}>
+            <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+          </label>
+        ) : (
+          <>
+            {right && <span className="text-sm">{right}</span>}
+            <ChevronRight size={18} />
+          </>
+        )}
+      </span>
     </button>
   );
 
-  //  Main JSX
+  const QuickAction: React.FC<QuickActionProps> = ({ icon: Icon, label, bg, iconColor, link, count, badge }) => (
+    <Link href={link}>
+      <div className="flex flex-col items-center text-gray-700 hover:opacity-80 transition-opacity active:scale-95 relative">
+        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${bg} rounded-full flex items-center justify-center relative`}>
+          <Icon className={`text-xl sm:text-2xl ${iconColor}`} />
+          {count && (
+            <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+              {count}
+            </span>
+          )}
+        </div>
+        <span className="text-xs sm:text-sm mt-2 text-center font-medium">{label}</span>
+        {badge && <span className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{badge}</span>}
+      </div>
+    </Link>
+  );
+
+  const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
+    <div className="flex items-center justify-between mb-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+      <div className="flex items-center flex-1">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden bg-gray-200 flex-shrink-0 relative">
+          <Image src={order.image} alt={order.name} fill className="object-cover rounded-xl" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm sm:text-base text-gray-800 font-semibold truncate">{order.name}</p>
+          <p className="text-xs text-gray-500">{order.order}</p>
+          <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>{order.status}</p>
+        </div>
+      </div>
+      <div className="flex flex-col items-end ml-4">
+        <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">{order.price}</span>
+        <button className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700">{order.action}</button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col pb-16">
       {/* Header */}
-      <header className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-20">
-        <button aria-label="Back" className="text-gray-600 text-xl">
-          <IoArrowBackOutline />
+      <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-20">
+        <button className="text-gray-600 text-xl hover:text-gray-800 transition-colors p-1">
+          <ArrowLeft size={24} />
         </button>
-        <h2 className="font-semibold text-lg flex-1 text-center">Profile</h2>
-        <div className="flex items-center space-x-4">
-          <button
-            aria-label="Share"
-            className="text-gray-600 text-xl hover:text-orange-500"
-          >
-            <GoShareAndroid />
+        <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center">Profile</h2>
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <button className="text-gray-600 hover:text-orange-500 p-1">
+            <Share2 size={22} />
           </button>
-          <div className="relative">
-            <Link
-              href="/cart"
-              aria-label="View cart"
-              className="text-gray-600 text-xl hover:text-orange-500 relative"
-            >
-              <FiShoppingCart />
-              {cartCount > 0 && (
-                <span
-                  className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center
-              text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full w-[16px] h-[16px]"
-                >
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </div>
+          <Link href="/cart" className="relative text-gray-600 hover:text-orange-500 p-1">
+            <ShoppingCart size={22} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 text-[10px] font-bold text-white bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </div>
       </header>
 
       {/* Profile Section */}
-      <div className="flex-1 shadow-lg">
-        <div className="relative overflow-hidden">
-          <Image
-            width={200}
-            height={300}
-            src="/images/image.png"
-            alt="Background"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
-          <div className="relative z-10 flex flex-col items-center py-8 px-14 text-white">
-            <div className="relative w-24 h-24">
-              <Image
-                src="/images/profile_img.png"
-                alt="Profile Picture"
-                fill
-                className="rounded-full shadow-md object-cover"
-              />
-            </div>
-            <h1 className="text-xl font-bold mt-2">Priya Sharma</h1>
-            <p className="text-sm">Premium Member</p>
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image src="/images/image.png" alt="Background" fill className="object-cover" />
+          <div className="absolute inset-0 bg-orange-600/30"></div>
+        </div>
+        <div className="relative z-10 flex flex-col items-center py-6 sm:py-8 px-4 sm:px-6 text-white">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+            <Image src="/images/profile_img.png" alt="Profile Picture" fill className="rounded-full shadow-lg object-cover border-4 border-white" />
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold mt-3">Priya Sharma</h1>
+          <p className="text-sm sm:text-base">Premium Member</p>
 
-            <div className="flex justify-between w-full mt-4">
-              {[
-                { label: "Orders", value: "28" },
-                { label: "Points", value: "156" },
-                { label: "Saved", value: "₹12,480" },
-              ].map((item, i) => (
-                <div className="text-center" key={i}>
-                  <p className="text-sm">{item.label}</p>
-                  <p className="text-lg font-semibold">{item.value}</p>
-                </div>
-              ))}
-            </div>
+          <div className="flex justify-between w-full max-w-md mt-6 gap-4">
+            {profileStats.map((item, i) => (
+              <div className="text-center flex-1" key={i}>
+                <p className="text-xs sm:text-sm opacity-90">{item.label}</p>
+                <p className="text-lg sm:text-xl font-semibold mt-1">{item.value}</p>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Quick Actions */}
-        <Section title="Quick Actions">
-          <div className="grid grid-cols-4 gap-4">
-            <QuickAction
-              icon={<FiShoppingCart className="text-xl text-orange-600" />}
-              label="My Orders"
-              bg="bg-orange-50"
-            />
-            <QuickAction
-              icon={<AiOutlineHeart className="text-xl text-orange-600" />}
-              label="Wishlist"
-              bg="bg-orange-50"
-            />
-            <QuickAction
-              icon={<AiOutlineGift className="text-xl text-purple-600" />}
-              label="Rewards"
-              bg="bg-purple-200"
-            />
-            <QuickAction
-              icon={<RiWalletLine className="text-xl text-green-500" />}
-              label="Wallet"
-              bg="bg-green-100"
-            />
-          </div>
-        </Section>
-
-        {/* Account Settings */}
-        <Section title="Account Settings">
-          <SettingButton
-            icon={<GoPerson />}
-            label="Personal Information"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<LuMapPin />}
-            label="Delivery Addresses"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<RiWalletLine />}
-            label="Payment Methods"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<RiNotification2Line />}
-            label="Notifications"
-            right={<FaAngleRight />}
-          />
-        </Section>
-
-        {/* Support & Help */}
-        <Section title="Support & Help">
-          <SettingButton
-            icon={<MdOutlineHeadsetMic />}
-            label="Customer Support"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<BsQuestionCircle />}
-            label="FAQ"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<IoMdStarOutline />}
-            label="Rate App"
-            right={<FaAngleRight />}
-          />
-          <SettingButton
-            icon={<IoIosInformationCircleOutline />}
-            label="About Us"
-            right={<FaAngleRight />}
-          />
-        </Section>
-
-        {/* Premium Section */}
-        <Section>
-          <div className="bg-purple-50 p-4 rounded-lg mb-4 shadow-sm">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-md font-semibold text-gray-800 mb-1">
-                  Premium Membership
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Get exclusive benefits and offers
-                </p>
-              </div>
-              <span className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                <LuCrown />
-              </span>
-            </div>
-
-            <ul className="grid grid-cols-2 gap-4 text-sm list-none mt-4 mb-4">
-              {[
-                "Free delivery",
-                "Early access",
-                "Extra rewards",
-                "Priority support",
-              ].map((item) => (
-                <li key={item} className="flex items-center">
-                  <IoMdCheckmark className="mr-2 text-green-600" /> {item}
-                </li>
-              ))}
-            </ul>
-            <button className="w-full py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-purple-800">
-              Upgrade Now
-            </button>
-          </div>
-        </Section>
-
-        {/* Recent Orders */}
-        <Section title="Recent Orders">
-          {[
-            {
-              name: "Luxury Foundation",
-              order: "#RP2044001",
-              status: "Delivered",
-              price: "₹1,299",
-              color: "text-green-600",
-              action: "Reorder",
-            },
-            {
-              name: "Matte Lipstick",
-              order: "#RP2044002",
-              status: "In Transit",
-              price: "₹700",
-              color: "text-orange-600",
-              action: "Track",
-            },
-          ].map((item) => (
-            <div
-              key={item.order}
-              className="flex items-center justify-between mb-4"
-            >
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-xl mr-2 overflow-hidden">
-                  <Image
-                    src="/images/image.png"
-                    alt={item.name}
-                    width={40}
-                    height={40}
-                    layout="responsive"
-                    objectFit="cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-800 font-semibold">
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-gray-500">{item.order}</p>
-                  <p className={`text-xs ${item.color}`}>{item.status}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-sm font-bold mb-2">{item.price}</span>
-                <span className="text-[var(--color-brand)] text-xs">
-                  {item.action}
-                </span>
-              </div>
-            </div>
-          ))}
-        </Section>
-
-        {/* App Settings */}
-        <Section title="App Settings">
-          <SettingButton
-            icon={<CiGlobe />}
-            label="Language"
-            right={
-              <>
-                <span>English</span>
-                <FaAngleRight />
-              </>
-            }
-          />
-          <SettingButton
-            icon={<CgDarkMode />}
-            label="Dark Mode"
-            right={
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
-                <div
-                  className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500
-                  after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                  after:bg-white after:border-gray-300 after:border after:rounded-full
-                  after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"
-                ></div>
-              </label>
-            }
-          />
-          <SettingButton
-            icon={<LuShieldCheck />}
-            label="Privacy Settings"
-            right={<FaAngleRight />}
-          />
-        </Section>
-
-        {/* Logout */}
-        <Section>
-          <button className="w-full flex items-center justify-center gap-2 py-3 text-orange-700 hover:bg-[var(--color-brand-hover)]/20 rounded-lg">
-            <RiLogoutBoxLine className="text-lg" />
-            <span className="font-semibold">Logout</span>
-          </button>
-        </Section>
       </div>
+
+      {/* Quick Actions */}
+      <Section title="Quick Actions">
+        <div className="grid grid-cols-4 gap-3 sm:gap-4">
+          {quickActions.map((action, i) => (
+            <QuickAction key={i} {...action} />
+          ))}
+        </div>
+      </Section>
+
+      {/* Account Settings */}
+      <Section title="Account Settings">
+        {accountSettings.map((setting, i) => (
+          <Link key={i} href={setting.link}>
+            <SettingButton icon={setting.icon} label={setting.label} info={setting.info} />
+          </Link>
+        ))}
+      </Section>
+
+      {/* Recent Orders */}
+      <Section title="Recent Orders">
+        {recentOrders.map((order) => (
+          <OrderCard key={order.order} order={order} />
+        ))}
+      </Section>
+
+      {/* App Settings */}
+      <Section title="App Settings">
+        {appSettings.map((setting, i) => (
+          <SettingButton
+            key={i}
+            icon={setting.icon}
+            label={setting.label}
+            right={setting.right}
+            hasToggle={setting.hasToggle}
+          />
+        ))}
+      </Section>
+
+      {/* Logout */}
+      <Section>
+        <button className="w-full flex items-center justify-center gap-2 py-3 sm:py-4 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-semibold">
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
+      </Section>
     </div>
   );
 }
-
-// "use client";
-// import { useState } from "react";
-// import { FiShoppingCart } from "react-icons/fi";
-// import { AiOutlineHeart, AiOutlineGift } from "react-icons/ai";
-// import Image from "next/image";
-// import { GoPerson, GoShareAndroid } from "react-icons/go";
-// import { IoArrowBackOutline } from "react-icons/io5";
-// import {
-//   RiLogoutBoxLine,
-//   RiNotification2Line,
-//   RiWalletLine,
-// } from "react-icons/ri";
-// import { FaAngleRight } from "react-icons/fa";
-// import { LuCrown, LuMapPin, LuShieldCheck } from "react-icons/lu";
-// import { MdOutlineHeadsetMic } from "react-icons/md";
-// import { BsQuestionCircle } from "react-icons/bs";
-// import {
-//   IoIosInformationCircleOutline,
-//   IoMdCheckmark,
-//   IoMdStarOutline,
-// } from "react-icons/io";
-// import { CiGlobe } from "react-icons/ci";
-// import { CgDarkMode } from "react-icons/cg";
-// export default function ProfilePage() {
-//   const [cartCount] = useState(3);
-
-//   return (
-//     <div className="min-h-screen bg-gray-100 flex flex-col pb-16 ">
-//       {/* Header */}
-//       <header
-//         className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-20"
-//         style={{ boxShadow: "0 2px 4px -1px rgba(0,0,0,0.1)" }}
-//       >
-//         {/* Back Button */}
-//         <button
-//           aria-label="Back"
-//           className="text-gray-600 text-xl flex-shrink-0"
-//         >
-//           <IoArrowBackOutline />
-//         </button>
-
-//         {/* Title */}
-//         <h2 className="font-semibold text-lg text-center flex-1">Profile</h2>
-
-//         {/* Right Icons */}
-//         <div className="flex items-center space-x-4 flex-shrink-0">
-//           {/* Share Button */}
-//           <button
-//             aria-label="Share"
-//             className="text-gray-600 text-xl hover:text-orange-500"
-//           >
-//             <GoShareAndroid />
-//           </button>
-
-//           {/* Cart Button */}
-//           <div className="relative">
-//             <button
-//               aria-label="View cart"
-//               className="text-gray-600 text-xl hover:text-orange-500"
-//             >
-//               <FiShoppingCart />
-//             </button>
-
-//             {cartCount > 0 && (
-//               <span
-//                 className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center
-//              text-[10px] font-bold text-white bg-orange-500 rounded-full
-//              w-[16px] h-[16px]"
-//               >
-//                 {cartCount}
-//               </span>
-//             )}
-//           </div>
-//         </div>
-//       </header>
-
-//       {/* Profile Section */}
-//       <div className="flex-1 shadow-lg">
-//         <div className="relative overflow-hidden">
-//           {/* Background image */}
-//           <Image
-//             width={200}
-//             height={300}
-//             src="/images/image.png"
-//             alt="Faded orange background with soft gradient texture"
-//             className="absolute inset-0 w-full h-full object-cover"
-//           />
-
-//           {/* Semi-transparent orange overlay */}
-//           <div className="absolute inset-0 bg-orange-400/30"></div>
-
-//           {/* Content container */}
-//           <div className="relative z-10 flex flex-col items-center py-8 px-14 w-full max-w-md text-white">
-//             <div className="relative w-24 h-24">
-//               <Image
-//                 src="/images/profile_img.png"
-//                 alt="Profile Picture"
-//                 fill
-//                 className="rounded-full  shadow-md object-cover"
-//               />
-//             </div>
-
-//             <h1 className="text-xl font-bold mt-2">Priya Sharma</h1>
-//             <p className="text-sm ">Premium Member</p>
-
-//             <div className="flex justify-between w-full mt-4 ">
-//               <div className="text-center">
-//                 <p className="text-sm">Orders</p>
-//                 <p className="text-lg font-semibold">28</p>
-//               </div>
-
-//               <div className="text-center">
-//                 <p className="text-sm">Points</p>
-//                 <p className="text-lg font-semibold">156</p>
-//               </div>
-
-//               <div className="text-center">
-//                 <p className="text-sm">Saved</p>
-//                 <p className="text-lg font-semibold">₹12,480</p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Quick Actions */}
-//         <div className=" p-4 mb-2 bg-white">
-//           <h3 className="text-md font-semibold text-gray-800 mb-4">
-//             Quick Actions
-//           </h3>
-//           <div className="grid grid-cols-4 gap-4">
-//             <button className="flex flex-col items-center text-gray-700  ">
-//               <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
-//                 <FiShoppingCart className="text-xl text-orange-600" />
-//               </div>
-//               <span className="text-sm mt-2">My Orders</span>
-//             </button>
-//             <button className="flex flex-col items-center text-gray-700  ">
-//               <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
-//                 <AiOutlineHeart className="text-xl text-orange-600" />
-//               </div>
-//               <span className="text-sm mt-2">Wishlist</span>
-//             </button>
-//             <button className="flex flex-col items-center text-gray-700  ">
-//               <div className="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center">
-//                 <AiOutlineGift className="text-xl text-purple-600" />
-//               </div>
-//               <span className="text-sm mt-2">Rewards</span>
-//             </button>
-//             <button className="flex flex-col items-center text-gray-700  ">
-//               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-//                 <RiWalletLine className="text-xl text-green-500" />
-//               </div>
-//               <span className="text-sm mt-2">Wallet</span>
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Account Settings */}
-
-//         <div className=" p-4 bg-white my-2">
-//           <h3 className="text-md font-semibold text-gray-800 mb-4">
-//             Account Settings
-//           </h3>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-600 flex items-center justify-center">
-//               <GoPerson className="w-full h-full " />
-//             </span>
-//             <span className="font-medium">Personal Information</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <LuMapPin className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Delivery Addresses</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <RiWalletLine className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Payment Methods</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <RiNotification2Line className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Notifications</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//         </div>
-
-//         {/* Support & Help */}
-//         <div className=" p-4 bg-white my-2">
-//           <h3 className="text-md font-semibold text-gray-800 mb-4">
-//             Support & Help
-//           </h3>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <MdOutlineHeadsetMic className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Customer Support</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <BsQuestionCircle className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">FAQ</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <IoMdStarOutline className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Rate App</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <IoIosInformationCircleOutline className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">About Us</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//         </div>
-
-//         <div className=" p-4 bg-white my-2">
-//           <div className="bg-purple-50 p-4 rounded-lg mb-4 shadow-sm">
-//             <div className="flex justify-between items-center">
-//               <div className="flex flex-col gap-1">
-//                 <h3 className="text-md font-semibold text-gray-800 mb-2 leading-tight">
-//                   Premium Membership
-//                 </h3>
-//                 <p className="text-sm text-gray-600 mb-0 leading-tight">
-//                   Get exclusive benefits and offers
-//                 </p>
-//               </div>
-//               <span className="w-10 h-10 flex items-center justify-center rounded-full  bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-//                 <LuCrown />
-//               </span>
-//             </div>
-
-//             <ul className="grid grid-cols-2 gap-4 text-sm list-none mb-4 mt-4">
-//               <li className="flex items-center">
-//                 <IoMdCheckmark className="mr-2 text-green-600" /> Free delivery
-//               </li>
-//               <li className="flex items-center">
-//                 <IoMdCheckmark className="mr-2 text-green-600" /> Early access
-//               </li>
-//               <li className="flex items-center">
-//                 <IoMdCheckmark className="mr-2 text-green-600" /> Extra rewards
-//               </li>
-//               <li className="flex items-center">
-//                 <IoMdCheckmark className="mr-2 text-green-600" /> Priority
-//                 support
-//               </li>
-//             </ul>
-//             <button className="w-full py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-purple-800">
-//               Upgrade Now
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Recent Orders */}
-//         <div className=" p-4 bg-white my-2">
-//           <div className="flex justify-between items-center mb-4">
-//             <h3 className="text-md font-semibold text-gray-800">
-//               Recent Orders
-//             </h3>
-//             <a href="#" className="text-sm text-orange-500 ">
-//               View All
-//             </a>
-//           </div>
-
-//           <div className="flex items-center justify-between mb-4 ">
-//             <div className="flex items-center">
-//               <div className="w-10 h-10 rounded-xl mr-2 overflow-hidden">
-//                 <Image
-//                   src="/images/image.png" // replace with your image path
-//                   alt="Profile"
-//                   width={40}
-//                   height={40}
-//                   layout="responsive"
-//                   objectFit="cover"
-//                 />
-//               </div>
-//               <div className="font-semibold">
-//                 <p className="text-sm text-gray-800">Luxury Foundation</p>
-//                 <p className="text-xs text-gray-500 ">Order #RP2044001</p>
-//                 <p className="text-xs text-green-600 ">Delivered</p>
-//               </div>
-//             </div>
-//             <div className="flex flex-col items-center">
-//               <span className="text-sm font-bold  mb-2">₹1,299</span>
-//               <span className="text-orange-500 text-xs">Reorder</span>
-//             </div>
-//           </div>
-
-//           <div className="flex items-center justify-between">
-//             <div className="flex items-center">
-//               <div className="w-10 h-10 rounded-xl mr-2 overflow-hidden">
-//                 <Image
-//                   src="/images/image.png" // replace with your image path
-//                   alt="Profile"
-//                   width={40}
-//                   height={40}
-//                   layout="responsive"
-//                   objectFit="cover"
-//                 />
-//               </div>
-//               <div className="font-semibold">
-//                 <p className="text-sm text-gray-800 ">Matte Lipstick</p>
-//                 <p className="text-xs text-gray-500">Order #RP2044002</p>
-//                 <p className="text-xs text-orange-600">In Transit</p>
-//               </div>
-//             </div>
-//             <div className="flex flex-col items-center">
-//               <span className="text-sm font-bold  mb-2">₹700</span>
-//               <span className="text-orange-500 text-xs">Track</span>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className=" p-4 bg-white my-2">
-//           <h3 className="text-md font-semibold text-gray-800 mb-4">
-//             App Settings
-//           </h3>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <CiGlobe className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Language</span>
-//             <span className="ml-auto flex items-center text-gray-400 gap-1">
-//               English
-//               <FaAngleRight />
-//             </span>
-//           </button>
-
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <CgDarkMode className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Dark Mode</span>
-//             <span className="ml-auto">
-//               <label className="relative inline-flex items-center cursor-pointer">
-//                 <input type="checkbox" className="sr-only peer" />
-//                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-//               </label>
-//             </span>
-//           </button>
-//           <button className="w-full flex items-center p-3 bg-white rounded-lg text-gray-700 hover:bg-gray-100 mb-2">
-//             <span className="w-5 h-5 mr-4 text-gray-500 flex items-center justify-center">
-//               <LuShieldCheck className="w-full h-full" />
-//             </span>
-//            <span className="font-medium">Privacy Settings</span>
-//             <span className="ml-auto text-gray-400">
-//               <FaAngleRight />
-//             </span>
-//           </button>
-//         </div>
-
-//         <div className=" p-4 bg-white my-2">
-//           <button className="w-full flex items-center justify-center gap-2 py-3 bg-white text-orange rounded-lg text-orange-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-//             <RiLogoutBoxLine className="text-lg" />
-//             <span className="font-semibold">Logout</span>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

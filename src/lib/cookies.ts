@@ -8,3 +8,7 @@ export const setTokenCookie = (token: string) =>
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });
+
+  export function deleteTokenCookie() {
+  return `token=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+}

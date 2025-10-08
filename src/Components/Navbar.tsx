@@ -37,7 +37,7 @@ export default function Navbar() {
       name: "cart",
       label: "Cart",
       icon: <FiShoppingCart size={22} />,
-      href: "/cart",
+      href: "/my-cart",
     },
     {
       name: "profile",

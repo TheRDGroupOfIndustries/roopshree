@@ -14,6 +14,8 @@ import {
   TrendingDown,
   X, // Added X icon for closing mobile menu
 } from "lucide-react";
+import UserManagementPage from "./user/UserManagementPage";
+import ProductManagementPage from "./product/ProductManagementPage";
 
 // --- MOCK DATA ---
 const mockData = {
@@ -44,7 +46,7 @@ const mockData = {
       bg: "bg-blue-50",
     },
     {
-      title: "New Customers",
+      title: "New User",
       value: "284",
       trend: 9.1,
       icon: Users,
@@ -186,7 +188,7 @@ const Sidebar = ({
     { name: "Dashboard", icon: Grid, key: "dashboard", section: "ecommerce" },
     { name: "Products", icon: Package, key: "products", section: "ecommerce" },
     { name: "Orders", icon: ShoppingCart, key: "orders", section: "ecommerce" },
-    { name: "Customers", icon: Users, key: "customers", section: "ecommerce" },
+    { name: "User", icon: Users, key: "User", section: "ecommerce" },
     { name: "Reports", icon: BarChart2, key: "reports", section: "ecommerce" },
     {
       name: "Expenses (WIP)",
@@ -287,7 +289,7 @@ const Header = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => (
       <div className="hidden md:block w-1/3">
         <input
           type="text"
-          placeholder="Search for orders, products, or customers..."
+          placeholder="Search for orders, products, or User..."
           className="w-full p-2.5 rounded-xl border border-gray-300 focus:ring-[#7e57c2] focus:border-[#7e57c2] transition duration-150"
         />
       </div>
@@ -458,10 +460,11 @@ const App = () => {
         return <DashboardPage />;
       case "products":
         return (
-          <PlaceholderPage
-            title="Product Inventory"
-            description="Manage all product listings, stock levels, and variants for your e-commerce store."
-          />
+          // <PlaceholderPage
+          //   title="Product Inventory"
+          //   description="Manage all product listings, stock levels, and variants for your e-commerce store."
+          // />
+          <ProductManagementPage />
         );
       case "orders":
         return (
@@ -470,12 +473,13 @@ const App = () => {
             description="View, process, and track all incoming customer orders."
           />
         );
-      case "customers":
+      case "User":
         return (
-          <PlaceholderPage
-            title="Customer Directory"
-            description="Manage customer accounts, view order history, and handle support requests."
-          />
+          // <PlaceholderPage
+          //   title="Customer Directory"
+          //   description="Manage customer accounts, view order history, and handle support requests."
+          // />
+          <UserManagementPage />
         );
       case "reports":
         return (

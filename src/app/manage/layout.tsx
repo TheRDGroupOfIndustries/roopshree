@@ -8,7 +8,7 @@ export default function ManageLayout({
 }) {
   return (
     <>
-      <header>header</header>
+      <header>Header</header>
       <main>{children}</main>
       <footer>footer</footer>
     </>

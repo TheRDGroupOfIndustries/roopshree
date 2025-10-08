@@ -22,9 +22,19 @@ import {
 import { CiGlobe } from "react-icons/ci";
 import { CgDarkMode } from "react-icons/cg";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthProvider";
+ import { useRouter } from "next/navigation";
 export default function ProfilePage() {
   const [cartCount] = useState(3);
+  const { logout } = useAuth(); 
+  const router= useRouter();
+  const handleLogout = () => {
+logout();
+  router.push("/auth/signin");
+  
+};
 
+// console.log("user: ",user) ;
   // 🔹 Reusable Components
   const Section = ({ title, children }: any) => (
     <div className="p-4 bg-white my-2">
@@ -338,7 +348,9 @@ export default function ProfilePage() {
 
         {/* Logout */}
         <Section>
-          <button className="w-full flex items-center justify-center gap-2 py-3 text-orange-700 hover:bg-[var(--color-brand-hover)]/20 rounded-lg">
+          <button 
+           onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 py-3 text-orange-700 hover:bg-[var(--color-brand-hover)]/20 rounded-lg">
             <RiLogoutBoxLine className="text-lg" />
             <span className="font-semibold">Logout</span>
           </button>

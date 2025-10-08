@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
       "img.freepik.com",
       "thumbs.dreamstime.com",
       "images.unsplash.com",
-      "plus.unsplash.com"
+      "plus.unsplash.com",
+      "res.cloudinary.com"
     ],
     formats: ["image/avif", "image/webp"], 
   },

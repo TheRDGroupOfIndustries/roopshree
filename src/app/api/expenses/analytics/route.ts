@@ -10,43 +10,50 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1. Total expenses
-    const totalExpenses = await prisma.expense.aggregate({
-      _sum: { amount: true },
-    });
-
-    // 2. Category-wise breakdown
-    const categoryBreakdown = await prisma.expense.groupBy({
-      by: ["category"],
-      _sum: { amount: true },
-      orderBy: { category: "asc" },
-    });
-
-    // 3. Monthly breakdown (last 12 months)
-    const monthlyBreakdown = await prisma.$queryRaw<
-      { month: string; total: number }[]
+    // Query: Get month + category-wise breakdown
+    const monthlyCategoryBreakdown = await prisma.$queryRaw<
+      { month: string; category: string; total: number }[]
     >`
       SELECT 
-        to_char("date", 'YYYY-MM') as month, 
+        to_char("date", 'YYYY-MM') as month,
+        "category",
         SUM("amount") as total
       FROM "Expense"
-      GROUP BY month
-      ORDER BY month DESC
-      LIMIT 12;
+      GROUP BY month, "category"
+      ORDER BY month DESC;
     `;
 
-    return NextResponse.json({
-      total: totalExpenses._sum.amount || 0,
-      category: categoryBreakdown.map((c: any) => ({
-        category: c.category,
-        total: c._sum.amount || 0,
-      })),
-      monthly: monthlyBreakdown,
-    });
+    // Transform to nested structure
+    const monthlyData = monthlyCategoryBreakdown.reduce((acc, row) => {
+      const existingMonth = acc.find((m: any) => m.month === row.month);
+
+      if (existingMonth) {
+        existingMonth.category.push({
+          category: row.category,
+          total: Number(row.total),
+        });
+        existingMonth.total += Number(row.total);
+      } else {
+        acc.push({
+          month: row.month,
+          total: Number(row.total),
+          category: [
+            {
+              category: row.category,
+              total: Number(row.total),
+            },
+          ],
+        });
+      }
+
+      return acc;
+    }, [] as any[]);
+
+    return NextResponse.json(monthlyData);
   } catch (err) {
     console.error("Analytics error:", err);
     return NextResponse.json(
-      { error: "Failed to fetch analytics" },
+      { error: "Failed to fetch monthly analytics" },
       { status: 500 }
     );
   }

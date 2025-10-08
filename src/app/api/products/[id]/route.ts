@@ -2,14 +2,18 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
+import { revalidatePath } from "next/cache";
 
 type Params = { params: { id: string } };
 
 // GET product by ID
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   // Await params before accessing its properties
   const { id } = await params;
-  
+
   const product = await prisma.products.findUnique({
     where: { id },
     include: { reviews: true },
@@ -30,6 +34,7 @@ interface updateProductBody {
   details: string;
   insideBox: string[];
   userId?: string;
+  stock?: number;
 }
 
 export async function PUT(req: Request, { params }: Params) {
@@ -65,7 +70,7 @@ export async function PUT(req: Request, { params }: Params) {
     const body = (await req.json()) as updateProductBody;
 
     // Destructure only allowed fields from body
-    const { title, description, images, details, insideBox } = body;
+    const { title, description, images, details, insideBox, stock } = body;
 
     const updated = await prisma.products.update({
       where: { id: params.id },
@@ -78,6 +83,27 @@ export async function PUT(req: Request, { params }: Params) {
       },
     });
 
+    const curStock = await prisma.stock.findUnique({
+      where: { productId: params.id },
+    });
+
+    if (curStock && stock) {
+      await prisma.stock.update({
+        where: { productId: params.id },
+        data: {
+          currentStock: stock,
+          history: {
+            create: {
+              fromQuantity: curStock.currentStock,
+              toQuantity: stock,
+              updatedBy: userId,
+            },
+          },
+        },
+      });
+    }
+
+    revalidatePath(req.url);
     return NextResponse.json(updated);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -115,7 +141,6 @@ export async function DELETE(_: Request, { params }: Params) {
     if (product.userId !== userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
 
     await prisma.products.delete({ where: { id: params.id } });
     return NextResponse.json({ message: "Product deleted" });

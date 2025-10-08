@@ -17,6 +17,7 @@ model User {
   role                Role           @default(USER)
   updatedAt           DateTime       @updatedAt
   profileImage        String?
+  address             Address[]
   cart                Cart?
   employees           Employee[]
   expenses            Expense[]
@@ -26,7 +27,6 @@ model User {
   reviews             Review[]       @relation("ReviewUser")
   stockHistory        StockHistory[]
   wishlist            Wishlist[]
-  address             Address[]
 }
 
 model Employee {
@@ -102,23 +102,21 @@ model Order {
   id            String    @id @default(cuid())
   userId        String
   quantity      Int
-  size          String?
-  color         String?
   totalAmount   Float
   status        Status    @default(CONFIRMED)
   paymentMode   String    @default("COD")
   referralCode  String?
   createdAt     DateTime  @default(now())
   deliveryBoyId String?
+  addressId     String
+  color         String?
+  productId     String
+  size          String?
+  address       Address   @relation(fields: [addressId], references: [id])
   deliveryBoy   User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+  product       Products  @relation(fields: [productId], references: [id])
   user          User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
   orderOtp      OrderOtp?
-
-  productId String
-  product   Products @relation(fields: [productId], references: [id])
-
-  addressId String
-  address   Address @relation(fields: [addressId], references: [id])
 }
 
 model Stock {
@@ -175,7 +173,7 @@ model Expense {
 }
 
 model Address {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   address String
   city    String
   state   String
@@ -183,11 +181,9 @@ model Address {
   zipCode String
   phone   String
   name    String
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  orders Order[]
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+  orders  Order[]
 }
 
 enum Role {

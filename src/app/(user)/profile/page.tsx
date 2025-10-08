@@ -27,15 +27,15 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 export default function ProfilePage() {
   const [cartCount] = useState(3);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const router = useRouter();
+
   const handleLogout = () => {
     logout();
     router.push("/auth/signin");
     toast.success("Logged out successfully!");
   };
-
-  // console.log("user: ",user) ;
+  
   // 🔹 Reusable Components
   const Section = ({ title, children }: any) => (
     <div className="p-4 bg-white my-2">
@@ -125,15 +125,19 @@ export default function ProfilePage() {
           />
           <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
           <div className="relative z-10 flex flex-col items-center py-8 px-14 text-white">
-            <div className="relative w-24 h-24">
+            <div className="relative w-24 h-24 flex justify-center items-center">
               <Image
-                src="/images/profile_img.png"
-                alt="Profile Picture"
+                src={user?.profileImage || "/images/dummy_profile.png"}
+                alt={
+                  user?.name
+                    ? `Profile picture of ${user.name}`
+                    : "Profile Picture"
+                }
                 fill
                 className="rounded-full shadow-md object-cover"
               />
             </div>
-            <h1 className="text-xl font-bold mt-2">Priya Sharma</h1>
+            <h1 className="text-xl font-bold mt-2">{user?.name || "User"}</h1>
             <p className="text-sm">Premium Member</p>
 
             <div className="flex justify-between w-full mt-4">

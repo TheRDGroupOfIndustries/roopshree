@@ -4,7 +4,7 @@
 // import Link from "next/link";
 // import Image from "next/image";
 // import { Eye, EyeOff, Mail, Phone,User } from "lucide-react";
- 
+
 // // Define types for form data
 // interface FormData {
 //   name: string;
@@ -280,7 +280,6 @@
 //         )}
 //       </form>
 
-    
 //     </div>
 //   );
 // };
@@ -294,7 +293,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
 import { useAuth } from "../../../context/AuthProvider";
-  import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface FormData {
@@ -329,8 +328,13 @@ const SignUpPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const phoneDigitsOnly = formData.phone.replace(/\D/g, "");
+    if (phoneDigitsOnly.length !== 10) {
+      toast.error("Phone Number must be 10 digits long!");
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
@@ -340,7 +344,7 @@ const SignUpPage: React.FC = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-         confirmPassword:formData.confirmPassword,
+        confirmPassword: formData.confirmPassword,
         role: "USER",
       });
 
@@ -348,7 +352,7 @@ const SignUpPage: React.FC = () => {
       router.push("/auth/signin");
     } catch (error: any) {
       console.error("Signup failed:", error);
-      alert(error?.response?.data?.error || "Signup failed");
+      toast.error(error?.response?.data?.error || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -375,7 +379,9 @@ const SignUpPage: React.FC = () => {
       >
         {/* Name */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Full Name
+          </label>
           <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
             <User className="text-gray-500 w-5 h-5 mr-2" />
             <input
@@ -392,7 +398,9 @@ const SignUpPage: React.FC = () => {
 
         {/* Email */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Email</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Email
+          </label>
           <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
             <Mail className="text-gray-500 w-5 h-5 mr-2" />
             <input
@@ -409,7 +417,9 @@ const SignUpPage: React.FC = () => {
 
         {/* Phone */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Phone</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Phone
+          </label>
           <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
             <Phone className="text-gray-500 w-5 h-5 mr-2" />
             <input
@@ -426,7 +436,9 @@ const SignUpPage: React.FC = () => {
 
         {/* Password */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Password</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Password
+          </label>
           <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
             <input
               type={showPassword ? "text" : "password"}
@@ -442,14 +454,20 @@ const SignUpPage: React.FC = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="text-gray-500 ml-2 hover:text-gray-700"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Confirm Password */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Confirm Password</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Confirm Password
+          </label>
           <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
             <input
               type={showConfirm ? "text" : "password"}
@@ -465,7 +483,11 @@ const SignUpPage: React.FC = () => {
               onClick={() => setShowConfirm(!showConfirm)}
               className="text-gray-500 ml-2 hover:text-gray-700"
             >
-              {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showConfirm ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -481,7 +503,10 @@ const SignUpPage: React.FC = () => {
         <div className="text-center mt-4">
           <p className="text-gray-600 text-sm">
             Already have an account?{" "}
-            <Link href="/auth/signin" className="text-[#F49F00] font-semibold hover:underline">
+            <Link
+              href="/auth/signin"
+              className="text-[#F49F00] font-semibold hover:underline"
+            >
               Login here
             </Link>
           </p>

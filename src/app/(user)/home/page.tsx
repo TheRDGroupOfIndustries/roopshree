@@ -7,9 +7,23 @@ import { BiHeart, BiPlus } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import TrendingCard from "@/Components/TrendingNow";
 import Link from "next/link";
+import { getAllProducts } from "@/services/productService";
 export default function HomePage() {
   const cartCount = 3;
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
+
+
+ useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res= await getAllProducts();
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  fetchProducts();
+}, []);
 
   useEffect(() => {
     const timer = setInterval(() => {

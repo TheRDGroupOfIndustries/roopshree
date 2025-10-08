@@ -10,9 +10,9 @@ import { RiHomeFill, RiCustomerService2Line } from "react-icons/ri";
 export default function Navbar() {
   const pathname = usePathname();
   const cartCount = 3;
-  const hiddenPaths = ["/signin", "/signup", "/admin", "/"];
+  const hiddenPaths = ["/auth", "/manage", "/admin"];
 
-  if (hiddenPaths.includes(pathname)) return null;
+  if (hiddenPaths.some((path) => pathname.startsWith(path)) || pathname === "/") return null;
 
   const navItems = [
     {

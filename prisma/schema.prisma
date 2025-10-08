@@ -8,52 +8,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-  EXCLUSIVE_USER
-  DELIVERY_BOY
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum Status {
-  CONFIRMED
-  DISPATCH
-  OUTOFDELIVERY
-  CANCELLED
-  DELIVERED
-}
-
-enum ExpenseCategory {
-  INVENTORY
-  LOGISTICS
-  MARKETING
-  SALARY
-  OTHER
-}
-
 model User {
-  id              String         @id @default(cuid())
-  name            String
-  email           String         @unique
-  password        String
-  createdAt       DateTime       @default(now())
-  role            Role           @default(USER)
-  updatedAt       DateTime       @updatedAt
-  cart            Cart?
-  employees       Employee[]
-  orders          Order[]        @relation("OrderUser")
-  ordersAsDeliveryBoy Order[]    @relation("OrderDeliveryBoy")
-  products        Products[]     @relation("UserProducts")
-  wishlist        Wishlist[]
-  stockHistory    StockHistory[]
-  expenses        Expense[]
-  reviews         Review[]       @relation("ReviewUser")
+  id                  String         @id @default(cuid())
+  name                String
+  email               String         @unique
+  password            String
+  createdAt           DateTime       @default(now())
+  role                Role           @default(USER)
+  updatedAt           DateTime       @updatedAt
+  profileImage        String?
+  cart                Cart?
+  employees           Employee[]
+  expenses            Expense[]
+  ordersAsDeliveryBoy Order[]        @relation("OrderDeliveryBoy")
+  orders              Order[]        @relation("OrderUser")
+  products            Products[]     @relation("UserProducts")
+  reviews             Review[]       @relation("ReviewUser")
+  stockHistory        StockHistory[]
+  wishlist            Wishlist[]
+  address             Address[]
 }
 
 model Employee {
@@ -74,23 +47,21 @@ model Employee {
 }
 
 model Products {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   images      String[]
   details     String?
   insideBox   String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userId String
-  user   User   @relation("UserProducts", fields: [userId], references: [id])
-
-  reviews  Review[]
-  cart     CartItem[]
-  orders   Order[]
-  wishlist Wishlist[]
-  stock    Stock?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      String
+  cart        CartItem[]
+  orders      Order[]
+  user        User       @relation("UserProducts", fields: [userId], references: [id])
+  reviews     Review[]
+  stock       Stock?
+  wishlist    Wishlist[]
 }
 
 model Cart {
@@ -128,23 +99,26 @@ model Review {
 }
 
 model Order {
-  id            String   @id @default(cuid())
-  productId     String
+  id            String    @id @default(cuid())
   userId        String
   quantity      Int
+  size          String?
+  color         String?
   totalAmount   Float
-  status        Status   @default(CONFIRMED)
-  address       String
-  paymentMode   String   @default("COD")
+  status        Status    @default(CONFIRMED)
+  paymentMode   String    @default("COD")
   referralCode  String?
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
   deliveryBoyId String?
+  deliveryBoy   User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+  user          User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
+  orderOtp      OrderOtp?
 
-  product     Products  @relation(fields: [productId], references: [id])
-  user        User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
-  deliveryBoy User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
+  productId String
+  product   Products @relation(fields: [productId], references: [id])
 
-  orderOtp OrderOtp?
+  addressId String
+  address   Address @relation(fields: [addressId], references: [id])
 }
 
 model Stock {
@@ -198,4 +172,49 @@ model Expense {
   updatedAt   DateTime        @updatedAt
   createdBy   String
   user        User            @relation(fields: [createdBy], references: [id])
+}
+
+model Address {
+  id      String @id @default(cuid())
+  address String
+  city    String
+  state   String
+  country String
+  zipCode String
+  phone   String
+  name    String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  orders Order[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  EXCLUSIVE_USER
+  DELIVERY_BOY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  CONFIRMED
+  DISPATCH
+  OUTOFDELIVERY
+  CANCELLED
+  DELIVERED
+}
+
+enum ExpenseCategory {
+  INVENTORY
+  LOGISTICS
+  MARKETING
+  SALARY
+  OTHER
 }

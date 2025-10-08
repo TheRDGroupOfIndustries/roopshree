@@ -21,8 +21,15 @@ export async function DELETE(_: NextRequest, { params }: Params) {
     }
 
     const { productId } = params;
+    const wishlistItem = await prisma.wishlist.findFirst({
+      where: { productId },
+    });
 
-    await prisma.wishlist.delete({
+    if(!wishlistItem) {
+      return NextResponse.json({ error: "Wishlist item not found" }, { status: 404 });
+    }
+
+   await prisma.wishlist.delete({
       where: {
         userId_productId: {
           userId: payload.userId,
@@ -30,6 +37,7 @@ export async function DELETE(_: NextRequest, { params }: Params) {
         },
       },
     });
+
     
     return NextResponse.json({ message: "Removed from wishlist" }, { status: 200 });
   } catch (error) {

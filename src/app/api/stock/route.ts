@@ -5,9 +5,9 @@ import { authenticate } from "@/lib/jwt";
 // GET all stocks
 export async function GET(req: NextRequest) {
   try {
-    // const user = await authenticate(req);
-    // if (!user)
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user = await authenticate(req);
+    if (!user || user.role !== "ADMIN")
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const stocks = await prisma.stock.findMany({
       include: {

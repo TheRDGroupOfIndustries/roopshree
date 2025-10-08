@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
-import { deleteExpiredOtps } from "@/lib/otpCleanup";
+import { deleteExpiredOtps, isOtpExpired } from "@/lib/otpHelpers";
 
 type Params = { params: { id: string } };
 
@@ -11,54 +11,81 @@ export async function POST(req: NextRequest, { params }: Params) {
     const orderId = params.id;
     const { otp: providedOtp } = await req.json();
 
-    if (!providedOtp)
-      return NextResponse.json({ error: "otp is required" }, { status: 400 });
+    if (!providedOtp) {
+      return NextResponse.json({ error: "OTP is required" }, { status: 400 });
+    }
 
-    // ✅ Authenticate delivery boy
-    const requestCookies = cookies();
+    // ✅ Get and verify token
+     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
     const payload = token ? await verifyJwt(token) : null;
-    if (!payload)
+
+    if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!payload.role?.includes("DELIVERY_BOY"))
+    }
+
+    if (!payload.role?.includes("DELIVERY_BOY")) {
       return NextResponse.json(
         { error: "Forbidden: only delivery boys can verify OTP" },
         { status: 403 }
       );
+    }
 
-    // ✅ Cleanup expired OTPs
+    // 🧹 Clean expired OTPs before verifying
     await deleteExpiredOtps();
 
-    // ✅ Fetch order + OTP
+    // ✅ Fetch order + OTP in parallel
     const [order, orderOtp] = await Promise.all([
       prisma.order.findUnique({ where: { id: orderId } }),
       prisma.orderOtp.findUnique({ where: { orderId } }),
     ]);
 
-    if (!order)
+    if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    if (!orderOtp)
+    }
+
+    if (!orderOtp) {
       return NextResponse.json(
         { error: "No OTP found for this order" },
         { status: 400 }
       );
+    }
 
-    // ✅ Ensure assigned delivery boy
-    if (order.deliveryBoyId !== payload.userId)
+    // ✅ Ensure order is currently OUTOFDELIVERY
+    if (order.status !== "OUTOFDELIVERY") {
+      return NextResponse.json(
+        {
+          error: `Order not in OUTOFDELIVERY state. Current status: ${order.status}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    // ✅ Ensure assigned delivery boy only
+    if (order.deliveryBoyId !== payload.userId) {
       return NextResponse.json(
         { error: "Forbidden: not assigned to this order" },
         { status: 403 }
       );
+    }
 
-    // ✅ Compare OTP
-    if (orderOtp.otp !== providedOtp)
+    // ✅ Check OTP expiry
+    if (isOtpExpired(orderOtp.expiresAt)) {
+      await prisma.orderOtp.deleteMany({ where: { orderId } });
+      return NextResponse.json({ error: "OTP expired" }, { status: 400 });
+    }
+
+    // ✅ Compare provided OTP
+    if (orderOtp.otp !== providedOtp) {
       return NextResponse.json({ error: "Invalid OTP" }, { status: 400 });
+    }
 
-    // ✅ Mark order DELIVERED & cleanup OTP
+    // ✅ Mark order as DELIVERED and clean up OTP
     const updatedOrder = await prisma.order.update({
       where: { id: orderId },
       data: { status: "DELIVERED" },
     });
+
     await prisma.orderOtp.deleteMany({ where: { orderId } });
 
     return NextResponse.json(

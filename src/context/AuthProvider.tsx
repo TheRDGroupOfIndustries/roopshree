@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getMe, loginUser, registerUser } from "@/services/authService";
+import { getMe, loginUser, logoutUser, registerUser } from "@/services/authService";
 import { removeToken } from "@/lib/auth";
 
 interface Cart {
@@ -78,11 +78,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Logout
-  const logout = () => {
-    removeToken();
+ const logout = async () => {
+  try {
+    await logoutUser();
     setUser(null);
-    window.location.href = "/auth/signin"; // redirect
-  };
+    window.location.href = "/auth/signin"; 
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
 
   return (
     <AuthContext.Provider value={{ user, loading, signup, login, logout }}>

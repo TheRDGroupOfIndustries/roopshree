@@ -12,6 +12,13 @@ export const registerUser = async (name: string, email: string, password: string
   
   return res.data;
 };
+
+export const logoutUser = async () => {
+  const res = await api.post("/auth/logout");
+  console.log("res logoutUser: ", res);
+  return res.data;
+};
+
 export const getMe = async () => {
   const res = await api.get("/auth/me");
   console.log("res getMe: ",res);

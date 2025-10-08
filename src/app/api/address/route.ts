@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "@/lib/jwt";
+import { postcodeValidator } from "postcode-validator"; // ✅ added import
 
 // Validation helper
 function validateAddress(data: any) {
@@ -22,6 +23,13 @@ function validateAddress(data: any) {
       return `Field '${field}' is required and must be a non-empty string.`;
     }
   }
+
+  // ✅ Added ZIP code validation (only change)
+  const isValidZip = postcodeValidator(data.zipCode, data.country);
+  if (!isValidZip) {
+    return `Invalid ZIP/postal code for the country '${data.country}'.`;
+  }
+
   return null;
 }
 

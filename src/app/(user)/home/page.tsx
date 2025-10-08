@@ -112,7 +112,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             {/* Cart with Badge */}
             <div className="relative">
-              <Link href={"/cart"}>
+              <Link href={"/my-cart"}>
                 <FiShoppingCart size={22} />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">

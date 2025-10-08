@@ -161,12 +161,12 @@ const SignInPage: React.FC = () => {
     setLoading(true);
     try {
       await login(loginData.email, loginData.password);
-      toast.success("Login successful!");
+      toast.success("Logged in successfully!");
       router.push('/home')
       
     } catch (error: any) {
       console.error("Login failed:", error);
-      alert(error.response?.data?.error || "Login failed. Try again.");
+      toast.error(error.response?.data?.error || "Login failed. Try again.");
     } finally {
       setLoading(false);
     }

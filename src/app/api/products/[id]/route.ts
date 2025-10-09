@@ -35,61 +35,44 @@ interface updateProductBody {
   insideBox: string[];
   userId?: string;
   stock?: number;
+   price: number;
+  oldPrice: number;
+  exclusive?: number;
 }
 
-export async function PUT(req: Request, { params }: Params) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const product = await prisma.products.findUnique({
-      where: { id: params.id },
-    });
+    const { id } = await params;
 
+    const product = await prisma.products.findUnique({ where: { id } });
     if (!product)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const payload = await verifyJwt(token);
-    if (!payload) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (!payload.role.includes("ADMIN")) {
-      return NextResponse.json(
-        { error: "Unauthorized admin" },
-        { status: 401 }
-      );
-    }
+    if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!payload.role.includes("ADMIN"))
+      return NextResponse.json({ error: "Unauthorized admin" }, { status: 401 });
 
     const userId = payload.userId.toString();
-    if (product.userId !== userId) {
+    if (product.userId !== userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const body = (await req.json()) as updateProductBody;
 
-    // Destructure only allowed fields from body
-    const { title, description, images, details, insideBox, stock } = body;
+    const body = (await req.json()) as updateProductBody;
+    const { title, description, images, details, insideBox, stock, price, oldPrice, exclusive } = body;
 
     const updated = await prisma.products.update({
-      where: { id: params.id },
-      data: {
-        title,
-        description,
-        images,
-        details,
-        insideBox,
-      },
+      where: { id },
+      data: { title, description, images, details, insideBox, price, oldPrice, exclusive },
     });
 
-    const curStock = await prisma.stock.findUnique({
-      where: { productId: params.id },
-    });
-
+    const curStock = await prisma.stock.findUnique({ where: { productId: id } });
     if (curStock && stock) {
       await prisma.stock.update({
-        where: { productId: params.id },
+        where: { productId: id },
         data: {
           currentStock: stock,
           history: {
@@ -109,6 +92,7 @@ export async function PUT(req: Request, { params }: Params) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 // DELETE product
 export async function DELETE(_: Request, { params }: Params) {

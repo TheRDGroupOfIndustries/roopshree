@@ -8,6 +8,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  EXCLUSIVE_USER
+  DELIVERY_BOY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  CONFIRMED
+  DISPATCH
+  OUTOFDELIVERY
+  CANCELLED
+  DELIVERED
+}
+
+enum ExpenseCategory {
+  INVENTORY
+  LOGISTICS
+  MARKETING
+  SALARY
+  OTHER
+}
+
+
 model User {
   id                  String         @id @default(cuid())
   name                String
@@ -53,6 +83,9 @@ model Products {
   images      String[]
   details     String?
   insideBox   String[]
+  price       Int
+  oldPrice    Int
+  exclusive   Int?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   userId      String
@@ -186,31 +219,3 @@ model Address {
   orders  Order[]
 }
 
-enum Role {
-  USER
-  ADMIN
-  EXCLUSIVE_USER
-  DELIVERY_BOY
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum Status {
-  CONFIRMED
-  DISPATCH
-  OUTOFDELIVERY
-  CANCELLED
-  DELIVERED
-}
-
-enum ExpenseCategory {
-  INVENTORY
-  LOGISTICS
-  MARKETING
-  SALARY
-  OTHER
-}

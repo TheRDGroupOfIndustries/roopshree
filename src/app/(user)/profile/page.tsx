@@ -12,17 +12,16 @@ import {
   MapPin,
   CreditCard,
   Bell,
-  Headphones,
-  HelpCircle,
-  Star,
-  Info,
   Globe,
   Moon,
   Shield,
+  Headphones,
+  Check,
+  HelpCircle,
+  Star,
+  Info,
   LogOut,
   ChevronRight,
-  Crown,
-  Check,
   Wallet,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
@@ -49,6 +48,12 @@ interface AccountSetting {
   label: string;
   link: string;
   info: string;
+}
+interface SupportHelp {
+  icon: LucideIcon;
+  label: string;
+  info: string;
+  link: string;
 }
 interface AppSetting {
   icon: LucideIcon;
@@ -166,11 +171,37 @@ export default function ProfilePage() {
     {
       icon: Bell,
       label: "Notifications",
-      link: "/profile/notifications",
+      link: "/profile/notify",
       info: "All enabled",
     },
   ];
 
+const SupportHelps: SupportHelp[] = [
+  {
+    icon: Headphones,
+    label: "Customer Support",
+    link: "/profile/support",
+    info: "24/7 assistance",
+  },
+  {
+    icon: HelpCircle,
+    label: "FAQ",
+    link: "/profile/faq",
+    info: "Common questions",
+  },
+  {
+    icon: Star,
+    label: "Rate App",
+    link: "/profile/rateapp",
+    info: "Share feedback",
+  },
+  {
+    icon: Info,
+    label: "About Us",
+    link: "/profile/aboutus",
+    info: "Know our story",
+  },
+];
   const recentOrders: RecentOrder[] = [
     {
       name: "Luxury Foundation",
@@ -418,6 +449,58 @@ export default function ProfilePage() {
             />
           </Link>
         ))}
+      </Section>
+
+      <Section title="Support & Help">
+        {SupportHelps.map((Support, i) => (
+          <Link key={i} href={Support.link}>
+            <SettingButton
+              icon={Support.icon}
+              label={Support.label}
+              info={Support.info}
+            />
+          </Link>
+        ))}
+      </Section>
+
+      {/* permium section */}
+      <Section >
+        <div className="bg-gradient-to-br from-purple-400 to-purple-500 p-6 md:p-8 rounded-2xl shadow-lg w-full">
+  {/* Header */}
+  <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-0 mb-6">
+    <div className="flex-1">
+      <h1 className="text-2xl md:text-3xl font-bold mb-1">Premium Membership</h1>
+      <p className="text-sm md:text-base opacity-90">Get exclusive benefits and offers</p>
+    </div>
+    <span className="bg-pink-400 rounded-full p-4 md:p-5 flex items-center justify-center shadow-md">
+      <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 "/>
+    </span>
+  </div>
+
+  {/* Benefits List */}
+  <ul className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 mb-6 text-sm md:text-base font-medium">
+    <li className="flex items-center gap-2">
+      <Check className="w-4 h-4 text-green-300"/> Free delivery
+    </li>
+    <li className="flex items-center gap-2">
+      <Check className="w-4 h-4 text-green-300"/> Early access
+    </li>
+    <li className="flex items-center gap-2">
+      <Check className="w-4 h-4 text-green-300"/> Extra rewards
+    </li>
+    <li className="flex items-center gap-2">
+      <Check className="w-4 h-4 text-green-300"/> Priority support
+    </li>
+  </ul>
+
+  {/* Upgrade Button */}
+  <Link href={"/profile/upgrade"}>
+  <button className="w-full flex items-center justify-center bg-amber-500 hover:bg-amber-600 transition-colors text-white font-semibold py-3 px-6 rounded-3xl shadow-md active:scale-95">
+    Upgrade Now
+  </button>
+  </Link>
+</div>
+
       </Section>
 
       {/* Recent Orders */}

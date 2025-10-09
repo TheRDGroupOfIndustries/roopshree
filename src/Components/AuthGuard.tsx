@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
 import Navbar from "./Navbar";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -21,7 +22,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, publicPaths = ["/", "/a
     }
   }, [loading, user, pathname, router, publicPaths]);
 
-  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (loading) return <LoadingSpinner/>
   if (!user && !publicPaths.includes(pathname)) return null;
 
   return (

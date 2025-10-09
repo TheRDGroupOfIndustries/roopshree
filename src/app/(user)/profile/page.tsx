@@ -26,6 +26,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
+import { useAuth } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 // Type Definitions
 interface ProfileStat {
@@ -92,6 +95,13 @@ interface OrderCardProps {
 export default function ProfilePage() {
   const [cartCount] = useState<number>(3);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const { logout, user } = useAuth();
+  const router = useRouter();
+  const handleLogout = () => {
+    logout();
+    router.push("/auth/signin");
+    toast.success("Logged out successfully!");
+  };
 
   const profileStats: ProfileStat[] = [
     { label: "Orders", value: "28" },
@@ -100,17 +110,65 @@ export default function ProfilePage() {
   ];
 
   const quickActions: QuickAction[] = [
-    { icon: ShoppingCart, label: "My Orders", bg: "bg-orange-50", iconColor: "text-orange-600", link: "/cart", count: 28 },
-    { icon: Heart, label: "Wishlist", bg: "bg-orange-50", iconColor: "text-orange-600", link: "/Wishlist", count: 12 },
-    { icon: Gift, label: "Rewards", bg: "bg-purple-100", iconColor: "text-purple-600", link: "/rewards", badge: "156 pts" },
-    { icon: Wallet, label: "Wallet", bg: "bg-green-100", iconColor: "text-green-600", link: "/wallet", badge: "₹2,450" },
+    {
+      icon: ShoppingCart,
+      label: "My Orders",
+      bg: "bg-orange-50",
+      iconColor: "text-orange-600",
+      link: "/my-cart",
+      count: 28,
+    },
+    {
+      icon: Heart,
+      label: "Wishlist",
+      bg: "bg-orange-50",
+      iconColor: "text-orange-600",
+      link: "/Wishlist",
+      count: 12,
+    },
+    {
+      icon: Gift,
+      label: "Rewards",
+      bg: "bg-purple-100",
+      iconColor: "text-purple-600",
+      link: "/rewards",
+      badge: "156 pts",
+    },
+    {
+      icon: Wallet,
+      label: "Wallet",
+      bg: "bg-green-100",
+      iconColor: "text-green-600",
+      link: "/wallet",
+      badge: "₹2,450",
+    },
   ];
 
   const accountSettings: AccountSetting[] = [
-    { icon: User, label: "Personal Information", link: "/profile/personal", info: "priya.sharma@email.com" },
-    { icon: MapPin, label: "Delivery Addresses", link: "/profile/addresses", info: "3 saved addresses" },
-    { icon: CreditCard, label: "Payment Methods", link: "/profile/payments", info: "2 cards saved" },
-    { icon: Bell, label: "Notifications", link: "/profile/notifications", info: "All enabled" },
+    {
+      icon: User,
+      label: "Personal Information",
+      link: "/profile/personal",
+      info: "priya.sharma@email.com",
+    },
+    {
+      icon: MapPin,
+      label: "Delivery Addresses",
+      link: "/profile/addresses",
+      info: "3 saved addresses",
+    },
+    {
+      icon: CreditCard,
+      label: "Payment Methods",
+      link: "/profile/payments",
+      info: "2 cards saved",
+    },
+    {
+      icon: Bell,
+      label: "Notifications",
+      link: "/profile/notifications",
+      info: "All enabled",
+    },
   ];
 
   const recentOrders: RecentOrder[] = [
@@ -135,19 +193,39 @@ export default function ProfilePage() {
   ];
 
   const appSettings: AppSetting[] = [
-    { icon: Globe, label: "Language", right: "English", link: "/settings/language" },
+    {
+      icon: Globe,
+      label: "Language",
+      right: "English",
+      link: "/settings/language",
+    },
     { icon: Moon, label: "Dark Mode", hasToggle: true },
     { icon: Shield, label: "Privacy Settings", link: "/settings/privacy" },
   ];
 
-  const Section: React.FC<SectionProps> = ({ title, children, className = "" }) => (
+  const Section: React.FC<SectionProps> = ({
+    title,
+    children,
+    className = "",
+  }) => (
     <div className={`p-4 sm:p-6 bg-white my-2 ${className}`}>
-      {title && <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">{title}</h3>}
+      {title && (
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
+          {title}
+        </h3>
+      )}
       {children}
     </div>
   );
 
-  const SettingButton: React.FC<SettingButtonProps> = ({ icon: Icon, label, right, hasToggle, info, onClick }) => (
+  const SettingButton: React.FC<SettingButtonProps> = ({
+    icon: Icon,
+    label,
+    right,
+    hasToggle,
+    info,
+    onClick,
+  }) => (
     <button
       onClick={onClick}
       className="w-full flex items-center p-3 sm:p-4 bg-white rounded-lg text-gray-700 hover:bg-gray-50 transition-colors mb-2 active:bg-gray-100"
@@ -157,12 +235,22 @@ export default function ProfilePage() {
       </span>
       <div className="flex-1 text-left">
         <span className="font-medium text-sm sm:text-base block">{label}</span>
-        {info && <span className="text-xs text-gray-500 block mt-0.5">{info}</span>}
+        {info && (
+          <span className="text-xs text-gray-500 block mt-0.5">{info}</span>
+        )}
       </div>
       <span className="ml-auto text-gray-400 flex items-center gap-2">
         {hasToggle ? (
-          <label className="relative inline-flex items-center cursor-pointer" onClick={(e) => e.stopPropagation()}>
-            <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} className="sr-only peer" />
+          <label
+            className="relative inline-flex items-center cursor-pointer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+              className="sr-only peer"
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
           </label>
         ) : (
@@ -175,10 +263,20 @@ export default function ProfilePage() {
     </button>
   );
 
-  const QuickAction: React.FC<QuickActionProps> = ({ icon: Icon, label, bg, iconColor, link, count, badge }) => (
+  const QuickAction: React.FC<QuickActionProps> = ({
+    icon: Icon,
+    label,
+    bg,
+    iconColor,
+    link,
+    count,
+    badge,
+  }) => (
     <Link href={link}>
       <div className="flex flex-col items-center text-gray-700 hover:opacity-80 transition-opacity active:scale-95 relative">
-        <div className={`w-12 h-12 sm:w-14 sm:h-14 ${bg} rounded-full flex items-center justify-center relative`}>
+        <div
+          className={`w-12 h-12 sm:w-14 sm:h-14 ${bg} rounded-full flex items-center justify-center relative`}
+        >
           <Icon className={`text-xl sm:text-2xl ${iconColor}`} />
           {count && (
             <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
@@ -186,8 +284,14 @@ export default function ProfilePage() {
             </span>
           )}
         </div>
-        <span className="text-xs sm:text-sm mt-2 text-center font-medium">{label}</span>
-        {badge && <span className="text-[10px] sm:text-xs text-gray-500 mt-0.5">{badge}</span>}
+        <span className="text-xs sm:text-sm mt-2 text-center font-medium">
+          {label}
+        </span>
+        {badge && (
+          <span className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+            {badge}
+          </span>
+        )}
       </div>
     </Link>
   );
@@ -196,17 +300,30 @@ export default function ProfilePage() {
     <div className="flex items-center justify-between mb-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
       <div className="flex items-center flex-1">
         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden bg-gray-200 flex-shrink-0 relative">
-          <Image src={order.image} alt={order.name} fill className="object-cover rounded-xl" />
+          <Image
+            src={order.image}
+            alt={order.name}
+            fill
+            className="object-cover rounded-xl"
+          />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm sm:text-base text-gray-800 font-semibold truncate">{order.name}</p>
+          <p className="text-sm sm:text-base text-gray-800 font-semibold truncate">
+            {order.name}
+          </p>
           <p className="text-xs text-gray-500">{order.order}</p>
-          <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>{order.status}</p>
+          <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>
+            {order.status}
+          </p>
         </div>
       </div>
       <div className="flex flex-col items-end ml-4">
-        <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">{order.price}</span>
-        <button className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700">{order.action}</button>
+        <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">
+          {order.price}
+        </span>
+        <button className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700">
+          {order.action}
+        </button>
       </div>
     </div>
   );
@@ -218,12 +335,17 @@ export default function ProfilePage() {
         <button className="text-gray-600 text-xl hover:text-gray-800 transition-colors p-1">
           <ArrowLeft size={24} />
         </button>
-        <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center">Profile</h2>
+        <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center">
+          Profile
+        </h2>
         <div className="flex items-center space-x-3 sm:space-x-4">
           <button className="text-gray-600 hover:text-orange-500 p-1">
             <Share2 size={22} />
           </button>
-          <Link href="/cart" className="relative text-gray-600 hover:text-orange-500 p-1">
+          <Link
+            href="/cart"
+            className="relative text-gray-600 hover:text-orange-500 p-1"
+          >
             <ShoppingCart size={22} />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 text-[10px] font-bold text-white bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
@@ -237,21 +359,39 @@ export default function ProfilePage() {
       {/* Profile Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/image.png" alt="Background" fill className="object-cover" />
-          <div className="absolute inset-0 bg-orange-600/30"></div>
+          <Image
+            src="/images/image.png"
+            alt="Background"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
         </div>
         <div className="relative z-10 flex flex-col items-center py-6 sm:py-8 px-4 sm:px-6 text-white">
           <div className="relative w-20 h-20 sm:w-24 sm:h-24">
-            <Image src="/images/profile_img.png" alt="Profile Picture" fill className="rounded-full shadow-lg object-cover border-4 border-white" />
+            <Image
+              src={user?.profileImage || "/images/dummy_profile.png"}
+              alt={
+                user?.name
+                  ? `Profile picture of ${user.name}`
+                  : "Profile Picture"
+              }
+              fill
+              className="rounded-full shadow-md object-cover"
+            />{" "}
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold mt-3">Priya Sharma</h1>
+          <h1 className="text-xl sm:text-2xl font-bold mt-3">
+            {user?.name || "User"}
+          </h1>
           <p className="text-sm sm:text-base">Premium Member</p>
 
           <div className="flex justify-between w-full max-w-md mt-6 gap-4">
             {profileStats.map((item, i) => (
               <div className="text-center flex-1" key={i}>
                 <p className="text-xs sm:text-sm opacity-90">{item.label}</p>
-                <p className="text-lg sm:text-xl font-semibold mt-1">{item.value}</p>
+                <p className="text-lg sm:text-xl font-semibold mt-1">
+                  {item.value}
+                </p>
               </div>
             ))}
           </div>
@@ -271,7 +411,11 @@ export default function ProfilePage() {
       <Section title="Account Settings">
         {accountSettings.map((setting, i) => (
           <Link key={i} href={setting.link}>
-            <SettingButton icon={setting.icon} label={setting.label} info={setting.info} />
+            <SettingButton
+              icon={setting.icon}
+              label={setting.label}
+              info={setting.info}
+            />
           </Link>
         ))}
       </Section>
@@ -298,7 +442,10 @@ export default function ProfilePage() {
 
       {/* Logout */}
       <Section>
-        <button className="w-full flex items-center justify-center gap-2 py-3 sm:py-4 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-semibold">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 py-3 sm:py-4 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-semibold"
+        >
           <LogOut size={20} />
           <span>Logout</span>
         </button>

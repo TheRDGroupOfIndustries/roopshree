@@ -78,7 +78,7 @@
 //               type={showPassword ? "text" : "password"}
 //               name="password"
 //               placeholder="Enter password"
-//               value={loginData.password}  
+//               value={loginData.password}
 //               onChange={handleChange}
 //               className="w-full py-2 outline-none placeholder-gray-400"
 //             />
@@ -133,24 +133,21 @@
 
 // export default SignInPage;
 
-
-
-
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff,  } from "lucide-react";
-import { useAuth } from "@/context/AuthProvider"; 
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 const SignInPage: React.FC = () => {
-  const { login } = useAuth(); 
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
- const router = useRouter();
+  const router = useRouter();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
@@ -162,8 +159,7 @@ const SignInPage: React.FC = () => {
     try {
       await login(loginData.email, loginData.password);
       toast.success("Logged in successfully!");
-      router.push('/home')
-      
+      router.push("/home");
     } catch (error: any) {
       console.error("Login failed:", error);
       toast.error(error.response?.data?.error || "Login failed. Try again.");
@@ -176,7 +172,13 @@ const SignInPage: React.FC = () => {
     <div className="-translate-y-40 absolute">
       {/* Background */}
       <div className="relative w-screen h-[70vh]">
-        <Image src="/Vector 2.svg" alt="wave" fill className="object-cover absolute h-full w-full" priority />
+        <Image
+          src="/Vector 2.svg"
+          alt="wave"
+          fill
+          className="object-cover absolute h-full w-full"
+          priority
+        />
       </div>
 
       <h1 className="text-4xl text-black font-bold pl-[5vw]">Sign In</h1>
@@ -188,7 +190,12 @@ const SignInPage: React.FC = () => {
       >
         {/* Email */}
         <div className="relative">
-          <label htmlFor="email" className="block text-gray-700 font-semibold mb-1">Email</label>
+          <label
+            htmlFor="email"
+            className="block text-gray-700 font-semibold mb-1"
+          >
+            Email
+          </label>
           <input
             type="email"
             name="email"
@@ -202,7 +209,9 @@ const SignInPage: React.FC = () => {
 
         {/* Password */}
         <div className="relative">
-          <label className="block text-gray-700 font-semibold mb-1">Password</label>
+          <label className="block text-gray-700 font-semibold mb-1">
+            Password
+          </label>
           <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#F49F00] transition">
             <input
               type={showPassword ? "text" : "password"}
@@ -212,7 +221,11 @@ const SignInPage: React.FC = () => {
               onChange={handleChange}
               className="w-full py-2 outline-none placeholder-gray-400"
             />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-600 ml-2">
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-600 ml-2"
+            >
               {showPassword ? <EyeOff /> : <Eye />}
             </button>
           </div>
@@ -231,7 +244,10 @@ const SignInPage: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/signup" className="text-[#F49F00] font-semibold hover:underline">
+            <Link
+              href="/auth/signup"
+              className="text-[#F49F00] font-semibold hover:underline"
+            >
               Sign up here
             </Link>
           </p>

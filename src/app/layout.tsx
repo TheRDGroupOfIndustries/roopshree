@@ -38,7 +38,8 @@ export default function RootLayout({
           <Toaster />
            <AuthGuard>
             {/* <Navbar /> */}
-            {children}</AuthGuard>
+            {children}
+            </AuthGuard>
         </AuthProvider>
       </body>
     </html>

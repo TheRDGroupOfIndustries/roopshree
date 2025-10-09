@@ -23,6 +23,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState<number>();
+  const [price, setPrice] = useState<number>();
+  const [oldPrice, setOldPrice] = useState<number>();
+  const [exclusive, setExclusive] = useState<number>();
   const [loading, setLoading] = useState(false);
 
   const [images, setImages] = useState<PreviewImage[]>([]);
@@ -42,6 +45,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setTitle(product.title || "");
     setDescription(product.description || "");
     setStock(product.stock?.currentStock || 0);
+    setPrice(product.price || 0);
+    setOldPrice(product.oldPrice || 0);
+    setExclusive(product.exclusive || undefined);
 
     if (product.images && product.images.length > 0) {
       const serverImages = product.images.map((img: any) => ({
@@ -118,7 +124,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
   // CREATE
   const handleCreate = async () => {
-    if (!title || !description || !stock || images.length === 0) {
+    if (!title || !description || !stock || !price || !oldPrice || images.length === 0) {
       showMessage("Please fill all required fields and upload at least one image", true);
       return;
     }
@@ -136,6 +142,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           details: "Product details placeholder",
           insideBox: ["Item1", "Item2"],
           initialStock: stock,
+          price: price,
+          oldPrice: oldPrice,
+          exclusive: exclusive || undefined,
         }),
       });
 
@@ -174,7 +183,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
   // UPDATE
   const handleUpdate = async () => {
-    if (!title || !description || !stock || !id) {
+    if (!title || !description || !stock || !price || !oldPrice || !id) {
       showMessage("Fill all required fields", true);
       return;
     }
@@ -184,7 +193,15 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       const existingImages = images.filter((i) => i.serverId).map((i) => i.serverId!);
       const newImages = images.filter((i) => i.file);
 
-      const payload = { title, description, stock, images: existingImages };
+      const payload = { 
+        title, 
+        description, 
+        stock, 
+        images: existingImages,
+        price,
+        oldPrice,
+        exclusive,
+      };
       const res = await fetch(`/api/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -278,6 +295,54 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             rows={4}
             disabled={loading}
           />
+        </div>
+
+        {/* Pricing Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Price */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={price || ""}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              placeholder="0"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Old Price */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Old Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={oldPrice || ""}
+              onChange={(e) => setOldPrice(Number(e.target.value))}
+              placeholder="0"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Exclusive */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Exclusive
+            </label>
+            <input
+              type="number"
+              value={exclusive || ""}
+              onChange={(e) => setExclusive(e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="Optional"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
         </div>
 
         {/* Stock */}

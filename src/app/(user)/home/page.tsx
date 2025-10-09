@@ -3,29 +3,37 @@ import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { AiOutlineSearch } from "react-icons/ai";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { BiHeart, BiPlus } from "react-icons/bi";
+import { BiHeart,  } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import TrendingCard from "@/Components/TrendingNow";
 import Link from "next/link";
 import { getAllProducts } from "@/services/productService";
+import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
 export default function HomePage() {
   const cartCount = 3;
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
-
+ const [products, setProducts] = useState<any[]>([]);
+const [productLoading, setProductLoading] = useState(true);
 
  useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      const res= await getAllProducts();
-      console.log("fetchProducts: ",res);
-      
-    } catch (error) {
-      console.log("error: ", error);
-    }
-  };
+    const fetchProducts = async () => {
+      try {
+        setProductLoading(true);
+        const res = await getAllProducts();
+        console.log("Fetched Products:", res);
 
-  fetchProducts();
-}, []);
+        // Assuming res is an array (based on your example)
+        setProducts(res);
+      } catch (error) {
+        console.log("Error fetching products:", error);
+      }
+      finally{
+            setProductLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,52 +59,52 @@ export default function HomePage() {
     { name: "Accessories", img: "/images/image.png" },
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: "Luxury Foundation",
-      description: "Perfect coverage for all skin types",
-      price: "₹1,299",
-      oldPrice: "₹1,599",
-      image: "/images/image.png",
-      badge: "New",
-      badgeColor: "bg-orange-400",
-      rating: 4,
-    },
-    {
-      id: 2,
-      name: "Luxury Foundation",
-      description: "Perfect coverage for all skin types",
-      price: "₹1,299",
-      oldPrice: "₹1,599",
-      image: "/images/image.png",
-      badge: "Sale",
-      badgeColor: "bg-red-600",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Luxury Foundation",
-      description: "Perfect coverage for all skin types",
-      price: "₹1,299",
-      oldPrice: "₹1,599",
-      image: "/images/image.png",
-      badge: "Best Seller",
-      badgeColor: "bg-green-600",
-      rating: 4,
-    },
-    {
-      id: 4,
-      name: "Luxury Foundation",
-      description: "Perfect coverage for all skin types",
-      price: "₹1,299",
-      oldPrice: "₹1,599",
-      image: "/images/image.png",
-      badge: "",
-      badgeColor: "",
-      rating: 5,
-    },
-  ];
+  // const products = [
+  //   {
+  //     id: 1,
+  //     name: "Luxury Foundation",
+  //     description: "Perfect coverage for all skin types",
+  //     price: "₹1,299",
+  //     oldPrice: "₹1,599",
+  //     image: "/images/image.png",
+  //     badge: "New",
+  //     badgeColor: "bg-orange-400",
+  //     rating: 4,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Luxury Foundation",
+  //     description: "Perfect coverage for all skin types",
+  //     price: "₹1,299",
+  //     oldPrice: "₹1,599",
+  //     image: "/images/image.png",
+  //     badge: "Sale",
+  //     badgeColor: "bg-red-600",
+  //     rating: 5,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Luxury Foundation",
+  //     description: "Perfect coverage for all skin types",
+  //     price: "₹1,299",
+  //     oldPrice: "₹1,599",
+  //     image: "/images/image.png",
+  //     badge: "Best Seller",
+  //     badgeColor: "bg-green-600",
+  //     rating: 4,
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Luxury Foundation",
+  //     description: "Perfect coverage for all skin types",
+  //     price: "₹1,299",
+  //     oldPrice: "₹1,599",
+  //     image: "/images/image.png",
+  //     badge: "",
+  //     badgeColor: "",
+  //     rating: 5,
+  //   },
+  // ];
 
   const trendingProducts = [
     {
@@ -235,11 +243,30 @@ export default function HomePage() {
           </div>
 
           {/* Product Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
+         <div className="grid grid-cols-2 gap-4">
+  {productLoading ? (
+    
+   <div className="text-gray-500 text-sm flex items-center gap-2">
+  <SmallLoadingSpinner /> Fetching products...
+</div>
+
+  ) : products.length > 0 ? (
+    products.map((product) => (
+      <ProductCard
+        key={product.id}
+        id={product.id}
+        name={product.title}
+        description={product.description}
+        price={`₹${product.price}`}
+        oldPrice={`₹${product.oldPrice}`}
+        image={product.images?.[0] || "/images/image.png"}
+      />
+    ))
+  ) : (
+    <p className="text-gray-500 text-sm">No products available</p>
+  )}
+</div>
+
         </div>
 
         {/* Special Offers */}

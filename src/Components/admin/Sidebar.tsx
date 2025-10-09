@@ -12,7 +12,9 @@ import {
   CreditCard, // Expenses
   LogOut, // Sign Out
   Menu, // Mobile Menu Icon
-  X, // Close Icon
+  X,
+  BriefcaseBusiness,
+   // Close Icon
 } from "lucide-react";
 
 // --- Navigation Data ---
@@ -21,6 +23,7 @@ const navItems = [
   { name: "Products", path: "/manage/products", icon: Box },
   { name: "Orders", path: "/manage/orders", icon: ShoppingCart },
   { name: "Users", path: "/manage/users", icon: Users },
+  { name: "Employee", path: "/manage/employee", icon: BriefcaseBusiness },
   { name: "Reports", path: "/manage/reports", icon: BarChart3 },
   { name: "Expenses (WIP)", path: "/manage/expenses", icon: CreditCard },
 ];

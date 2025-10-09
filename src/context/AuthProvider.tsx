@@ -2,8 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getMe, loginUser, logoutUser, registerUser } from "@/services/authService";
-import { removeToken } from "@/lib/auth";
-
 interface Cart {
   items: any[];
 }
@@ -33,7 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [fetched, setFetched] = useState(false); // ✅ flag to fetch profile only once
+  const [fetched, setFetched] = useState(false); 
 
   // Fetch user profile on mount only once
   useEffect(() => {

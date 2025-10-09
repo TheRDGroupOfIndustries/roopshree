@@ -121,10 +121,10 @@ export async function DELETE(_: Request, { params }: Params) {
       );
     }
 
-    const userId = payload.userId.toString();
-    if (product.userId !== userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const userId = payload.userId.toString();
+    // if (product.userId !== userId) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
 
     await prisma.products.delete({ where: { id: params.id } });
     return NextResponse.json({ message: "Product deleted" });

@@ -1,8 +1,5 @@
+import Expenses from "@/Components/admin/Expenses";
 
-export default function Page () {
-  return (
-    <div>
-      <h1>Expenses Page</h1>
-    </div>
-  );
-};
+export default function Page() {
+  return <Expenses />;
+}

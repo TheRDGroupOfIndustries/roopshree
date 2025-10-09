@@ -1,8 +1,10 @@
+import OrderManagement from "@/Components/admin/Orders";
+import prisma from "@/lib/prisma";
 
-export default function Page () {
+export default async function Page() {
+  const totalOrders = await prisma.order.count();
+  console.log("Total Orders: ", totalOrders);
   return (
-    <div>
-      <h1>Orders Page</h1>
-    </div>
+    <OrderManagement totalOrders={totalOrders} />
   );
 };

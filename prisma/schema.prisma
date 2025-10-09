@@ -8,36 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-  EXCLUSIVE_USER
-  DELIVERY_BOY
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum Status {
-  CONFIRMED
-  DISPATCH
-  OUTOFDELIVERY
-  CANCELLED
-  DELIVERED
-}
-
-enum ExpenseCategory {
-  INVENTORY
-  LOGISTICS
-  MARKETING
-  SALARY
-  OTHER
-}
-
-
 model User {
   id                  String         @id @default(cuid())
   name                String
@@ -83,12 +53,12 @@ model Products {
   images      String[]
   details     String?
   insideBox   String[]
-  price       Int
-  oldPrice    Int
-  exclusive   Int?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   userId      String
+  exclusive   Int?
+  oldPrice    Int
+  price       Int
   cart        CartItem[]
   orders      Order[]
   user        User       @relation("UserProducts", fields: [userId], references: [id])
@@ -133,6 +103,7 @@ model Review {
 
 model Order {
   id            String    @id @default(cuid())
+  productId     String
   userId        String
   quantity      Int
   totalAmount   Float
@@ -143,7 +114,6 @@ model Order {
   deliveryBoyId String?
   addressId     String
   color         String?
-  productId     String
   size          String?
   address       Address   @relation(fields: [addressId], references: [id])
   deliveryBoy   User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
@@ -219,3 +189,31 @@ model Address {
   orders  Order[]
 }
 
+enum Role {
+  USER
+  ADMIN
+  EXCLUSIVE_USER
+  DELIVERY_BOY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  CONFIRMED
+  DISPATCH
+  OUTOFDELIVERY
+  CANCELLED
+  DELIVERED
+}
+
+enum ExpenseCategory {
+  INVENTORY
+  LOGISTICS
+  MARKETING
+  SALARY
+  OTHER
+}

@@ -17,6 +17,8 @@ export default function HomePage() {
   const fetchProducts = async () => {
     try {
       const res= await getAllProducts();
+      console.log("fetchProducts: ",res);
+      
     } catch (error) {
       console.log("error: ", error);
     }

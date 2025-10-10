@@ -71,6 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await loginUser(email, password); 
       const res = await getMe();
       setUser(res);
+      return res;
     } catch (error) {
       console.error("Login error:", error);
       throw error;

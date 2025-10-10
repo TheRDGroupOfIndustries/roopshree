@@ -11,11 +11,12 @@ import { getAllProducts } from "@/services/productService";
 import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
 import { useAuth } from "@/context/AuthProvider";
 export default function HomePage() {
-  const cartCount = 3;
-  const {refreshUser}=useAuth();
+  
+  const {user,refreshUser}=useAuth();
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
- const [products, setProducts] = useState<any[]>([]);
-const [productLoading, setProductLoading] = useState(true);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productLoading, setProductLoading] = useState(true);
+  const cartCount = user?.cart?.length || 0;
 
  useEffect(() => {
     const fetchProducts = async () => {
@@ -70,19 +71,22 @@ const [productLoading, setProductLoading] = useState(true);
     {
       id: 1,
       name: "Moisturizer",
-      price: "₹799",
+      price: "799",
+      oldPrice: "899",
       image: "/images/image.png",
     },
     {
       id: 2,
       name: "Lipstick",
-      price: "₹499",
+      price: "499",
+      oldPrice: "599",
       image: "/images/image.png",
     },
     {
       id: 3,
       name: "Perfume",
-      price: "₹1299",
+      price: "1299",
+      oldPrice: "1399",
       image: "/images/image.png",
     },
   ];
@@ -105,10 +109,10 @@ const [productLoading, setProductLoading] = useState(true);
                 )}
               </Link>
             </div>
-            <Link href={"/Wishlist"}>
+            <Link href={"/wishlist"}>
               <BiHeart size={22} />
             </Link>
-            <FiUser size={22} />
+        
           </div>
         </header>
 

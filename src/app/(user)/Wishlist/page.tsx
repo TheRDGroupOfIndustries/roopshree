@@ -69,7 +69,7 @@ const WishlistPage: React.FC = () => {
       <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 bg-white shadow-md sticky top-0 z-50">
         {/* Logo */}
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
-          BeautyBloom
+          Roop Shree
         </h1>
 
         {/* Search Icon */}

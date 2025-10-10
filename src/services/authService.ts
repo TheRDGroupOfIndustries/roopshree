@@ -1,13 +1,7 @@
 import api from "@/lib/api";
 
 export const loginUser = async (email: string, password: string) => {
-<<<<<<< HEAD
-  const res = await api.post("/auth/signin", { email, password });
-  // const res = await api.post("/auth/login", { email, password });
-
-=======
   const res = await api.post("/auth/login", { email, password });
->>>>>>> 7255ebd5fd2d0f35dcc89fb3fdaf77bae5225590
   return res.data;
 };
 
@@ -36,4 +30,15 @@ export const getMe = async () => {
   // console.log("getMe: ", res.data);
 
   return res.data;
+};
+
+
+export const sendOtpEmail = async (email: string) => {
+  try {
+    const res = await api.post("/auth/send-otp", { email });
+    return res.data;
+  } catch (error: any) {
+    console.error("Send OTP error:", error);
+    throw error.response?.data || { error: "Failed to send OTP" };
+  }
 };

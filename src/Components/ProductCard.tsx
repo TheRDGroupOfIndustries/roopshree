@@ -191,9 +191,10 @@ interface ProductCardProps {
   id: string;
   name: string;
   description: string;
-  price: string;
-  oldPrice?: string;
+  price: number;
+  oldPrice?: number;
   image: string;
+  refreshWishlist?: () => void;
 }
 
 export default function ProductCard({
@@ -203,6 +204,7 @@ export default function ProductCard({
   price,
   oldPrice,
   image,
+  refreshWishlist,
 }: ProductCardProps) {
   const { user, refreshUser } = useAuth();
   const [isInWishlist, setIsInWishlist] = useState(false);
@@ -237,6 +239,7 @@ export default function ProductCard({
         setIsInWishlist(false);
         await removeFromWishlist(id);
         toast.success("Removed from wishlist");
+        if (refreshWishlist) refreshWishlist();
       } else {
         setIsInWishlist(true);
         await addToWishlist(id);
@@ -289,6 +292,7 @@ export default function ProductCard({
       setIsInCart(false); // instant UI feedback
       await removeCartItem(cartItem.id);
       toast.success("Removed from cart");
+    
       refreshUser(); // background refresh
     } catch (err) {
       console.error(err);
@@ -315,7 +319,7 @@ export default function ProductCard({
             disabled={loadingWishlist}
           >
             {loadingWishlist ? (
-              <SmallLoadingSpinner  />
+              <SmallLoadingSpinner />
             ) : (
               <BiHeart className="w-4 h-4" />
             )}
@@ -355,11 +359,11 @@ export default function ProductCard({
           <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-[var(--color-brand)]">
-                {price}
+                ₹{price}
               </span>
               {oldPrice && (
                 <span className="text-xs text-gray-400 line-through">
-                  {oldPrice}
+                  ₹{oldPrice}
                 </span>
               )}
             </div>

@@ -71,7 +71,7 @@ const PersonalInfoPage: React.FC = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative w-28 h-28">
             <Image
-              src={"https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+               src={"https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?semt=ais_hybrid&amp;w=740&amp;q=80"}
               fill
               alt="Profile"
               className="w-28 h-28 rounded-full object-cover border-4 border-gray-200"

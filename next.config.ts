@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
       "thumbs.dreamstime.com",
       "images.unsplash.com",
       "plus.unsplash.com",
-      "res.cloudinary.com"
+      "res.cloudinary.com",
+      "www.pngplay.com",
+      "plus.unsplash.com"
     ],
     formats: ["image/avif", "image/webp"], 
   },

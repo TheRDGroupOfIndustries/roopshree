@@ -466,44 +466,54 @@ const SupportHelps: SupportHelp[] = [
       </Section>
 
       {/* permium section */}
-      <Section >
-        <div className="bg-gradient-to-br from-purple-400 to-purple-500 p-6 md:p-8 rounded-2xl shadow-lg w-full">
-  {/* Header */}
-  <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-0 mb-6">
-    <div className="flex-1">
-      <h1 className="text-2xl md:text-3xl font-bold mb-1">Premium Membership</h1>
-      <p className="text-sm md:text-base opacity-90">Get exclusive benefits and offers</p>
+      <Section>
+  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 md:p-10 rounded-3xl shadow-xl border border-gray-100 w-full">
+    {/* Header */}
+    <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5 mb-8">
+      <div>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+          Premium Membership
+        </h1>
+        <p className="text-gray-500 text-sm md:text-base">
+          Unlock exclusive benefits and special rewards
+        </p>
+      </div>
+
+      <div className="relative bg-white p-4 md:p-5 rounded-full shadow-lg">
+        <span className="absolute inset-0 bg-gradient-to-tr from-purple-400 via-pink-400 to-yellow-400 opacity-20 rounded-full blur-md"></span>
+        <ShoppingCart className="w-7 h-7 text-purple-600 relative z-10" />
+      </div>
     </div>
-    <span className="bg-pink-400 rounded-full p-4 md:p-5 flex items-center justify-center shadow-md">
-      <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 "/>
-    </span>
+
+    {/* Benefits List */}
+    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      {[
+        "Free express delivery on all orders",
+        "Early access to sales & new launches",
+        "Double reward points on every purchase",
+        "Priority customer support 24/7",
+      ].map((benefit, index) => (
+        <li
+          key={index}
+          className="flex items-center gap-3 bg-white/60 backdrop-blur-md rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-gray-100"
+        >
+          <div className="bg-green-100 p-1.5 rounded-full">
+            <Check className="w-4 h-4 text-green-600" />
+          </div>
+          <span className="text-gray-700 font-medium">{benefit}</span>
+        </li>
+      ))}
+    </ul>
+
+    {/* Upgrade Button */}
+    <Link href="/profile/upgrade">
+      <button className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 active:scale-95">
+        Upgrade Now ✨
+      </button>
+    </Link>
   </div>
+</Section>
 
-  {/* Benefits List */}
-  <ul className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 mb-6 text-sm md:text-base font-medium">
-    <li className="flex items-center gap-2">
-      <Check className="w-4 h-4 text-green-300"/> Free delivery
-    </li>
-    <li className="flex items-center gap-2">
-      <Check className="w-4 h-4 text-green-300"/> Early access
-    </li>
-    <li className="flex items-center gap-2">
-      <Check className="w-4 h-4 text-green-300"/> Extra rewards
-    </li>
-    <li className="flex items-center gap-2">
-      <Check className="w-4 h-4 text-green-300"/> Priority support
-    </li>
-  </ul>
-
-  {/* Upgrade Button */}
-  <Link href={"/profile/upgrade"}>
-  <button className="w-full flex items-center justify-center bg-amber-500 hover:bg-amber-600 transition-colors text-white font-semibold py-3 px-6 rounded-3xl shadow-md active:scale-95">
-    Upgrade Now
-  </button>
-  </Link>
-</div>
-
-      </Section>
 
       {/* Recent Orders */}
       <Section title="Recent Orders">

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, ArrowLeft, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 const RateAppPage: React.FC = () => {
   const [rating, setRating] = useState(0);
@@ -12,56 +13,117 @@ const RateAppPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`You rated ${rating} stars.\nReview: ${review}`);
+    if (rating === 0) {
+      alert("Please select a star rating before submitting.");
+      return;
+    }
+    alert(`Thank you for your feedback! You rated ${rating} stars.\nReview: ${review}`);
     setRating(0);
     setReview("");
+    // In a real app, you would send this data to an API here.
+  };
+
+  // --- Header Component ---
+  const Header = () => (
+    <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
+      <button
+        className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
+        onClick={() => window.history.back()}
+        aria-label="Go back"
+      >
+        <ArrowLeft size={24} />
+      </button>
+      <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center text-gray-800">
+        Rate & Review App
+      </h2>
+      <Link href="/my-cart" aria-label="View shopping cart">
+        <button className="relative text-gray-700 hover:text-sky-600 p-2 hover:bg-sky-50 rounded-full transition-colors">
+          <ShoppingCart size={24} />
+          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+            2
+          </span>
+        </button>
+      </Link>
+    </header>
+  );
+
+  // Helper text based on rating
+  const getRatingText = (currentRating: number) => {
+    switch (currentRating) {
+      case 1:
+        return "Terrible 😔";
+      case 2:
+        return "Poor 🙁";
+      case 3:
+        return "Average 🙂";
+      case 4:
+        return "Good 👍";
+      case 5:
+        return "Excellent! ⭐";
+      default:
+        return "Tap a star to rate";
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center px-4 py-10">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-2xl p-6 md:p-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Star className="w-6 h-6 text-yellow-500" />
-          <h1 className="text-xl font-semibold text-gray-800">Rate Our App</h1>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* 1. Sticky Header (Moved outside the content wrapper) */}
+      <Header />
 
-        <p className="text-gray-600 text-sm mb-6">
-          Your feedback helps us improve. Please rate your experience with our app.
-        </p>
+      {/* 2. Main Content Wrapper */}
+      <div className="px-4 sm:px-6 py-8 flex justify-center">
+        <div className="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-8 md:p-10 text-center">
+          
+          <h1 className="text-3xl font-extrabold text-gray-800 mb-2">
+            How was your experience?
+          </h1>
+          <p className="text-gray-600 text-lg mb-8 border-b pb-6 border-gray-100">
+            Your honest feedback helps us improve.
+          </p>
 
-        {/* Star Rating */}
-        <div className="flex gap-2 mb-6">
-          {stars.map((star) => (
-            <Star
-              key={star}
-              className={`w-10 h-10 cursor-pointer transition-colors ${
-                (hover || rating) >= star ? "text-yellow-500" : "text-gray-300"
-              }`}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Star Rating */}
+            <div className="flex justify-center gap-2 mb-4">
+              {stars.map((star) => (
+                <Star
+                  key={star}
+                  className={`w-12 h-12 cursor-pointer transition-all duration-200 
+                    ${(hover || rating) >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-300 fill-gray-100"}
+                    hover:scale-110 active:scale-90`}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHover(star)}
+                  onMouseLeave={() => setHover(0)}
+                />
+              ))}
+            </div>
+            
+            <p className={`text-xl font-semibold transition-colors ${rating > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
+                {getRatingText(rating)}
+            </p>
+
+            {/* Review Textarea */}
+            <textarea
+              placeholder="Tell us what you loved or how we can improve (optional)..."
+              className="w-full border border-gray-200 rounded-xl p-4 resize-none focus:outline-none focus:ring-4 focus:ring-sky-100 focus:border-sky-400 text-gray-700 placeholder-gray-400 transition-all"
+              rows={5}
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
             />
-          ))}
+
+            <button
+              type="submit"
+              disabled={rating === 0}
+              className={`w-full py-3 rounded-xl font-bold text-lg transition-all shadow-md ${
+                rating === 0
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-orange-500 text-white hover:bg-orange-600 active:scale-[0.99] shadow-orange-300/50"
+              }`}
+            >
+              {rating === 0 ? "Select a Rating to Submit" : "Submit Feedback"}
+            </button>
+          </form>
+          
         </div>
-
-        {/* Review Textarea */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <textarea
-            placeholder="Write your review (optional)..."
-            className="w-full border border-gray-200 rounded-xl p-3 resize-none focus:outline-none focus:ring-2 focus:ring-orange-300 text-gray-700"
-            rows={4}
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            className="w-full py-3 rounded-xl bg-orange-600 text-white font-semibold hover:bg-orange-700 transition-colors active:scale-95"
-          >
-            Submit Feedback
-          </button>
-        </form>
       </div>
     </div>
   );

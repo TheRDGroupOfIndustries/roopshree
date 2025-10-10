@@ -79,7 +79,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
   const isEditing = !!initialAddress;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-aut bg-black bg-opacity-100 flex items-center justify-center p-4">
       <div className="relative w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden animate-slide-in">
         
         {/* Modal Header */}
@@ -268,7 +268,7 @@ const AddressesPage: React.FC = () => {
             </h1>
             <button
               onClick={() => handleOpenModal()}
-              className="flex items-center bg-sky-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-sky-700 transition-colors shadow-md"
+              className="flex items-center bg-sky-600 text-white py-2 px-3 rounded-full text-sm font-medium hover:bg-sky-700 transition-colors shadow-md"
             >
               <Plus size={18} className="mr-1" /> Add New
             </button>
@@ -317,7 +317,7 @@ const AddressesPage: React.FC = () => {
               <div className="col-span-full text-center py-10 text-gray-500 border-dashed border-2 border-gray-300 rounded-lg">
                 <MapPin className="mx-auto mb-3 text-gray-400" size={30} />
                 <p className="font-medium">No saved addresses yet</p>
-                <p className="text-sm mt-1">Click "Add New" to save your first address.</p>
+                <p className="text-sm mt-1">Click Add New to save your first address.</p>
               </div>
             )}
           </div>

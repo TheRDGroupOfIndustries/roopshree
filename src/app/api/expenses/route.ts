@@ -1,5 +1,6 @@
 import { authenticate } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidatePath(req.url);
+
     return NextResponse.json(expense);
   } catch (err: any) {
     console.error("Error creating expense:", err);
@@ -47,7 +50,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const category = searchParams.get("category") || "ALL";
+    const skip = (page - 1) * limit;
+
     const expenses = await prisma.expense.findMany({
+      where: {
+        ...(category !== "ALL" ? { category: category as any } : {}),
+      },
       orderBy: { date: "desc" },
       select: {
         id: true,
@@ -55,23 +67,19 @@ export async function GET(req: NextRequest) {
         category: true,
         amount: true,
         date: true,
-        createdBy: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
+      skip,
+      take: limit,
     });
-    const expensesWithUsers = await Promise.all(
-      expenses.map(async (expense) => {
-        const createdByUser = await prisma.user.findUnique({
-          where: { id: expense.createdBy },
-          select: { id: true, name: true, email: true },
-        });
-        return {
-          ...expense,
-          createdBy: createdByUser,
-        };
-      })
-    );
 
-    return NextResponse.json(expensesWithUsers);
+    return NextResponse.json(expenses);
 
     // return NextResponse.json(expenses);
   } catch (err: any) {

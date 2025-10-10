@@ -1,32 +1,10 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
-import {
-  DollarSign,
-  ListOrdered,
-  Calendar,
-  Filter,
-  PlusCircle,
-  LayoutGrid,
-  Menu,
-  Package,
-  Bell,
-  Edit3,
-  Trash2,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Filter, PlusCircle, Edit3, Trash2, Loader2 } from "lucide-react";
 import ExpenseAnalyticsChart from "./ExpenseAnalyticsChart";
 import ExpenseFormModal from "./ExpenseForm";
+import { getExpenseLenghtByCategory } from "@/lib/actions/expenseActions";
 
 // --- MOCK DATA ---
 
@@ -37,7 +15,7 @@ const MOCK_EXPENSE_LIST = [
     category: "OTHER",
     amount: 3400,
     date: "2025-10-09T14:15:26.867Z",
-    createdBy: {
+    user: {
       id: "cmgj1imnz0000f0u0tijde14o",
       name: "admin",
       email: "admin@ad.com",
@@ -49,7 +27,7 @@ const MOCK_EXPENSE_LIST = [
     category: "SALARY",
     amount: 22000,
     date: "2025-10-09T14:15:18.744Z",
-    createdBy: {
+    user: {
       id: "cmgj1imnz0000f0u0tijde14o",
       name: "admin",
       email: "admin@ad.com",
@@ -61,7 +39,7 @@ const MOCK_EXPENSE_LIST = [
     category: "MARKETING",
     amount: 4200,
     date: "2025-10-09T14:15:10.097Z",
-    createdBy: {
+    user: {
       id: "cmgj1imnz0000f0u0tijde14o",
       name: "admin",
       email: "admin@ad.com",
@@ -73,7 +51,7 @@ const MOCK_EXPENSE_LIST = [
     category: "LOGISTICS",
     amount: 4800,
     date: "2025-10-09T14:15:01.145Z",
-    createdBy: {
+    user: {
       id: "cmgj1imnz0000f0u0tijde14o",
       name: "admin",
       email: "admin@ad.com",
@@ -85,105 +63,11 @@ const MOCK_EXPENSE_LIST = [
     category: "INVENTORY",
     amount: 12200,
     date: "2025-10-09T14:14:48.050Z",
-    createdBy: {
+    user: {
       id: "cmgj1imnz0000f0u0tijde14o",
       name: "admin",
       email: "admin@ad.com",
     },
-  },
-  {
-    id: "cmgji1axy0009nnrwgtkpq5ym",
-    title: "Office Maintenance",
-    category: "OTHER",
-    amount: 950,
-    date: "2025-10-09T14:14:38.758Z",
-    createdBy: {
-      id: "cmgj1imnz0000f0u0tijde14o",
-      name: "admin",
-      email: "admin@ad.com",
-    },
-  },
-  {
-    id: "cmgji12kl0007nnrww6qry7qi",
-    title: "Staff Salary - September",
-    category: "SALARY",
-    amount: 56000,
-    date: "2025-10-09T14:14:27.441Z",
-    createdBy: {
-      id: "cmgj1imnz0000f0u0tijde14o",
-      name: "admin",
-      email: "admin@ad.com",
-    },
-  },
-  {
-    id: "cmgji0vnm0005nnrwjpp35omz",
-    title: "Instagram Ad Campaign",
-    category: "MARKETING",
-    amount: 3500,
-    date: "2025-10-09T14:14:18.945Z",
-    createdBy: {
-      id: "cmgj1imnz0000f0u0tijde14o",
-      name: "admin",
-      email: "admin@ad.com",
-    },
-  },
-  {
-    id: "cmgji0pyu0003nnrwkda4lrj8",
-    title: "Delivery Vehicle Fuel",
-    category: "LOGISTICS",
-    amount: 1800,
-    date: "2025-10-09T14:14:11.191Z",
-    createdBy: {
-      id: "cmgj1imnz0000f0u0tijde14o",
-      name: "admin",
-      email: "admin@ad.com",
-    },
-  },
-  {
-    id: "cmgji0j2q0001nnrwxia4s3d7",
-    title: "Product Packaging Materials",
-    category: "INVENTORY",
-    amount: 2300,
-    date: "2025-10-09T14:14:02.637Z",
-    createdBy: {
-      id: "cmgj1imnz0000f0u0tijde14o",
-      name: "admin",
-      email: "admin@ad.com",
-    },
-  },
-  // Add more mock data for pagination testing
-  ...Array.from({ length: 15 }).map((_, i) => ({
-    id: `cmgji${i}mockid`,
-    title: `Mock Expense ${i + 1}`,
-    category: ["OTHER", "SALARY", "MARKETING", "LOGISTICS", "INVENTORY"][i % 5],
-    amount: Math.floor(Math.random() * 5000 + 1000),
-    date: `2025-09-${(i % 20) + 1}T10:00:00.000Z`,
-    createdBy: { id: "mockuser", name: "Mock User", email: "mock@user.com" },
-  })),
-];
-
-const MOCK_ANALYTICS = [
-  {
-    month: "2025-10",
-    total: 111150,
-    category: [
-      { category: "OTHER", total: 4350 },
-      { category: "SALARY", total: 78000 },
-      { category: "MARKETING", total: 7700 },
-      { category: "LOGISTICS", total: 6600 },
-      { category: "INVENTORY", total: 14500 },
-    ],
-  },
-  {
-    month: "2025-9",
-    total: 111150,
-    category: [
-      { category: "OTHER", total: 4350 },
-      { category: "SALARY", total: 78000 },
-      { category: "MARKETING", total: 7700 },
-      { category: "LOGISTICS", total: 6600 },
-      { category: "INVENTORY", total: 14500 },
-    ],
   },
 ];
 
@@ -195,8 +79,6 @@ const ALL_CATEGORIES = [
   "LOGISTICS",
   "OTHER",
 ];
-
-// --- UTILITY FUNCTIONS ---
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-IN", {
@@ -233,9 +115,15 @@ const Expenses = () => {
   const [expenses, setExpenses] = useState(MOCK_EXPENSE_LIST);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterCategory, setFilterCategory] = useState("ALL");
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentExpenseToEdit, setCurrentExpenseToEdit] = useState<any>(null); // null for create mode
+  const [currentExpenseToEdit, setCurrentExpenseToEdit] = useState<any>(null);
+
+  const [fetching, setFetching] = useState(false);
+  const [deleting, setDeleting] = useState<any>(null);
+  const [totalExpenseCount, setTotalExpenseCount] = useState(0);
+
+  const ITEMS_PER_PAGE = 3;
 
   const handleOpenCreate = () => {
     setCurrentExpenseToEdit(null);
@@ -247,44 +135,66 @@ const Expenses = () => {
     setIsModalOpen(true);
   };
 
-  //   const handleSubmitExpense = (data) => {
-  //     console.log("Submitting Expense Data:", data);
-  //     alert(
-  //       `Action: ${data.id ? "UPDATE" : "CREATE"}\nTitle: ${
-  //         data.title
-  //       }\nAmount: ${data.amount}\nCategory: ${data.category}`
-  //     );
-  //     // Here you would call your API endpoint
-  //     setIsModalOpen(false);
-  //   };
+  const fetchExpensesLength = async () => {
+    try {
+      const res = await getExpenseLenghtByCategory(filterCategory);
+      console.log(res);
+      setTotalExpenseCount(res);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    }
+  };
 
-  const ITEMS_PER_PAGE = 10; // Keeping it low for better mock data demonstration
+  const fetchExpenses = async () => {
+    setFetching(true);
+    try {
+      const res = await fetch(
+        `/api/expenses?page=${currentPage}&limit=${ITEMS_PER_PAGE}&category=${filterCategory}`
+      );
+      const data = await res.json();
+      console.log("Fetched Expenses:", data);
+      setExpenses(data);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    } finally {
+      setFetching(false);
+    }
+  };
 
-  // --- Filtered and Paginated Logic ---
+  useEffect(() => {
+    fetchExpenses();
+  }, [currentPage, filterCategory]);
 
-  const filteredExpenses = useMemo(() => {
-    return expenses.filter((expense) => {
-      const matchesCategory =
-        filterCategory === "ALL" || expense.category === filterCategory;
-      const matchesSearch = expense.title
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [expenses, filterCategory, searchTerm]);
+  useEffect(() => {
+    fetchExpensesLength();
+  }, [filterCategory]);
 
-  const totalPages = Math.ceil(filteredExpenses.length / ITEMS_PER_PAGE);
+  const totalPages = totalExpenseCount
+    ? Math.ceil(totalExpenseCount / ITEMS_PER_PAGE)
+    : 0;
 
-  const currentExpenses = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredExpenses.slice(startIndex, endIndex);
-  }, [filteredExpenses, currentPage, ITEMS_PER_PAGE]);
-
-  // --- Handlers (Mock) ---
-
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     console.log("Delete Expense", id);
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/expenses/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.ok) {
+        setExpenses((prevExpenses) =>
+          prevExpenses.filter((expense) => expense.id !== id)
+        );
+      } else {
+        console.error("Error deleting expense:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const handlePageChange = (page: number) => {
@@ -293,7 +203,13 @@ const Expenses = () => {
     }
   };
 
-  // --- Rendering ---
+  const handleUpdateExpense = (id: string, data: any) => {
+    setExpenses((prevExpenses) =>
+      prevExpenses.map((expense) =>
+        expense.id === id ? { ...expense, ...data } : expense
+      )
+    );
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -314,10 +230,15 @@ const Expenses = () => {
       </div>
 
       {/* Expense List Table */}
-      <div className="bg-white shadow-xl rounded-xl overflow-hidden p-6">
+      <div className="bg-white shadow-xl rounded-xl overflow-hidden p-6 relative">
+        {fetching && (
+          <div className="w-full h-full bg-neutral-300/50 absolute inset-0 flex items-center justify-center backdrop-blur-sm">
+            <Loader2 className="w-10 h-10 animate-spin" />
+          </div>
+        )}
         {/* Filters and Search */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="relative w-full sm:w-1/3">
+          {/* <div className="relative w-full sm:w-1/3">
             <input
               type="text"
               placeholder="Search by title..."
@@ -325,7 +246,8 @@ const Expenses = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 transition"
             />
-          </div>
+          </div> */}
+          <h2 className="text-xl font-bold ">All Expenses</h2>
           <div className="flex items-center space-x-3">
             <label
               htmlFor="category-filter"
@@ -394,8 +316,8 @@ const Expenses = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentExpenses.length > 0 ? (
-                currentExpenses.map((expense) => (
+              {expenses.length > 0 ? (
+                expenses.map((expense) => (
                   <tr
                     key={expense.id}
                     className="hover:bg-gray-50 transition duration-150"
@@ -415,7 +337,7 @@ const Expenses = () => {
                       {formatShortDate(expense.date)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 hidden md:table-cell">
-                      {expense.createdBy.name}
+                      {expense.user.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                       <div className="flex items-center justify-center space-x-2">
@@ -431,7 +353,11 @@ const Expenses = () => {
                           onClick={() => handleDelete(expense.id)}
                           className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          {deleting && deleting === expense.id ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                     </td>
@@ -460,10 +386,9 @@ const Expenses = () => {
             </span>{" "}
             to{" "}
             <span className="font-medium">
-              {Math.min(currentPage * ITEMS_PER_PAGE, filteredExpenses.length)}
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalExpenseCount)}
             </span>{" "}
-            of <span className="font-medium">{filteredExpenses.length}</span>{" "}
-            results.
+            of <span className="font-medium">{totalExpenseCount}</span> results.
           </p>
           <div className="flex space-x-2">
             <button
@@ -486,8 +411,9 @@ const Expenses = () => {
 
       {isModalOpen && (
         <ExpenseFormModal
-          initialData={currentExpenseToEdit}
+          expenseId={currentExpenseToEdit}
           onClose={() => setIsModalOpen(false)}
+          onUpdate={(id, data) => handleUpdateExpense(id, data)}
         />
       )}
     </div>

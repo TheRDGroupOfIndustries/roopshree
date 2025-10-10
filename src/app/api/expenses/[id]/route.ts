@@ -1,5 +1,6 @@
 import { authenticate } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -27,6 +28,8 @@ export async function PUT(
         date: true,
       },
     });
+
+    revalidatePath(req.url);
 
     return NextResponse.json(expense);
   } catch (err: any) {

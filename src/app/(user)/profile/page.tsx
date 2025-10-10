@@ -130,7 +130,7 @@ export default function ProfilePage() {
       label: "Wishlist",
       bg: "bg-orange-50",
       iconColor: "text-orange-600",
-      link: "/Wishlist",
+      link: "/wishlist",
       count: 12,
     },
     {

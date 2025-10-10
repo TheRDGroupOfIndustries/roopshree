@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { X, Save, DollarSign, Tag, Text, Layers } from "lucide-react";
+import { X, Save, DollarSign, Tag, Text, Layers, Loader2 } from "lucide-react";
+import { getExpenseData } from "@/lib/actions/expenseActions";
 
 // Expense Category Enum equivalent
 const ExpenseCategories = [
@@ -22,20 +23,19 @@ interface ExpenseFormData {
 }
 
 interface ExpenseFormModalProps {
-  initialData?: {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    amount: number;
-  } | null;
+  expenseId?: string | null;
   onClose: () => void;
+  onUpdate?: (id: string, data: ExpenseFormData) => void;
 }
 
 /**
  * Reusable modal for creating or updating an expense using React Hook Form.
  */
-const ExpenseFormModal = ({ initialData, onClose }: ExpenseFormModalProps) => {
+const ExpenseFormModal = ({
+  expenseId,
+  onClose,
+  onUpdate,
+}: ExpenseFormModalProps) => {
   const {
     register,
     handleSubmit,
@@ -47,39 +47,76 @@ const ExpenseFormModal = ({ initialData, onClose }: ExpenseFormModalProps) => {
     defaultValues: {
       title: "",
       description: "",
-      category: ExpenseCategories[0],
+      category: "",
       amount: 0,
     },
     mode: "onBlur",
   });
 
-  const isEditing = initialData && initialData.id;
-  const modalTitle = isEditing
-    ? `Edit Expense: ${initialData.title}`
-    : "Create New Expense";
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
 
-  // Effect to populate form when initialData changes (for editing)
-  useEffect(() => {
-    if (initialData) {
+  const fetchExpenseDetails = async (id: string) => {
+    setFetching(true);
+    try {
+      const res = await getExpenseData(id);
+      if (!res) return;
+      console.log("Expense details: ", res);
       reset({
-        title: initialData.title || "",
-        description: initialData.description || "",
-        category: initialData.category || ExpenseCategories[0],
-        amount: initialData.amount || 0,
+        title: res.title || "",
+        description: res.description || "",
+        category: res.category || "",
+        amount: res.amount || 0,
       });
-    } else if (!isEditing) {
-      reset({
-        title: "",
-        description: "",
-        category: ExpenseCategories[0],
-        amount: 0,
-      });
+    } catch (error) {
+      console.error("Error fetching expense details:", error);
+    } finally {
+      setFetching(false);
     }
-  }, [initialData, isEditing, reset]);
+  };
 
-  const handleFormSubmit = (data: ExpenseFormData) => {
-    const dataToSubmit = isEditing ? { id: initialData.id, ...data } : data;
-    console.log(dataToSubmit);
+  useEffect(() => {
+    if (expenseId) {
+      fetchExpenseDetails(expenseId);
+    }
+  }, [expenseId]);
+
+  const isEditing = expenseId;
+  const modalTitle = isEditing ? `Edit Expense` : "Create New Expense";
+
+  const handleFormSubmit = async (data: ExpenseFormData) => {
+    const dataToSubmit = isEditing ? { id: expenseId, ...data } : data;
+
+    setLoading(true);
+    try {
+      let res;
+      if (isEditing) {
+        res = await fetch(`/api/expenses/${expenseId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
+        });
+        if (onUpdate) onUpdate(expenseId, dataToSubmit);
+      } else {
+        console.log(dataToSubmit);
+        res = await fetch("/api/expenses", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
+        });
+      }
+
+      console.log("Expense response: ", await res.json());
+      onClose();
+    } catch (error) {
+      console.error("Error submitting expense data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- Form Field Helper Component ---
@@ -173,6 +210,7 @@ const ExpenseFormModal = ({ initialData, onClose }: ExpenseFormModalProps) => {
                   required: "Category is required",
                 })}
               >
+                <option value="">Select a category (required)</option>
                 {ExpenseCategories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -235,16 +273,25 @@ const ExpenseFormModal = ({ initialData, onClose }: ExpenseFormModalProps) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-150"
+              className="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-150 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex items-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transition duration-150"
+              disabled={loading || fetching}
+              className="flex items-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
-              <Save className="w-5 h-5 mr-2" />
-              {isEditing ? "Update Expense" : "Create Expense"}
+              {loading || fetching ? (
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-5 h-5 mr-2" />
+              )}
+              {fetching
+                ? "Loading..."
+                : isEditing
+                ? "Update Expense"
+                : "Create Expense"}
             </button>
           </div>
         </form>

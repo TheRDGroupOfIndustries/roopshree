@@ -15,7 +15,7 @@ export async function authenticateAdmin() {
       token,
       process.env.JWT_SECRET!
     ) as unknown as DecodedUser;
-    // console.log("decoded", decoded);
+    console.log("decoded", user);
     if (!user || user.role !== "ADMIN") {
       throw new Error("Unauthorized access: Invalid token or not an admin");
     }

@@ -302,6 +302,9 @@ import {
   clearCart as clearCartService,
 } from "@/services/cartService";
 import LoadingSpinner from "@/Components/LoadingSpinner";
+import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
+import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthProvider";
 
 interface Product {
   id: string;
@@ -327,6 +330,8 @@ const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { user, refreshUser } = useAuth();
+const [loadingWishlist, setLoadingWishlist] = useState<string | null>(null);
   const trendingProducts = [
     { id: 1, name: "Moisturizer", price: "₹799", image: "/images/image.png" },
     { id: 2, name: "Lipstick", price: "₹499", image: "/images/image.png" },
@@ -351,21 +356,25 @@ const Cart: React.FC = () => {
   }, []);
 
   // Update quantity
-  const updateQuantity = async (id: string, delta: number) => {
-    try {
-      const item = cartItems.find((i) => i.id === id);
-      if (!item) return;
-      const newQuantity = Math.max(1, item.quantity + delta);
-      await updateCartItem(id, newQuantity);
-      setCartItems(
-        cartItems.map((it) =>
-          it.id === id ? { ...it, quantity: newQuantity } : it
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update quantity:", error);
-    }
-  };
+const updateQuantity = async (id: string, delta: number) => {
+  const item = cartItems.find((i) => i.id === id);
+  if (!item) return;
+
+  const newQuantity = Math.max(1, item.quantity + delta);
+  setCartItems((prev) =>
+    prev.map((it) =>
+      it.id === id ? { ...it, quantity: newQuantity } : it
+    )
+  ); 
+
+  try {
+    await updateCartItem(id, newQuantity);
+  } catch (error) {
+    console.error("Failed to update quantity:", error);
+    fetchCart(); // fallback refresh if failed
+  }
+};
+
 
   // Remove item
   const handleRemoveItem = async (id: string) => {
@@ -387,6 +396,37 @@ const Cart: React.FC = () => {
       console.error("Failed to clear cart:", error);
     }
   };
+
+const handleMoveToWishlist = async (itemId: string) => {
+  const item = cartItems.find((i) => i.id === itemId);
+  if (!item) return;
+  if (!user) return toast.error("Please login to manage wishlist");
+
+  try {
+    setLoadingWishlist(itemId);
+
+    const wishlistExists = user.wishlist?.some(
+      (w: any) => w.productId === item.product.id
+    );
+
+    if (wishlistExists) {
+      await removeFromWishlist(item.product.id);
+      toast.success("Removed from wishlist");
+    } else {
+      await addToWishlist(item.product.id);
+      toast.success("Added to wishlist");
+    }
+
+    refreshUser(); 
+  } catch (err) {
+    console.error(err);
+    toast.error("Something went wrong");
+  } finally {
+    setLoadingWishlist(null);
+  }
+};
+
+
 
   // Calculations
   const subtotal = cartItems.reduce(
@@ -456,6 +496,7 @@ const Cart: React.FC = () => {
                     quantity={item.quantity}
                     onRemove={handleRemoveItem}
                     onUpdateQuantity={updateQuantity}
+                    onMoveToWishlist={handleMoveToWishlist}
                   />
                 ))}
               </div>

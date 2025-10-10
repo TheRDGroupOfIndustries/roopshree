@@ -98,10 +98,12 @@ interface OrderCardProps {
 }
 
 export default function ProfilePage() {
-  const [cartCount] = useState<number>(3);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const { logout, user } = useAuth();
   const router = useRouter();
+
+   const cartCount = user?.cart?.length || 0;
+  
   const handleLogout = () => {
     logout();
     router.push("/auth/signin");

@@ -139,7 +139,6 @@ import Image from "next/image";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useState, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import LoadingSpinner from "./LoadingSpinner";
 import SmallLoadingSpinner from "./SmallLoadingSpinner";
 
 interface ProductImageCarouselProps {

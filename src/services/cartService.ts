@@ -14,12 +14,16 @@ export const addToCart = async (
 //  Get user's cart
 export const getCart = async () => {
   const res = await api.get("/cart");
+  console.log("regetCart:",res.data);
+  
   return res.data;
 };
 
 //  Update cart item quantity
 export const updateCartItem = async (itemId: string, quantity: number) => {
   const res = await api.patch(`/cart/${itemId}`, { quantity });
+  console.log("res: ",res.data);
+  
   return res.data;
 };
 

@@ -61,17 +61,22 @@ export default function ProductDetails() {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
-  useEffect(() => {
- if (!user || !product) return; 
+  
 
-  // Check if product exists in wishlist by productId
-  const wishlistExists = user.wishlist?.some((item: any) => item.productId === product.id);
+  useEffect(() => {
+  if (!user || !product) return;
+
+  const wishlistExists = user.wishlist?.some(
+    (item: any) => item.productId === product.id
+  );
   setIsInWishlist(!!wishlistExists);
 
-  // Check if product exists in cart by productId
-  const cartExists = user.cart?.items?.some((item: any) => item.productId === product.id);
+  const cartExists = user.cart?.items?.some(
+    (item: any) => item.productId === product.id
+  );
   setIsInCart(!!cartExists);
-}, [user, id]);
+}, [user, product, id]); 
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -100,27 +105,33 @@ export default function ProductDetails() {
     }
   };
 
-  const handleWishlistToggle = async () => {
-    if (!user) return toast.error("Please login to manage wishlist");
-    try {
-      setLoadingWishlist(true);
-      if (isInWishlist) {
-        await removeFromWishlist(product?.id);
-        setIsInWishlist(false);
-        toast.success("Removed from wishlist");
-      } else {
-        await addToWishlist(product?.id);
-        setIsInWishlist(true);
-        toast.success("Added to wishlist");
+   const handleWishlistToggle = async (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (!user || !product) return; 
+  
+      try {
+        setLoadingWishlist(true);
+  
+        if (isInWishlist) {
+          setIsInWishlist(false);
+          await removeFromWishlist(product?.id);
+          toast.success("Removed from wishlist");
+        } else {
+          setIsInWishlist(true);
+          await addToWishlist(product?.id);
+          toast.success("Added to wishlist");
+        }
+  
+        refreshUser(); 
+      } catch (err) {
+        console.error(err);
+        setIsInWishlist((prev) => !prev);
+        toast.error("Something went wrong");
+      } finally {
+        setLoadingWishlist(false);
       }
-      refreshUser();
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    } finally {
-      setLoadingWishlist(false);
-    }
-  };
+    };
+
 
   const shades = [
     { id: 1, color: "bg-yellow-300" },

@@ -4,6 +4,7 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { X, Plus } from "lucide-react";
 import Image from "next/image";
+import CategoryDropdown from "@/Components/CategoryDropdown";
 
 interface PreviewImage {
   id: string;
@@ -27,7 +28,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   const [oldPrice, setOldPrice] = useState<number>();
   const [exclusive, setExclusive] = useState<number>();
   const [loading, setLoading] = useState(false);
-
+  const [category, setCategory] = useState<string>("");
   const [images, setImages] = useState<PreviewImage[]>([]);
   const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
@@ -38,7 +39,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setTimeout(() => setMessage(null), 5000);
   };
 
-  // Fetch product data for update mode
+  // Populate fields for update
   useEffect(() => {
     if (!isUpdateMode || !product) return;
 
@@ -48,8 +49,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setPrice(product.price || 0);
     setOldPrice(product.oldPrice || 0);
     setExclusive(product.exclusive || undefined);
+    setCategory(product.category || "");
 
-    if (product.images && product.images.length > 0) {
+    if (product.images?.length) {
       const serverImages = product.images.map((img: any) => ({
         id: crypto.randomUUID(),
         url: typeof img === "string" ? img : img.url,
@@ -62,44 +64,36 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   // Cleanup object URLs
   useEffect(() => {
     return () => {
-      images.forEach((img) => {
-        if (img.file) URL.revokeObjectURL(img.url);
-      });
+      images.forEach(img => img.file && URL.revokeObjectURL(img.url));
     };
   }, [images]);
 
-  // Handle image selection
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files);
-    const newPreviews: PreviewImage[] = filesArray.map((file) => ({
+    const newPreviews: PreviewImage[] = filesArray.map(file => ({
       id: crypto.randomUUID(),
       url: URL.createObjectURL(file),
       file,
     }));
-
-    // ✅ Update images array directly so validation works
-    setImages((prev) => [...prev, ...newPreviews]);
+    setImages(prev => [...prev, ...newPreviews]);
   };
 
-  // Remove selected image
   const handleRemoveImage = (imgId: string) => {
-    setImages((prev) => {
-      const imgToRemove = prev.find((i) => i.id === imgId);
+    setImages(prev => {
+      const imgToRemove = prev.find(i => i.id === imgId);
       if (imgToRemove?.file) URL.revokeObjectURL(imgToRemove.url);
-      return prev.filter((i) => i.id !== imgId);
+      return prev.filter(i => i.id !== imgId);
     });
   };
 
-  // Upload images
   const uploadImages = async (productId: string): Promise<string[]> => {
     const uploadedUrls: string[] = [];
-    const newFiles = images.filter((i) => i.file).map((i) => i.file as File);
-
-    if (newFiles.length === 0) return uploadedUrls;
+    const newFiles = images.filter(i => i.file).map(i => i.file as File);
+    if (!newFiles.length) return uploadedUrls;
 
     const formData = new FormData();
-    newFiles.forEach((file) => formData.append("files", file));
+    newFiles.forEach(file => formData.append("files", file));
     formData.append("type", "product");
     formData.append("productId", productId);
 
@@ -110,21 +104,19 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     });
 
     const data = await res.json();
-    if (res.ok && data.urls && data.urls.length > 0) {
-      uploadedUrls.push(...data.urls);
-    } else if (res.ok && data.url) {
-      uploadedUrls.push(data.url);
+    if (res.ok && (data.urls?.length || data.url)) {
+      if (data.urls?.length) uploadedUrls.push(...data.urls);
+      else if (data.url) uploadedUrls.push(data.url);
     } else {
-      console.error("Upload failed:", data);
       throw new Error(data.error || "Image upload failed");
     }
 
     return uploadedUrls;
   };
 
-  // CREATE
+  // CREATE product
   const handleCreate = async () => {
-    if (!title || !description || !stock || !price || !oldPrice || images.length === 0) {
+    if (!title || !description || !stock || !price || !oldPrice || !category || images.length === 0) {
       showMessage("Please fill all required fields and upload at least one image", true);
       return;
     }
@@ -138,18 +130,18 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         body: JSON.stringify({
           title,
           description,
-          images: [],
+          images: [], // Upload separately
           details: "Product details placeholder",
           insideBox: ["Item1", "Item2"],
           initialStock: stock,
-          price: price,
-          oldPrice: oldPrice,
+          price,
+          oldPrice,
           exclusive: exclusive || undefined,
+          category,
         }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         showMessage(data.error || "Product creation failed", true);
         setLoading(false);
@@ -163,9 +155,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      // Upload images
       const uploadedImageUrls = await uploadImages(productId);
-      if (uploadedImageUrls.length === 0) {
+      if (!uploadedImageUrls.length) {
         showMessage("Image upload failed. Please try again.", true);
         setLoading(false);
         return;
@@ -181,27 +172,29 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     }
   };
 
-  // UPDATE
+  // UPDATE product
   const handleUpdate = async () => {
-    if (!title || !description || !stock || !price || !oldPrice || !id) {
+    if (!title || !description || !stock || !price || !oldPrice || !id || !category) {
       showMessage("Fill all required fields", true);
       return;
     }
 
     setLoading(true);
     try {
-      const existingImages = images.filter((i) => i.serverId).map((i) => i.serverId!);
-      const newImages = images.filter((i) => i.file);
+      const existingImages = images.filter(i => i.serverId).map(i => i.serverId!);
+      const newImages = images.filter(i => i.file);
 
-      const payload = { 
-        title, 
-        description, 
-        stock, 
+      const payload = {
+        title,
+        description,
+        stock,
         images: existingImages,
         price,
         oldPrice,
         exclusive,
+        category,
       };
+
       const res = await fetch(`/api/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -223,14 +216,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      if (newImages.length > 0) {
-        const uploadedImageUrls = await uploadImages(productId);
-        if (uploadedImageUrls.length === 0) {
-          showMessage("Image upload failed. Please try again.", true);
-          setLoading(false);
-          return;
-        }
-      }
+      if (newImages.length > 0) await uploadImages(productId);
 
       showMessage("Product updated successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);
@@ -242,13 +228,11 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     }
   };
 
-  // Main submit
   const handleSubmit = async () => {
     if (isUpdateMode) await handleUpdate();
     else await handleCreate();
   };
 
-  // UI
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100 space-y-6">
@@ -256,18 +240,14 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           {isUpdateMode ? `Update Product: ${title}` : "Create Product"}
         </h2>
 
-        {/* Message */}
         {message && (
           <div
-            className={`p-4 rounded-lg ${
-              message.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
-            }`}
+            className={`p-4 rounded-lg ${message.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
           >
             {message.text}
           </div>
         )}
 
-        {/* Title */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">
             Title <span className="text-red-500">*</span>
@@ -275,21 +255,20 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             placeholder="Enter product title"
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
             disabled={loading}
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             placeholder="Enter product description"
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
             rows={4}
@@ -360,13 +339,20 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           />
         </div>
 
+        {/* Category Dropdown */}
+        <CategoryDropdown
+          selectedCategory={category}
+          onCategoryChange={setCategory}
+          disabled={loading}
+        />
+
         {/* Images */}
         <div>
           <label className="block text-gray-700 font-medium mb-2">
             Images <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-4">
-            {images.map((imgObj) => (
+            {images.map(imgObj => (
               <div key={imgObj.id} className="relative w-32 h-32">
                 <div className="w-full h-full rounded-lg overflow-hidden border border-gray-200">
                   <Image src={imgObj.url} alt="Preview" fill style={{ objectFit: "cover" }} />

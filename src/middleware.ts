@@ -2,26 +2,24 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  //   const isLoggedIn = request.cookies.get("token")?.value;
+  const role = request.cookies.get("role")?.value;
+  const path = request.nextUrl.pathname;
 
-  //   // Protect all /manage routes
-  //   if (request.nextUrl.pathname.startsWith("/manage") && !isLoggedIn) {
-  //     return NextResponse.redirect(new URL("/auth/login", request.url));
+  // 🛡 Allow everyone except /manage (admin-only)
+  // if (path.startsWith("/manage")) {
+  //   // If role is not admin, redirect them to /home
+  //   if (role !== "admin") {
+  //     return NextResponse.redirect(new URL("/home", request.url));
   //   }
+  // }
 
+  // ✅ Otherwise, allow everything
   return NextResponse.next();
 }
 
-// Configure which routes middleware applies to
+// Apply to all routes except static, API, images, etc.
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

@@ -276,6 +276,69 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           />
         </div>
 
+        {/* Pricing Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Price */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={price || ""}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              placeholder="0"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Old Price */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Old Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={oldPrice || ""}
+              onChange={(e) => setOldPrice(Number(e.target.value))}
+              placeholder="0"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Exclusive */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Exclusive
+            </label>
+            <input
+              type="number"
+              value={exclusive || ""}
+              onChange={(e) => setExclusive(e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="Optional"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        {/* Stock */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-1">
+            Stock <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            value={stock || ""}
+            onChange={(e) => setStock(Number(e.target.value))}
+            placeholder="0"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            disabled={loading}
+          />
+        </div>
+
         {/* Category Dropdown */}
         <CategoryDropdown
           selectedCategory={category}

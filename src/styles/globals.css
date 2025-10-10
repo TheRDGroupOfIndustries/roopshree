@@ -22,3 +22,7 @@
     --color-brand-hover: #f2ae55;
   }
 }
+
+button {
+  cursor: pointer;
+}

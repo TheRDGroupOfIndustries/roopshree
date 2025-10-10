@@ -59,6 +59,7 @@ model Products {
   exclusive   Int?
   oldPrice    Int
   price       Int
+  category    String
   cart        CartItem[]
   orders      Order[]
   user        User       @relation("UserProducts", fields: [userId], references: [id])

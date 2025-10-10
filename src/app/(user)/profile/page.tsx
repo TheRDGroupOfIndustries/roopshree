@@ -128,7 +128,7 @@ export default function ProfilePage() {
       label: "Wishlist",
       bg: "bg-orange-50",
       iconColor: "text-orange-600",
-      link: "/wishlist",
+      link: "/Wishlist",
       count: 12,
     },
     {
@@ -363,8 +363,8 @@ const SupportHelps: SupportHelp[] = [
     <div className="min-h-screen bg-gray-100 flex flex-col pb-16">
       {/* Header */}
       <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-20">
-        <button className="text-gray-600 text-xl hover:text-gray-800 transition-colors p-1">
-          <ArrowLeft size={24} />
+        <button className="text-gray-600 text-xl hover:text-gray-800 transition-colors p-1" onClick={()=>window.history.back()}>
+          <ArrowLeft size={24}  />
         </button>
         <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center">
           Profile
@@ -374,7 +374,7 @@ const SupportHelps: SupportHelp[] = [
             <Share2 size={22} />
           </button>
           <Link
-            href="/cart"
+            href="/my-cart"
             className="relative text-gray-600 hover:text-orange-500 p-1"
           >
             <ShoppingCart size={22} />

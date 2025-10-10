@@ -1,18 +1,19 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { X, Plus, Minus, Heart } from "lucide-react";
-
+import SmallLoadingSpinner from "./SmallLoadingSpinner";  
 interface CartItemProps {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
   prePrice?: number;
   image: string;
   quantity: number;
-  onRemove: (id: number) => void;
-  onUpdateQuantity: (id: number, delta: number) => void;
+  onRemove: (id: string) => void;
+  onUpdateQuantity: (id: string, delta: number) => void;
+  onMoveToWishlist: (productId: string) => void;
 }
 
 const CartItemCard: React.FC<CartItemProps> = ({
@@ -25,7 +26,11 @@ const CartItemCard: React.FC<CartItemProps> = ({
   quantity,
   onRemove,
   onUpdateQuantity,
+  onMoveToWishlist,
 }) => {
+const [isInWishlist, setIsInWishlist] = useState(false);
+const [loading, setLoading] = useState(false);
+
   return (
     <div className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
       {/* Remove Button */}
@@ -97,10 +102,30 @@ const CartItemCard: React.FC<CartItemProps> = ({
                 </button>
               </div>
 
-              <button className="flex items-center gap-1 text-[var(--color-brand)] text-xs font-medium">
-                <span>Move to Wishlist</span>
-                <Heart className="w-4 h-4" />
-              </button>
+              
+              <button
+  onClick={async () => {
+    if (loading) return;
+    setLoading(true);
+    setIsInWishlist(true);
+    await onMoveToWishlist(id);
+    setLoading(false);
+  }}
+  className="flex items-center gap-1 text-[var(--color-brand)] text-xs font-medium"
+>
+  {loading ? (
+    <SmallLoadingSpinner />
+  ) : (
+    <>
+      <span>
+        {isInWishlist ? "Added to Wishlist" : "Move to Wishlist"}
+      </span>
+      <Heart
+        className={`w-4 h-4 ${isInWishlist ? "fill-red-500" : ""}`}
+      />
+    </>
+  )}
+</button>
             </div>
           </div>
         </div>

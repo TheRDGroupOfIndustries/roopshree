@@ -1,4 +1,3 @@
-
 // "use client";
 // import Image from "next/image";
 // import Link from "next/link";
@@ -44,7 +43,6 @@
 //   const cartExists = user.cart?.items?.some((item: any) => item.productId === id);
 //   setIsInCart(!!cartExists);
 // }, [user, id]);
-
 
 //   // Toggle wishlist
 //   const handleWishlistToggle = async (e: React.MouseEvent) => {
@@ -177,7 +175,6 @@
 //   );
 // }
 
-
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -188,7 +185,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
 import { addToCart, removeCartItem } from "@/services/cartService";
 import toast from "react-hot-toast";
-import SmallLoadingSpinner from "./SmallLoadingSpinner"; 
+import SmallLoadingSpinner from "./SmallLoadingSpinner";
 
 interface ProductCardProps {
   id: string;
@@ -211,7 +208,7 @@ export default function ProductCard({
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
   const [loadingCart, setLoadingCart] = useState(false);
-  const [loadingWishlist, setLoadingWishlist] = useState(false); 
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   // Initialize wishlist and cart state
   useEffect(() => {
@@ -237,11 +234,11 @@ export default function ProductCard({
       setLoadingWishlist(true);
 
       if (isInWishlist) {
-        setIsInWishlist(false); 
+        setIsInWishlist(false);
         await removeFromWishlist(id);
         toast.success("Removed from wishlist");
       } else {
-        setIsInWishlist(true); 
+        setIsInWishlist(true);
         await addToWishlist(id);
         toast.success("Added to wishlist");
       }
@@ -258,50 +255,49 @@ export default function ProductCard({
   };
 
   // Add to cart
- // Add to cart
-const handleAddToCart = async (e: React.MouseEvent) => {
-  e.preventDefault();
-  if (!user) return toast.error("Please login to add to cart");
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) return toast.error("Please login to add to cart");
 
-  try {
-    setLoadingCart(true);
-    setIsInCart(true); // update UI immediately
-    await addToCart(id, 1);
-    toast.success("Added to cart");
-    refreshUser(); // don't await — background refresh
-  } catch (err) {
-    console.error(err);
-    setIsInCart(false); // rollback if failed
-    toast.error("Failed to add to cart");
-  } finally {
-    setLoadingCart(false);
-  }
-};
+    try {
+      setLoadingCart(true);
+      setIsInCart(true); // update UI immediately
+      await addToCart(id, 1);
+      toast.success("Added to cart");
+      refreshUser(); // don't await — background refresh
+    } catch (err) {
+      console.error(err);
+      setIsInCart(false); // rollback if failed
+      toast.error("Failed to add to cart");
+    } finally {
+      setLoadingCart(false);
+    }
+  };
 
-// Remove from cart
-const handleRemoveFromCart = async (e: React.MouseEvent) => {
-  e.preventDefault();
-  if (!user) return toast.error("Please login to remove from cart");
+  // Remove from cart
+  const handleRemoveFromCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) return toast.error("Please login to remove from cart");
 
-  try {
-    const cartItem = user.cart?.items?.find(
-      (item: any) => item.productId === id
-    );
-    if (!cartItem) return toast.error("Product not found in cart");
+    try {
+      const cartItem = user.cart?.items?.find(
+        (item: any) => item.productId === id
+      );
+      if (!cartItem) return toast.error("Product not found in cart");
 
-    setLoadingCart(true);
-    setIsInCart(false); // instant UI feedback
-    await removeCartItem(cartItem.id);
-    toast.success("Removed from cart");
-    refreshUser(); // background refresh
-  } catch (err) {
-    console.error(err);
-    setIsInCart(true); // rollback if failed
-    toast.error("Failed to remove from cart");
-  } finally {
-    setLoadingCart(false);
-  }
-};
+      setLoadingCart(true);
+      setIsInCart(false); // instant UI feedback
+      await removeCartItem(cartItem.id);
+      toast.success("Removed from cart");
+      refreshUser(); // background refresh
+    } catch (err) {
+      console.error(err);
+      setIsInCart(true); // rollback if failed
+      toast.error("Failed to remove from cart");
+    } finally {
+      setLoadingCart(false);
+    }
+  };
 
   return (
     <Link href={`/product/${id}`}>
@@ -319,7 +315,7 @@ const handleRemoveFromCart = async (e: React.MouseEvent) => {
             disabled={loadingWishlist}
           >
             {loadingWishlist ? (
-              <SmallLoadingSpinner size={14} />
+              <SmallLoadingSpinner  />
             ) : (
               <BiHeart className="w-4 h-4" />
             )}
@@ -379,7 +375,7 @@ const handleRemoveFromCart = async (e: React.MouseEvent) => {
               disabled={loadingCart}
             >
               {loadingCart ? (
-                <SmallLoadingSpinner  />
+                <SmallLoadingSpinner />
               ) : isInCart ? (
                 <BiMinus className="w-4 h-4" />
               ) : (

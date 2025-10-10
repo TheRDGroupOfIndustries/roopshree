@@ -9,8 +9,10 @@ import TrendingCard from "@/Components/TrendingNow";
 import Link from "next/link";
 import { getAllProducts } from "@/services/productService";
 import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
+import { useAuth } from "@/context/AuthProvider";
 export default function HomePage() {
   const cartCount = 3;
+  const {refreshUser}=useAuth();
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
  const [products, setProducts] = useState<any[]>([]);
 const [productLoading, setProductLoading] = useState(true);
@@ -36,6 +38,10 @@ const [productLoading, setProductLoading] = useState(true);
   }, []);
 
   useEffect(() => {
+  refreshUser(); 
+}, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
@@ -59,53 +65,7 @@ const [productLoading, setProductLoading] = useState(true);
     { name: "Accessories", img: "/images/image.png" },
   ];
 
-  // const products = [
-  //   {
-  //     id: 1,
-  //     name: "Luxury Foundation",
-  //     description: "Perfect coverage for all skin types",
-  //     price: "₹1,299",
-  //     oldPrice: "₹1,599",
-  //     image: "/images/image.png",
-  //     badge: "New",
-  //     badgeColor: "bg-orange-400",
-  //     rating: 4,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Luxury Foundation",
-  //     description: "Perfect coverage for all skin types",
-  //     price: "₹1,299",
-  //     oldPrice: "₹1,599",
-  //     image: "/images/image.png",
-  //     badge: "Sale",
-  //     badgeColor: "bg-red-600",
-  //     rating: 5,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Luxury Foundation",
-  //     description: "Perfect coverage for all skin types",
-  //     price: "₹1,299",
-  //     oldPrice: "₹1,599",
-  //     image: "/images/image.png",
-  //     badge: "Best Seller",
-  //     badgeColor: "bg-green-600",
-  //     rating: 4,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Luxury Foundation",
-  //     description: "Perfect coverage for all skin types",
-  //     price: "₹1,299",
-  //     oldPrice: "₹1,599",
-  //     image: "/images/image.png",
-  //     badge: "",
-  //     badgeColor: "",
-  //     rating: 5,
-  //   },
-  // ];
-
+ 
   const trendingProducts = [
     {
       id: 1,

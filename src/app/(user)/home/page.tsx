@@ -1,5 +1,5 @@
 "use client";
-import { FiShoppingCart, FiUser } from "react-icons/fi";
+import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineSearch } from "react-icons/ai";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -221,8 +221,8 @@ export default function HomePage() {
         id={product.id}
         name={product.title}
         description={product.description}
-        price={`₹${product.price}`}
-        oldPrice={`₹${product.oldPrice}`}
+        price={`${product.price}`}
+        oldPrice={`${product.oldPrice}`}
         image={product.images?.[0] || "/images/image.png"}
       />
     ))

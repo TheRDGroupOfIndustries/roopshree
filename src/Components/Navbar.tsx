@@ -1,17 +1,19 @@
 "use client";
 
+import { useAuth } from "@/context/AuthProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BiCategory } from "react-icons/bi";
 import { FiSearch, FiShoppingCart } from "react-icons/fi";
 import { GoPerson } from "react-icons/go";
-import { RiHomeFill, RiCustomerService2Line } from "react-icons/ri";
+import { RiHomeFill } from "react-icons/ri";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const cartCount = 3;
   const hiddenPaths = ["/auth", "/manage", "/admin"];
-
+  const {user}=useAuth();
+ const cartCount = user?.cart?.length || 0;
+  
   if (hiddenPaths.some((path) => pathname.startsWith(path)) || pathname === "/") return null;
 
   const navItems = [
@@ -49,15 +51,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Support Icon */}
-      {/* <Link
-        href="/support"
-        className="fixed bottom-20 right-5 bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 z-100"
-        title="Support"
-      >
-        <RiCustomerService2Line size={24} />
-      </Link> */}
-
       {/* Bottom Navbar */}
       <div className="fixed bottom-0 left-0 right-0 bg-gray-100 shadow-md flex justify-around items-center h-16 z-100">
         {navItems.map((item) => {

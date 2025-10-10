@@ -98,10 +98,12 @@ interface OrderCardProps {
 }
 
 export default function ProfilePage() {
-  const [cartCount] = useState<number>(3);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const { logout, user } = useAuth();
   const router = useRouter();
+
+   const cartCount = user?.cart?.length || 0;
+  
   const handleLogout = () => {
     logout();
     router.push("/auth/signin");
@@ -374,7 +376,7 @@ const SupportHelps: SupportHelp[] = [
             <Share2 size={22} />
           </button>
           <Link
-            href="/cart"
+            href="/my-cart"
             className="relative text-gray-600 hover:text-orange-500 p-1"
           >
             <ShoppingCart size={22} />

@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, ArrowLeft, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react"; // Added missing imports
+import Link from "next/link";
 
+// --- Interfaces & Data (kept the same) ---
 interface FAQItem {
   question: string;
   answer: string;
@@ -11,22 +13,51 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     question: "How can I track my order?",
-    answer: "You can track your order from the 'Orders' section in your profile. Click on 'Track' next to your order to see the latest updates.",
+    answer: "You can track your order from the 'Orders' section in your profile. Click on 'Track' next to your order to see the latest updates. Note that tracking may take up to 24 hours to update after shipping.",
   },
   {
     question: "What is your return policy?",
-    answer: "You can return most items within 15 days of delivery. Please make sure the items are unused and in original packaging.",
+    answer: "You can return most items within 15 days of delivery, provided they are unused, undamaged, and in their original packaging with all tags intact. Customized items are non-refundable.",
   },
   {
     question: "How can I redeem my rewards?",
-    answer: "Go to the 'Rewards' section in your profile. You can apply available reward points during checkout.",
+    answer: "Go to the 'Rewards' section in your profile to view your balance. You can apply available reward points as a discount option during the final step of checkout.",
   },
   {
     question: "How do I change my delivery address?",
-    answer: "Go to 'Delivery Addresses' under Account Settings and update or add a new address.",
+    answer: "Go to 'Account Settings' -> 'Delivery Addresses'. You can update an existing address or add a new one before placing your order. Changes cannot be made after an order is shipped.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "We accept Visa, MasterCard, American Express, Net Banking, UPI, and Cash on Delivery (COD) for most products.",
   },
 ];
 
+// --- Header Component ---
+const Header = () => (
+  <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
+    <button
+      className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
+      onClick={() => window.history.back()}
+      aria-label="Go back"
+    >
+      <ArrowLeft size={24} />
+    </button>
+    <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center text-gray-800">
+      Help Center
+    </h2>
+    <Link href="/my-cart" aria-label="View shopping cart">
+      <button className="relative text-gray-700 hover:text-sky-600 p-2 hover:bg-sky-50 rounded-full transition-colors">
+        <ShoppingCart size={24} />
+        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+          2
+        </span>
+      </button>
+    </Link>
+  </header>
+);
+
+// --- Main FAQ Component ---
 const FAQPage: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -35,40 +66,78 @@ const FAQPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center px-4 py-10">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-6 md:p-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <HelpCircle className="w-6 h-6 text-gray-700" />
-          </div>
-          <h1 className="text-xl font-semibold text-gray-800">FAQ</h1>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* 1. Sticky Header */}
+      <Header />
 
-        {/* FAQ List */}
-        <div className="space-y-4">
-          {faqData.map((item, index) => (
-            <div
-              key={index}
-              className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition"
-            >
-              <button
-                className="flex justify-between w-full text-left items-center"
-                onClick={() => toggleIndex(index)}
-              >
-                <span className="text-gray-800 font-medium">{item.question}</span>
-                <span className="text-gray-500">{openIndex === index ? "−" : "+"}</span>
-              </button>
-              {openIndex === index && (
-                <p className="mt-2 text-gray-600 text-sm">{item.answer}</p>
-              )}
+      {/* 2. Main Content Wrapper */}
+      <div className="px-4 sm:px-6 py-8 flex justify-center">
+        <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-8 md:p-10">
+          
+          {/* Main Title Block */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="p-3 bg-sky-100 rounded-xl">
+              <HelpCircle className="text-sky-600 w-7 h-7" />
             </div>
-          ))}
-        </div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Frequently Asked Questions
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg mb-8 pb-6 border-b border-gray-100 leading-relaxed">
+            Find quick answers to the most common questions about ordering, delivery, and returns.
+          </p>
 
-        {/* Footer */}
-        <div className="mt-6 text-center text-gray-500 text-sm">
-          If you have further questions, please contact our support team.
+
+          {/* Enhanced FAQ List (Accordion) */}
+          <div className="space-y-4">
+            {faqData.map((item, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <div
+                  key={index}
+                  className={`border ${isOpen ? 'border-sky-500 bg-sky-50 shadow-md' : 'border-gray-200 bg-white hover:border-sky-300'} rounded-xl transition-all duration-300`}
+                >
+                  <button
+                    className="flex justify-between w-full text-left items-center p-5 focus:outline-none"
+                    onClick={() => toggleIndex(index)}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${index}`}
+                  >
+                    <span className={`text-lg font-semibold ${isOpen ? 'text-sky-700' : 'text-gray-800'}`}>
+                      {item.question}
+                    </span>
+                    <span className="ml-4 transition-transform duration-300">
+                      {isOpen ? <ChevronUp size={20} className="text-sky-600" /> : <ChevronDown size={20} className="text-gray-500" />}
+                    </span>
+                  </button>
+
+                  <div
+                    id={`faq-answer-${index}`}
+                    className={`overflow-hidden transition-max-height duration-500 ease-in-out ${
+                      isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <p className="mt-0 p-5 pt-0 text-gray-700 text-base border-t border-gray-200">
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer CTA */}
+          <div className="mt-10 pt-6 border-t border-gray-100 text-center">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Still Need Help?</h3>
+            <p className="text-gray-600 mb-4">
+              If your question isn't answered here, feel free to contact our dedicated support team.
+            </p>
+            <Link href="/support">
+              <button className="inline-flex items-center bg-sky-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-sky-700 transition-colors shadow-lg shadow-sky-300/50">
+                Contact Support
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -24,7 +24,7 @@ import {
   ChevronRight,
   Wallet,
 } from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon,Crown } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -481,8 +481,9 @@ const SupportHelps: SupportHelp[] = [
 
       <div className="relative bg-white p-4 md:p-5 rounded-full shadow-lg">
         <span className="absolute inset-0 bg-gradient-to-tr from-purple-400 via-pink-400 to-yellow-400 opacity-20 rounded-full blur-md"></span>
-        <ShoppingCart className="w-7 h-7 text-purple-600 relative z-10" />
+        <Crown className="w-7 h-7 text-purple-600 relative z-10" />
       </div>
+      
     </div>
 
     {/* Benefits List */}

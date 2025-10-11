@@ -77,7 +77,7 @@ const RewardsPage: React.FC = () => {
 
       <div className="px-4 py-6 md:px-10 lg:px-20 max-w-7xl mx-auto">
         {/* Points Card */}
-        <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 rounded-3xl shadow-2xl p-8 mb-10 overflow-hidden text-white">
+        <div className="bg-gradient-to-br from-orange-400 to-orange-300 rounded-3xl shadow-xl mb-8 p-6 sm:p-8 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
 

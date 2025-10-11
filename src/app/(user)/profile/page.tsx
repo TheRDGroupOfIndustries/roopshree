@@ -102,7 +102,7 @@ export default function ProfilePage() {
   const { logout, user } = useAuth();
   const router = useRouter();
 
-   const cartCount = user?.cart?.length || 0;
+   const cartCount = user?.cart?.items?.length || 0;
   
   const handleLogout = () => {
     logout();
@@ -212,7 +212,7 @@ const SupportHelps: SupportHelp[] = [
       price: "₹1,299",
       statusColor: "text-green-600",
       action: "Reorder",
-      image: "/images/image.png",
+      image: "/images/placeholder_image.png",
     },
     {
       name: "Matte Lipstick",
@@ -221,7 +221,7 @@ const SupportHelps: SupportHelp[] = [
       price: "₹700",
       statusColor: "text-orange-600",
       action: "Track",
-      image: "/images/image.png",
+      image: "/images/placeholder_image.png",
     },
   ];
 

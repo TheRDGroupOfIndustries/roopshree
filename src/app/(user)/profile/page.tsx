@@ -29,6 +29,7 @@ import {
 import { useAuth } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 // --- Type Definitions ---
 
@@ -303,19 +304,14 @@ export default function ProfilePage() {
   const { logout, user } = useAuth();
   const router = useRouter();
 
-<<<<<<< HEAD
   // Handle case where user might not be logged in immediately (though useAuth should handle this)
   if (!user) {
     // Optionally return a loading state or redirect if user is required
-    return <div className="p-10 text-center">Loading Profile...</div>;
+    return <LoadingSpinner message="Loading Profile..."/>;
   }
 
-  const cartCount = user?.cart?.length || 0;
+  const cartCount = user?.cart?.items.length || 0;
 
-=======
-   const cartCount = user?.cart?.items?.length || 0;
-  
->>>>>>> 529881bffb36e9b44acaca201534df8ee5fe729c
   const handleLogout = () => {
     logout();
     router.push("/auth/signin");

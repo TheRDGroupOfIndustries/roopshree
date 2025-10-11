@@ -303,6 +303,7 @@ export default function ProfilePage() {
   const { logout, user } = useAuth();
   const router = useRouter();
 
+<<<<<<< HEAD
   // Handle case where user might not be logged in immediately (though useAuth should handle this)
   if (!user) {
     // Optionally return a loading state or redirect if user is required
@@ -311,6 +312,10 @@ export default function ProfilePage() {
 
   const cartCount = user?.cart?.length || 0;
 
+=======
+   const cartCount = user?.cart?.items?.length || 0;
+  
+>>>>>>> 529881bffb36e9b44acaca201534df8ee5fe729c
   const handleLogout = () => {
     logout();
     router.push("/auth/signin");
@@ -422,7 +427,7 @@ export default function ProfilePage() {
       price: "₹1,299",
       statusColor: "text-green-600",
       action: "Reorder",
-      image: "/images/image.png",
+      image: "/images/placeholder_image.png",
     },
     {
       name: "Matte Lipstick",
@@ -431,7 +436,7 @@ export default function ProfilePage() {
       price: "₹700",
       statusColor: "text-orange-600",
       action: "Track",
-      image: "/images/image.png",
+      image: "/images/placeholder_image.png",
     },
   ];
 

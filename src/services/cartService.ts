@@ -14,16 +14,12 @@ export const addToCart = async (
 //  Get user's cart
 export const getCart = async () => {
   const res = await api.get("/cart");
-  // console.log("regetCart:",res.data);
-  
-  return res.data;
+return res.data;
 };
 
 //  Update cart item quantity
 export const updateCartItem = async (itemId: string, quantity: number) => {
   const res = await api.patch(`/cart/${itemId}`, { quantity });
-  // console.log("res: ",res.data);
-  
   return res.data;
 };
 
@@ -35,6 +31,6 @@ export const removeCartItem = async (itemId: string) => {
 
 //  Clear entire cart
 export const clearCart = async () => {
-  const res = await api.delete("/cart");
+  const res = await api.delete("/cart/clear");
   return res.data;
 };

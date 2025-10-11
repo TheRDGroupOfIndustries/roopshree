@@ -1,10 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { X, Plus, Minus, Heart } from "lucide-react";
-import SmallLoadingSpinner from "./SmallLoadingSpinner";  
+import SmallLoadingSpinner from "./SmallLoadingSpinner";
+import { useAuth } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
+import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
 interface CartItemProps {
   id: string;
+  productId: string;
   name: string;
   description: string;
   price: number;
@@ -18,6 +22,7 @@ interface CartItemProps {
 
 const CartItemCard: React.FC<CartItemProps> = ({
   id,
+  productId,
   name,
   description,
   price,
@@ -26,10 +31,44 @@ const CartItemCard: React.FC<CartItemProps> = ({
   quantity,
   onRemove,
   onUpdateQuantity,
-  onMoveToWishlist,
 }) => {
-const [isInWishlist, setIsInWishlist] = useState(false);
-const [loading, setLoading] = useState(false);
+  const { user, refreshUser } = useAuth();
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    const wishlistExists = user.wishlist?.some(
+      (item: any) => item.productId === productId
+    );
+    setIsInWishlist(!!wishlistExists);
+  }, [user, productId]);
+
+  const handleWishlistToggle = async () => {
+    if (!user) return toast.error("Please login to manage wishlist");
+
+    try {
+      setLoadingWishlist(true);
+
+      setIsInWishlist((prev) => !prev);
+
+      if (isInWishlist) {
+        await removeFromWishlist(productId);
+        toast.success("Removed from wishlist");
+      } else {
+        await addToWishlist(productId);
+        toast.success("Added to wishlist");
+      }
+
+      // Refresh user after backend update
+      refreshUser();
+    } catch (err) {
+      console.error(err);
+      setIsInWishlist((prev) => !prev);
+      toast.error("Something went wrong");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
 
   return (
     <div className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
@@ -102,30 +141,26 @@ const [loading, setLoading] = useState(false);
                 </button>
               </div>
 
-              
               <button
-  onClick={async () => {
-    if (loading) return;
-    setLoading(true);
-    setIsInWishlist(true);
-    await onMoveToWishlist(id);
-    setLoading(false);
-  }}
-  className="flex items-center gap-1 text-[var(--color-brand)] text-xs font-medium"
->
-  {loading ? (
-    <SmallLoadingSpinner />
-  ) : (
-    <>
-      <span>
-        {isInWishlist ? "Added to Wishlist" : "Move to Wishlist"}
-      </span>
-      <Heart
-        className={`w-4 h-4 ${isInWishlist ? "fill-red-500" : ""}`}
-      />
-    </>
-  )}
-</button>
+                onClick={handleWishlistToggle}
+                disabled={loadingWishlist}
+                className="flex items-center gap-1 text-[var(--color-brand)] text-xs font-medium"
+              >
+                {loadingWishlist ? (
+                  <SmallLoadingSpinner />
+                ) : (
+                  <>
+                    <span>
+                      {isInWishlist ? "Added to Wishlist" : "Move to Wishlist"}
+                    </span>
+                    <Heart
+                      className={`w-4 h-4 ${
+                        isInWishlist ? "fill-red-500" : ""
+                      }`}
+                    />
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

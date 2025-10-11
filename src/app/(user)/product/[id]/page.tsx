@@ -99,7 +99,7 @@ export default function ProductDetails() {
     try {
       await addToCart(product.id, quantity);
       toast.success("Added to cart");
-      await refreshUser();
+       refreshUser();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to add to cart");
     }

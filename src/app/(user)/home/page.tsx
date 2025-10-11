@@ -3,44 +3,65 @@ import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineSearch } from "react-icons/ai";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { BiHeart,  } from "react-icons/bi";
+import { BiHeart } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import TrendingCard from "@/Components/TrendingNow";
 import Link from "next/link";
 import { getAllProducts } from "@/services/productService";
-import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
 import { useAuth } from "@/context/AuthProvider";
+import { getAllCategories } from "@/services/categoryService";
+import TrendingCardSkeleton from "@/Components/TrendingCardSkeleton";
+import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
 export default function HomePage() {
-  
-  const {user,refreshUser}=useAuth();
+  const { user, refreshUser } = useAuth();
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
   const [products, setProducts] = useState<any[]>([]);
   const [productLoading, setProductLoading] = useState(true);
-  const cartCount = user?.cart?.length || 0;
+  const cartCount = user?.cart?.items?.length || 0;
+  const [categories, setCategories] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [shuffledProducts, setShuffledProducts] = useState<any[]>([]);
+  const [showAllProducts, setShowAllProducts] = useState(false);
 
- useEffect(() => {
+  // Shuffle products randomly for Trending Now
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         setProductLoading(true);
         const res = await getAllProducts();
-        console.log("Fetched Products:", res);
-
-        // Assuming res is an array (based on your example)
+        // console.log("Fetched Products:", res);
         setProducts(res);
+        const shuffled = [...res].sort(() => Math.random() - 0.5);
+        setShuffledProducts(shuffled);
       } catch (error) {
         console.log("Error fetching products:", error);
-      }
-      finally{
-            setProductLoading(false);
+      } finally {
+        setProductLoading(false);
       }
     };
 
     fetchProducts();
   }, []);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoryLoading(true);
+        const res = await getAllCategories();
+        // console.log("Fetched Categories:", res);
+        setCategories(res);
+      } catch (error) {
+        console.log("Error fetching categories:", error);
+      } finally {
+        setCategoryLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
-  refreshUser(); 
-}, []);
+    refreshUser();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -58,15 +79,6 @@ export default function HomePage() {
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const categories = [
-    { name: "Skincare", img: "/images/image.png" },
-    { name: "Makeup", img: "/images/image.png" },
-    { name: "Hair Care", img: "/images/image.png" },
-    { name: "Fragrance", img: "/images/image.png" },
-    { name: "Accessories", img: "/images/image.png" },
-  ];
-
- 
   const trendingProducts = [
     {
       id: 1,
@@ -112,7 +124,6 @@ export default function HomePage() {
             <Link href={"/wishlist"}>
               <BiHeart size={22} />
             </Link>
-        
           </div>
         </header>
 
@@ -159,25 +170,43 @@ export default function HomePage() {
         <div className="mt-6 px-4">
           <h3 className="font-semibold text-lg mb-3">Categories</h3>
           <div className="flex gap-6 overflow-x-auto scrollbar-hide ">
-            {categories.map((cat) => (
-              <div
-                key={cat.name}
-                className="flex flex-col items-center min-w-max"
-              >
-                <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center">
-                  <Image
-                    src={cat.img}
-                    alt={cat.name}
-                    width={40}
-                    height={40}
-                    className="object-contain rounded-full"
-                  />
-                </div>
-                <span className="text-sm mt-1 truncate max-w-[5rem] text-center">
-                  {cat.name}
-                </span>
+            {categoryLoading ? (
+              // 🔄 Loading placeholders
+              <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center min-w-max animate-pulse"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-gray-200"></div>
+                    <div className="h-3 w-16 bg-gray-200 rounded mt-2"></div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              // ✅ Show all categories
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {categories.map((cat: any) => (
+                  <div
+                    key={cat.id}
+                    className="flex flex-col items-center cursor-pointer "
+                  >
+                    <div className="w-14 h-14 rounded-full bg-white shadow flex items-center justify-center">
+                      <Image
+                        src="/images/placeholder_image.png"
+                        alt={cat.name}
+                        width={50}
+                        height={50}
+                        className="object-contain rounded-full"
+                      />
+                    </div>
+                    <span className="text-sm font-medium mt-2 text-center truncate max-w-[6rem]">
+                      {cat.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -201,36 +230,43 @@ export default function HomePage() {
             <h3 className="font-semibold text-lg text-gray-900">
               Featured Products
             </h3>
-            <button className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]">
-              View All
+            <button
+              className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]"
+              onClick={() => setShowAllProducts(!showAllProducts)}
+            >
+              {showAllProducts ? "Show Less" : "View All"}
             </button>
           </div>
 
           {/* Product Grid */}
-         <div className="grid grid-cols-2 gap-4">
-  {productLoading ? (
-    
-   <div className="text-gray-500 text-sm flex items-center gap-2">
-  <SmallLoadingSpinner /> Fetching products...
-</div>
 
-  ) : products.length > 0 ? (
-    products.map((product) => (
-      <ProductCard
-        key={product.id}
-        id={product.id}
-        name={product.title}
-        description={product.description}
-        price={`${product.price}`}
-        oldPrice={`${product.oldPrice}`}
-        image={product.images?.[0] || "/images/image.png"}
-      />
-    ))
-  ) : (
-    <p className="text-gray-500 text-sm">No products available</p>
-  )}
-</div>
-
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {productLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))
+            ) : products.length > 0 ? (
+              (showAllProducts ? products : products.slice(0, 2)).map(
+                (product) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.title}
+                    description={product.description}
+                    price={product.price}
+                    oldPrice={product.oldPrice}
+                    image={
+                      product.images?.[0] || "/images/placeholder_image.png"
+                    }
+                  />
+                )
+              )
+            ) : (
+              <p className="text-gray-500 text-sm col-span-full text-center">
+                No products available
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Special Offers */}
@@ -270,9 +306,22 @@ export default function HomePage() {
 
           {/* Horizontal Scrollable Container */}
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {trendingProducts.map((product) => (
-              <TrendingCard key={product.id} {...product} />
-            ))}
+            {productLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <TrendingCardSkeleton key={i} />
+                ))
+              : shuffledProducts.map((product) => (
+                  <TrendingCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.title}
+                    price={product.price}
+                    oldPrice={product.oldPrice}
+                    image={
+                      product.images?.[0] || "/images/placeholder_image.png"
+                    }
+                  />
+                ))}
           </div>
         </div>
       </div>

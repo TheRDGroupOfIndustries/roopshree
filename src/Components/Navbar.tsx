@@ -11,10 +11,10 @@ import { RiHomeFill } from "react-icons/ri";
 export default function Navbar() {
   const pathname = usePathname();
   const hiddenPaths = ["/auth", "/manage", "/admin"];
-  const {user}=useAuth();
- const cartCount = user?.cart?.length || 0;
-  
-  if (hiddenPaths.some((path) => pathname.startsWith(path)) || pathname === "/") return null;
+  const { user } = useAuth();
+  const cartCount = user?.cart?.items?.length||0;
+  if (hiddenPaths.some((path) => pathname.startsWith(path)) || pathname === "/")
+    return null;
 
   const navItems = [
     {
@@ -23,12 +23,12 @@ export default function Navbar() {
       icon: <RiHomeFill size={22} />,
       href: "/home",
     },
-    {
-      name: "categories",
-      label: "Categories",
-      icon: <BiCategory size={22} />,
-      href: "/categories",
-    },
+    // {
+    //   name: "categories",
+    //   label: "Categories",
+    //   icon: <BiCategory size={22} />,
+    //   href: "/categories",
+    // },
     {
       name: "search",
       label: "Search",

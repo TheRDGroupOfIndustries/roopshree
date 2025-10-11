@@ -17,6 +17,10 @@ interface Product {
   description: string;
   stock: Stock[];
   images: string[];
+  price: number;
+  oldPrice: number;
+  exclusive?: number;
+  category: string;
 }
 
 const Products = () => {
@@ -126,7 +130,7 @@ const Products = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    {["Title", "Description", "Stock", "Images", "Actions"].map(
+                    {["Title", "Description", "Category", "Stock", "Images", "Actions"].map(
                       (header) => (
                         <th
                           key={header}
@@ -154,6 +158,9 @@ const Products = () => {
                           </td>
                           <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
                             {product.description}
+                          </td>
+                          <td className="px-6 py-4 text-gray-700 max-w-xs truncate">
+                            {product.category || "N/A"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                             <span
@@ -205,7 +212,7 @@ const Products = () => {
                   ) : (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={6}
                         className="text-center py-8 text-gray-500 text-sm"
                       >
                         No products found.
@@ -229,23 +236,23 @@ const Products = () => {
                     className="bg-white p-4 rounded-xl shadow border border-gray-100"
                   >
                     <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">
-                        Title:
-                      </span>
+                      <span className="font-semibold text-gray-800">Title:</span>
                       <span className="text-gray-700">{product.title}</span>
                     </div>
                     <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">
-                        Description:
-                      </span>
+                      <span className="font-semibold text-gray-800">Description:</span>
                       <span className="text-gray-700 truncate max-w-[200px]">
                         {product.description}
                       </span>
                     </div>
                     <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">
-                        Stock:
+                      <span className="font-semibold text-gray-800">Category:</span>
+                      <span className="text-gray-700 truncate max-w-[200px]">
+                        {product.category || "N/A"}
                       </span>
+                    </div>
+                    <div className="flex justify-between mb-2">
+                      <span className="font-semibold text-gray-800">Stock:</span>
                       <span
                         className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           totalStock > 0

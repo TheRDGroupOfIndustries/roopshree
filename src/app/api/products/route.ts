@@ -24,6 +24,7 @@ interface CreateProductBody {
   price: number;
   oldPrice: number;
   exclusive?: number;
+  category: string;
 }
 
 export async function POST(req: Request) {
@@ -73,7 +74,8 @@ export async function POST(req: Request) {
         insideBox,
         price: body.price,
         oldPrice: body.oldPrice,
-        exclusive: body.exclusive
+        exclusive: body.exclusive,
+        category: body.category ,
       },
     });
 

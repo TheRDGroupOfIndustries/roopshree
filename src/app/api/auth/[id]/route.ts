@@ -26,3 +26,21 @@ export async function PUT(
     return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
   }
 }
+
+export async function POST(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    // Extract the id string from the params object
+    const { id } = await params;
+    
+    const users = await prisma.user.findFirst({
+      where: { id: id }, // or just { id } in shorthand
+    });
+    
+    return NextResponse.json({ users });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

@@ -194,6 +194,7 @@ interface ProductCardProps {
   price: number;
   oldPrice?: number;
   image: string;
+  category: string;
   refreshWishlist?: () => void;
 }
 

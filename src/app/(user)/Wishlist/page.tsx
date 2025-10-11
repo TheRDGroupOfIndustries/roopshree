@@ -136,6 +136,7 @@ const WishlistPage: React.FC = () => {
                 oldPrice={product.oldPrice}
                 image={product.images?.[0]}
                 refreshWishlist={fetchWishlist}
+                category={product.category}
               />
             ))}
           </div>

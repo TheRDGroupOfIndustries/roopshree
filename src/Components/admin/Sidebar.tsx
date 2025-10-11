@@ -37,11 +37,30 @@ export default function Sidebar() {
   const toggleSidebar = useCallback(() => setIsOpen((prev) => !prev), []);
   const closeSidebar = useCallback(() => setIsOpen(false), []);
 
-  const handleSignOut = useCallback(() => {
-    alert("Simulating Sign Out..."); // Replace with real sign-out logic
+  const handleSignOut = useCallback(async() => {
+     // Replace with real sign-out logic
     // Add real sign-out logic here: router.push('/login');
-  }, []);
+     try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST", // or "GET" depending on your backend
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // include cookies if using session auth
+      });
 
+      if (res.ok) {
+        // Optional: clear any localStorage tokens
+        localStorage.removeItem("token");
+
+        // Redirect user to login page
+        router.push("/login");
+      } else {
+        console.error("Logout failed:", await res.text());
+      }
+    } catch (err) {
+      console.error("Error during logout:", err);
+    }
+  }, []); 
+  
   return (
     <>
       {/* Mobile Menu Button (Top Bar) */}

@@ -20,8 +20,28 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
+  const [items, setItems] = useState<string[]>([""]); // initial input
+
+  const handleChange = (index: number, value: string) => {
+    const newItems = [...items];
+    newItems[index] = value;
+    setItems(newItems);
+
+    // If typing in the last box and it has value, add a new empty box
+    if (index === items.length - 1 && value.trim() !== "") {
+      setItems([...newItems, ""]);
+    }
+  };
+
+  const handleRemove = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setItems(newItems.length ? newItems : [""]);
+  };
+
+  // Product form
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
   const [description, setDescription] = useState("");
   const [stock, setStock] = useState<number>();
   const [price, setPrice] = useState<number>();
@@ -30,7 +50,10 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState<string>("");
   const [images, setImages] = useState<PreviewImage[]>([]);
-  const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
 
   const isUpdateMode = mode === "update" && !!id;
 
@@ -44,12 +67,14 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     if (!isUpdateMode || !product) return;
 
     setTitle(product.title || "");
+    setDetails(product.details || "");
     setDescription(product.description || "");
     setStock(product.stock?.currentStock || 0);
     setPrice(product.price || 0);
     setOldPrice(product.oldPrice || 0);
     setExclusive(product.exclusive || undefined);
     setCategory(product.category || "");
+    setItems(product.insideBox?.length ? product.insideBox : [""]);
 
     if (product.images?.length) {
       const serverImages = product.images.map((img: any) => ({
@@ -64,36 +89,36 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   // Cleanup object URLs
   useEffect(() => {
     return () => {
-      images.forEach(img => img.file && URL.revokeObjectURL(img.url));
+      images.forEach((img) => img.file && URL.revokeObjectURL(img.url));
     };
   }, [images]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files);
-    const newPreviews: PreviewImage[] = filesArray.map(file => ({
+    const newPreviews: PreviewImage[] = filesArray.map((file) => ({
       id: crypto.randomUUID(),
       url: URL.createObjectURL(file),
       file,
     }));
-    setImages(prev => [...prev, ...newPreviews]);
+    setImages((prev) => [...prev, ...newPreviews]);
   };
 
   const handleRemoveImage = (imgId: string) => {
-    setImages(prev => {
-      const imgToRemove = prev.find(i => i.id === imgId);
+    setImages((prev) => {
+      const imgToRemove = prev.find((i) => i.id === imgId);
       if (imgToRemove?.file) URL.revokeObjectURL(imgToRemove.url);
-      return prev.filter(i => i.id !== imgId);
+      return prev.filter((i) => i.id !== imgId);
     });
   };
 
   const uploadImages = async (productId: string): Promise<string[]> => {
     const uploadedUrls: string[] = [];
-    const newFiles = images.filter(i => i.file).map(i => i.file as File);
+    const newFiles = images.filter((i) => i.file).map((i) => i.file as File);
     if (!newFiles.length) return uploadedUrls;
 
     const formData = new FormData();
-    newFiles.forEach(file => formData.append("files", file));
+    newFiles.forEach((file) => formData.append("files", file));
     formData.append("type", "product");
     formData.append("productId", productId);
 
@@ -116,8 +141,19 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
   // CREATE product
   const handleCreate = async () => {
-    if (!title || !description || !stock || !price || !oldPrice || !category || images.length === 0) {
-      showMessage("Please fill all required fields and upload at least one image", true);
+    if (
+      !title ||
+      !description ||
+      !stock ||
+      !price ||
+      !oldPrice ||
+      !category ||
+      images.length === 0
+    ) {
+      showMessage(
+        "Please fill all required fields and upload at least one image",
+        true
+      );
       return;
     }
 
@@ -131,8 +167,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           title,
           description,
           images: [], // Upload separately
-          details: "Product details placeholder",
-          insideBox: ["Item1", "Item2"],
+          details,
+          insideBox: items.filter(i => i.trim() !== ""),
           initialStock: stock,
           price,
           oldPrice,
@@ -174,15 +210,25 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
   // UPDATE product
   const handleUpdate = async () => {
-    if (!title || !description || !stock || !price || !oldPrice || !id || !category) {
+    if (
+      !title ||
+      !description ||
+      !stock ||
+      !price ||
+      !oldPrice ||
+      !id ||
+      !category
+    ) {
       showMessage("Fill all required fields", true);
       return;
     }
 
     setLoading(true);
     try {
-      const existingImages = images.filter(i => i.serverId).map(i => i.serverId!);
-      const newImages = images.filter(i => i.file);
+      const existingImages = images
+        .filter((i) => i.serverId)
+        .map((i) => i.serverId!);
+      const newImages = images.filter((i) => i.file);
 
       const payload = {
         title,
@@ -193,6 +239,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         oldPrice,
         exclusive,
         category,
+        details,
+        insideBox: items.filter(i => i.trim() !== ""),
       };
 
       const res = await fetch(`/api/products/${id}`, {
@@ -242,12 +290,17 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
         {message && (
           <div
-            className={`p-4 rounded-lg ${message.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
+            className={`p-4 rounded-lg ${
+              message.isError
+                ? "bg-red-100 text-red-800"
+                : "bg-green-100 text-green-800"
+            }`}
           >
             {message.text}
           </div>
         )}
 
+        {/* title */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">
             Title <span className="text-red-500">*</span>
@@ -255,9 +308,24 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           <input
             type="text"
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter product title"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            disabled={loading}
+          />
+        </div>
+
+        {/* sub title */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-1">
+            SubTitle <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            placeholder="Enter product subtitle"
+            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
             disabled={loading}
           />
         </div>
@@ -268,9 +336,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           </label>
           <textarea
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter product description"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
             rows={4}
             disabled={loading}
           />
@@ -288,7 +356,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               value={price || ""}
               onChange={(e) => setPrice(Number(e.target.value))}
               placeholder="0"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#6d5d8a]"
               disabled={loading}
             />
           </div>
@@ -303,7 +371,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               value={oldPrice || ""}
               onChange={(e) => setOldPrice(Number(e.target.value))}
               placeholder="0"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
               disabled={loading}
             />
           </div>
@@ -316,46 +384,95 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             <input
               type="number"
               value={exclusive || ""}
-              onChange={(e) => setExclusive(e.target.value ? Number(e.target.value) : undefined)}
+              onChange={(e) =>
+                setExclusive(
+                  e.target.value ? Number(e.target.value) : undefined
+                )
+              }
               placeholder="Optional"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
               disabled={loading}
             />
           </div>
         </div>
 
         {/* Stock */}
-        <div>
-          <label className="block text-gray-700 font-medium mb-1">
-            Stock <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            value={stock || ""}
-            onChange={(e) => setStock(Number(e.target.value))}
-            placeholder="0"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
-            disabled={loading}
-          />
+        <div className="flex gap-4 items-end">
+          {/* Stock Input */}
+          <div className="flex-1 flex flex-col">
+            <label className="block text-gray-700 font-medium mb-1">
+              Stock <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={stock || ""}
+              onChange={(e) => setStock(Number(e.target.value))}
+              placeholder="0"
+              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Category Dropdown */}
+          <div className="flex-1 flex flex-col">
+            <label className="block text-gray-700 font-medium mb-1">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <CategoryDropdown
+              selectedCategory={category}
+              onCategoryChange={setCategory}
+              disabled={loading}
+            />
+          </div>
         </div>
 
-        {/* Category Dropdown */}
-        <CategoryDropdown
-          selectedCategory={category}
-          onCategoryChange={setCategory}
-          disabled={loading}
-        />
+        {/* inside box */}
 
+        <div className="space-y-2">
+          {/* Single label at the top */}
+          <label className="block text-gray-700 font-medium mb-2">
+            Inside box <span className="text-red-500">*</span>
+          </label>
+
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className=" rounded-lg flex items-center justify-between gap-3"
+            >
+              <input
+                type="text"
+                value={item}
+                onChange={(e) => handleChange(index, e.target.value)}
+                placeholder="Enter something..."
+                className="flex-1 outline-none p-3 rounded-lg border focus:ring-2 focus:ring-[#7e57c2]"
+              />
+              {items.length > 1 && (
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="text-red-500 font-bold px-2 py-1 border rounded-lg hover:bg-red-200"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        
         {/* Images */}
         <div>
           <label className="block text-gray-700 font-medium mb-2">
             Images <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-4">
-            {images.map(imgObj => (
+            {images.map((imgObj) => (
               <div key={imgObj.id} className="relative w-32 h-32">
                 <div className="w-full h-full rounded-lg overflow-hidden border border-gray-200">
-                  <Image src={imgObj.url} alt="Preview" fill style={{ objectFit: "cover" }} />
+                  <Image
+                    src={imgObj.url}
+                    alt="Preview"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
                 </div>
                 <button
                   type="button"
@@ -370,7 +487,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
             <label
               className={`w-32 h-32 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer transition ${
-                loading ? "border-gray-200 text-gray-400" : "border-gray-300 hover:border-[#7e57c2]"
+                loading
+                  ? "border-gray-200 text-gray-400"
+                  : "border-gray-300 hover:border-[#7e57c2]"
               }`}
             >
               <Plus className="w-6 h-6 text-gray-400 mb-1" />
@@ -386,7 +505,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             </label>
           </div>
           {images.length === 0 && (
-            <p className="text-sm text-gray-500 mt-2">Please upload at least one product image</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Please upload at least one product image
+            </p>
           )}
         </div>
 

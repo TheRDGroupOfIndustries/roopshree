@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X, Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
+import toast from "react-hot-toast"; // ✅ added
 
 interface Stock {
   id: string;
@@ -31,14 +32,12 @@ const Products = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Fetch products from backend
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch("/api/products");
         const data = await res.json();
-
-        console.log("Fetched product data:", data);
 
         let fetchedProducts: Product[] = [];
         if (Array.isArray(data)) {
@@ -50,7 +49,6 @@ const Products = () => {
           fetchedProducts = [];
         }
 
-        // ✅ Reverse to show newest first
         setProducts(fetchedProducts.reverse());
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -63,14 +61,12 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  // Helper to calculate total stock
   const getTotalStock = (stock: Stock[] | Stock | undefined) => {
     if (!stock) return 0;
     const stockArray = Array.isArray(stock) ? stock : [stock];
     return stockArray.reduce((acc, s) => acc + (s.currentStock || 0), 0);
   };
 
-  // Handle delete product
   const handleDelete = async (productId: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product? This action cannot be undone."
@@ -91,14 +87,13 @@ const Products = () => {
         throw new Error(data.error || "Failed to delete product");
       }
 
-      // Remove from UI
       setProducts((prev) => prev.filter((p) => p.id !== productId));
-      alert("Product deleted successfully!");
+      toast.success("✅ Product deleted successfully!"); // ✅ changed
     } catch (error) {
       console.error("Delete error:", error);
-      alert(
+      toast.error(
         error instanceof Error ? error.message : "Failed to delete product"
-      );
+      ); // ✅ changed
     } finally {
       setDeletingId(null);
     }
@@ -130,17 +125,22 @@ const Products = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    {["Title", "Description", "Category", "Stock", "Images", "Actions"].map(
-                      (header) => (
-                        <th
-                          key={header}
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          {header}
-                        </th>
-                      )
-                    )}
+                    {[
+                      "Title",
+                      "Description",
+                      "Category",
+                      "Stock",
+                      "Images",
+                      "Actions",
+                    ].map((header) => (
+                      <th
+                        key={header}
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {header}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -223,86 +223,6 @@ const Products = () => {
               </table>
             </div>
           </div>
-
-          {/* Mobile Card View */}
-          <div className="md:hidden space-y-4">
-            {products.length > 0 ? (
-              products.map((product) => {
-                const totalStock = getTotalStock(product.stock);
-                const isDeleting = deletingId === product.id;
-                return (
-                  <div
-                    key={product.id}
-                    className="bg-white p-4 rounded-xl shadow border border-gray-100"
-                  >
-                    <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">Title:</span>
-                      <span className="text-gray-700">{product.title}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">Description:</span>
-                      <span className="text-gray-700 truncate max-w-[200px]">
-                        {product.description}
-                      </span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">Category:</span>
-                      <span className="text-gray-700 truncate max-w-[200px]">
-                        {product.category || "N/A"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">Stock:</span>
-                      <span
-                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          totalStock > 0
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {totalStock}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3 pt-3 border-t">
-                      <button
-                        onClick={() => {
-                          setPopupImages(product.images);
-                          setCurrentImageIndex(0);
-                        }}
-                        className="text-[#7e57c2] hover:text-[#5d40a2] font-medium text-sm"
-                      >
-                        View Images
-                      </button>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            router.push(`/manage/products/${product.id}`)
-                          }
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="Edit Product"
-                          disabled={isDeleting}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-50"
-                          title="Delete Product"
-                          disabled={isDeleting}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-8 text-gray-500 text-sm">
-                No products found.
-              </div>
-            )}
-          </div>
         </>
       )}
 
@@ -324,48 +244,20 @@ const Products = () => {
                 fill
                 className="object-contain"
               />
-
               {currentImageIndex > 0 && (
                 <button
                   onClick={() => setCurrentImageIndex((prev) => prev - 1)}
                   className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow hover:bg-gray-100 transition"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-black"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
+                  ←
                 </button>
               )}
-
               {currentImageIndex < popupImages.length - 1 && (
                 <button
                   onClick={() => setCurrentImageIndex((prev) => prev + 1)}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow hover:bg-gray-100 transition"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-black"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  →
                 </button>
               )}
             </div>

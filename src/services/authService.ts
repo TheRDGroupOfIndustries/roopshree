@@ -1,20 +1,17 @@
 import api from "@/lib/api";
 
 export const loginUser = async (email: string, password: string) => {
-<<<<<<< HEAD
-     const res = await api.post("/auth/signin", { email, password });
+      const res = await api.post("/auth/signin", { email, password });
   // const res = await api.post("/auth/login", { email, password });
     return res.data;
  };
  
  
-=======
-  const res = await api.post("/auth/login", { email, password });
-  return res.data;
-};
+  //  const res = await api.post("/auth/login", { email, password });
+  // return res.data;
 
->>>>>>> 529881bffb36e9b44acaca201534df8ee5fe729c
-export const registerUser = async (
+
+ export const registerUser = async (
   name: string,
   email: string,
   password: string,

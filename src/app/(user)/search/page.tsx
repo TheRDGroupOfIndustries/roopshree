@@ -179,6 +179,35 @@ export default function SearchPage() {
           className="flex-1 bg-transparent outline-none ml-3 text-sm"
         />
       </div>
+{/* catogery section */}
+{/* <div className="w-full mt-6">
+  <h2 className="text-xl font-semibold mb-4 text-gray-800">Categories</h2>
+
+  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+    {[
+      { name: "Electronics", img: "https://via.placeholder.com/100?text=E" },
+      { name: "Fashion", img: "https://via.placeholder.com/100?text=F" },
+      { name: "Home", img: "https://via.placeholder.com/100?text=H" },
+      { name: "Beauty", img: "https://via.placeholder.com/100?text=B" },
+      { name: "Toys", img: "https://via.placeholder.com/100?text=T" },
+      { name: "Sports", img: "https://via.placeholder.com/100?text=S" },
+    ].map((cat, i) => (
+      <div
+        key={i}
+        className="flex flex-col items-center justify-center min-w-[90px]"
+      >
+        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-orange-500 shadow-md flex items-center justify-center bg-white">
+          <img
+            src={cat.img}
+            alt={cat.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <p className="text-sm text-gray-700 mt-2">{cat.name}</p>
+      </div>
+    ))}
+  </div>
+</div> */}
 
       {/* 🔥 Popular Searches */}
       <div className="px-4 mb-5">

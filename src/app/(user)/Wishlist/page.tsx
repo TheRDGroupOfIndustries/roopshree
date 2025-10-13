@@ -125,7 +125,7 @@ const WishlistPage: React.FC = () => {
       ) : (
         <div className="px-4 sm:px-6 lg:px-8 pb-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {Array.isArray(wishlist) && wishlist.length > 0 ? (
+             {Array.isArray(wishlist) && wishlist.length > 0 ? (
               wishlist.map(({ product }) => (
                 <ProductCard
                   key={product.id}
@@ -143,6 +143,7 @@ const WishlistPage: React.FC = () => {
                 Your wishlist is empty.
               </p>
             )}
+            
           </div>
         </div>
       )}

@@ -51,7 +51,7 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
     <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn">
       <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-hidden animate-slideUp">
         {/* Header */}
-        <div className="bg-[#7e57c2] text-white px-6 py-4 flex justify-between items-center">
+        <div className="bg-amber-600 text-white px-6 py-4 flex justify-between items-center">
           <h3 className="text-xl font-semibold">
             Select User to Add as{" "}
             {selectedRole === "admin" ? "Admin" : "Delivery Boy"}
@@ -81,11 +81,11 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
                       <span className="font-medium">{user.role}</span>
                     </p>
                   </div>
-
+                  
                   {/* Add Role Button */}
                   <button
                     onClick={() => handleRoleChange(user.id, selectedRole)}
-                    className="ml-4 bg-[#7e57c2] text-white px-4 py-2 rounded-lg hover:bg-[#6d48b0] transition-all duration-150 flex items-center gap-2 font-medium"
+                    className="ml-4 bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-all duration-150 flex items-center gap-2 font-medium"
                   >
                     <span className="text-xl">+</span>
                     <span>Add</span>

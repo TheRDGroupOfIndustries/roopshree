@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import ProductCard from "@/Components/ProductCard";
 import Image from "next/image";
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // 🟠 Categories Data
   const categoriesData = [
@@ -183,13 +185,37 @@ export default function SearchPage() {
     "Perfume",
     "Serum",
     "Sunscreen",
+    "Bella Vita Perfumes",
   ];
 
+  // 🔹 Fetch products dynamically from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) throw new Error("Failed to fetch products");
+
+        const data = await res.json();
+        console.log("🔥 API response:", data);
+        setProducts(data.products || data || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // 🔹 Filter products based on search term (using title)
   // 🔎 Filtered Products
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 🔹 Get unique categories
+  const categories = [...new Set(products.map((p) => p.category))];
   // 🏷️ Get Unique Categories
   const uniqueCategories = [...new Set(products.map((p) => p.category))];
 
@@ -225,6 +251,7 @@ export default function SearchPage() {
         </div>
       </div>
 
+      {/* 🛍️ Product Section */}
       {/* 🟣 Category Section */}
       <div className="w-full mt-6">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 pl-3">
@@ -253,15 +280,33 @@ export default function SearchPage() {
 
       {/* 🛍️ Products Section */}
       <div className="px-4">
-        {searchTerm ? (
+        {loading ? (
+          <p className="text-gray-500 text-sm text-center mt-10">
+            Loading products...
+          </p>
+        ) : searchTerm ? (
           <>
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
+              Results for “{searchTerm}”
               Results for "{searchTerm}"
             </h3>
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} {...product} />
+                {filteredProducts.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    id={p.id}
+                    name={p.title}
+                    description={p.description}
+                    price={p.price}
+                    oldPrice={p.oldPrice}
+                    image={
+                      Array.isArray(p.images)
+                        ? p.images[0]
+                        : "/images/placeholder.png"
+                    }
+                    category={p.category}
+                  />
                 ))}
               </div>
             ) : (
@@ -279,8 +324,21 @@ export default function SearchPage() {
               <div className="grid grid-cols-2 gap-4">
                 {products
                   .filter((p) => p.category === category)
-                  .map((product) => (
-                    <ProductCard key={product.id} {...product} />
+                  .map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      id={p.id}
+                      name={p.title}
+                      description={p.description}
+                      price={p.price}
+                      oldPrice={p.oldPrice}
+                      image={
+                        Array.isArray(p.images)
+                          ? p.images[0]
+                          : "/images/placeholder.png"
+                      }
+                      category={p.category}
+                    />
                   ))}
               </div>
             </div>

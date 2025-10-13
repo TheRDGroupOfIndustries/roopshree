@@ -215,8 +215,7 @@ export default function SearchPage() {
   );
 
   // 🔹 Get unique categories
-  const categories = [...new Set(products.map((p) => p.category))];
-  // 🏷️ Get Unique Categories
+   // 🏷️ Get Unique Categories
   const uniqueCategories = [...new Set(products.map((p) => p.category))];
 
   return (
@@ -288,8 +287,7 @@ export default function SearchPage() {
           <>
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
               Results for “{searchTerm}”
-              Results for "{searchTerm}"
-            </h3>
+             </h3>
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
                 {filteredProducts.map((p) => (

@@ -8,35 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-  EXCLUSIVE_USER
-  DELIVERY_BOY
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum Status {
-  CONFIRMED
-  DISPATCH
-  OUTOFDELIVERY
-  CANCELLED
-  DELIVERED
-}
-
-enum ExpenseCategory {
-  INVENTORY
-  LOGISTICS
-  MARKETING
-  SALARY
-  OTHER
-}
-
 model User {
   id                  String         @id @default(cuid())
   name                String
@@ -233,4 +204,33 @@ model Offer {
   date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  EXCLUSIVE_USER
+  DELIVERY_BOY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  CONFIRMED
+  DISPATCH
+  OUTOFDELIVERY
+  CANCELLED
+  DELIVERED
+}
+
+enum ExpenseCategory {
+  INVENTORY
+  LOGISTICS
+  MARKETING
+  SALARY
+  OTHER
 }

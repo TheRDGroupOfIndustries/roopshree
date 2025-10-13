@@ -123,7 +123,7 @@ const Expenses = () => {
   const [deleting, setDeleting] = useState<any>(null);
   const [totalExpenseCount, setTotalExpenseCount] = useState(0);
 
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 20;
 
   const handleOpenCreate = () => {
     setCurrentExpenseToEdit(null);
@@ -217,7 +217,7 @@ const Expenses = () => {
         <h1 className="text-3xl font-bold text-gray-900">Expense Management</h1>
         <button
           onClick={handleOpenCreate}
-          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 text-sm font-medium"
+          className="flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition duration-150 text-sm font-medium"
         >
           <PlusCircle className="w-5 h-5 mr-2" />
           Add New Expense

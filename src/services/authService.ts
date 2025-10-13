@@ -1,13 +1,11 @@
 import api from "@/lib/api";
 
 export const loginUser = async (email: string, password: string) => {
-        const res = await api.post("/auth/signin", { email, password });
-  // const res = await api.post("/auth/login", { email, password });
-      return res.data;
- 
-  };
- 
- 
+  const res = await api.post("/auth/login", { email, password });
+  console.log(res);
+  return res.data;
+};
+
 export const registerUser = async (
   name: string,
   email: string,
@@ -34,7 +32,6 @@ export const getMe = async () => {
 
   return res.data;
 };
-
 
 export const sendOtpEmail = async (email: string) => {
   try {

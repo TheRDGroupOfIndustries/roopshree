@@ -210,7 +210,7 @@ export default function ExpenseAnalyticsChart() {
                     console.log("Clicked month:", (data as any).month);
                   }}
                   dataKey="total"
-                  fill="#4F39F6"
+                  fill="#F39500"
                   radius={[4, 4, 0, 0]} // Added slight radius for modern look
                 />
               </BarChart>
@@ -243,7 +243,7 @@ export default function ExpenseAnalyticsChart() {
                 className="flex justify-between items-center py-2 border-b"
               >
                 <span className="text-gray-700">{item}</span>
-                <span className="font-medium text-[#4F39F6]">
+                <span className="font-medium text-amber-600">
                   {formatCurrency(totalAmount)}
                 </span>
               </li>
@@ -251,7 +251,7 @@ export default function ExpenseAnalyticsChart() {
           })}
           <li className="flex justify-between text-lg items-center py-2 ">
             <span className="text-gray-700 font-bold">Total</span>
-            <span className="font-bold text-[#4F39F6]">
+            <span className="font-bold text-amber-600">
               {formatCurrency(monthlyExpenses?.total || 0)}
             </span>
           </li>

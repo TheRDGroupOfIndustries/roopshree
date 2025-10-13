@@ -155,7 +155,7 @@ const StatusEditModal = ({ order, onClose, onSave }: any) => {
               setDeliveryBoyId("");
               setError(null);
             }}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg border"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-lg border"
           >
             {["CONFIRMED", "DISPATCH", "OUTOFDELIVERY", "CANCELLED"].map(
               (status) => (
@@ -185,7 +185,7 @@ const StatusEditModal = ({ order, onClose, onSave }: any) => {
                 setDeliveryBoyId(e.target.value);
                 setError(null);
               }}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg border"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-lg border"
             >
               <option value="">Select Delivery Boy</option>
               {deliveryBoys?.map((boy) => (
@@ -208,7 +208,7 @@ const StatusEditModal = ({ order, onClose, onSave }: any) => {
           </button>
           <button
             onClick={handleSaveStatus}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md"
+            className="px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition duration-150 shadow-md"
           >
             {updating ? "Saving..." : "Save Changes"}
           </button>
@@ -304,7 +304,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
     <div className="p-4 sm:p-6 lg:p-8">
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
-        {/* <button className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 text-sm font-medium">
+        {/* <button className="flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition duration-150 text-sm font-medium">
           <Package className="w-5 h-5 mr-2" />
           Create New Order (Mock)
         </button> */}
@@ -364,7 +364,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
                     key={order.id}
                     className="hover:bg-gray-50 transition duration-150"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-amber-600">
                       #{order.id.slice(0, 6)}...
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
@@ -394,7 +394,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
                         <button
                           title="Edit Status"
                           onClick={() => handleEditStatusClick(order)}
-                          className="text-gray-500 hover:text-indigo-600 p-1 rounded-full hover:bg-indigo-50 transition duration-150 cursor-pointer"
+                          className="text-gray-500 hover:text-amber-600 p-1 rounded-full hover:bg-amber-50 transition duration-150 cursor-pointer"
                         >
                           <Edit3 className="w-5 h-5" />
                         </button>
@@ -463,7 +463,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   {/* Simplified page indicators */}
-                  <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-indigo-600 text-sm font-medium text-white">
+                  <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-amber-600 text-sm font-medium text-white">
                     {currentPage}
                   </span>
                   <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">

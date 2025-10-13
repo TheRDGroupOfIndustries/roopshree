@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Bell, Store } from "lucide-react";
 import Image from "next/image";
+import { getTodaysSale } from "@/lib/actions/orderActions";
 
 interface UserData {
   userId: string;
@@ -13,7 +14,11 @@ interface UserData {
 
 export default function Navbar() {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [activeOrders, setActiveOrders] = useState<number>(0); // Default static value
+  // const [activeOrders, setActiveOrders] = useState<number>(0); // Default static value
+  const [todaysData, setTodaysData] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+  });
 
   // Fetch user info
   useEffect(() => {
@@ -28,17 +33,27 @@ export default function Navbar() {
 
   // Fetch active orders count
   useEffect(() => {
-    fetch("/api/order", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.totalCount !== undefined) {
-          setActiveOrders(data.totalCount);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch orders:", err));
+    // fetch("/api/order", {
+    //   method: "GET",
+    //   credentials: "include",
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     if (data.totalCount !== undefined) {
+    //       setActiveOrders(data.totalCount);
+    //     }
+    //   })
+    //   .catch((err) => console.error("Failed to fetch orders:", err));
+    const fetchTodaysData = async () => {
+      try {
+        const res = await getTodaysSale();
+        console.log("res", res);
+        setTodaysData(res);
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      }
+    };
+    fetchTodaysData();
   }, []);
 
   return (
@@ -56,7 +71,9 @@ export default function Navbar() {
             >
               RoopShree
             </h1>
-            <p className="text-xs text-gray-500 font-medium">Premium Dashboard</p>
+            <p className="text-xs text-gray-500 font-medium">
+              Premium Dashboard
+            </p>
           </div>
         </div>
 
@@ -74,12 +91,16 @@ export default function Navbar() {
       <div className="flex items-center gap-2 md:gap-4">
         <div className="text-center">
           <p className="text-xs text-amber-700 font-medium">Today's Sales</p>
-          <p className="text-sm font-bold text-amber-800">$12.4K</p>
+          <p className="text-sm font-bold text-amber-800">
+            {(todaysData.totalRevenue / 100).toFixed(2)}k
+          </p>
         </div>
 
         <div className="text-center">
           <p className="text-xs text-amber-700 font-medium">Active Orders</p>
-          <p className="text-sm font-bold text-amber-800">{activeOrders}</p>
+          <p className="text-sm font-bold text-amber-800">
+            {todaysData.totalOrders}
+          </p>
         </div>
 
         <div className="relative">
@@ -103,8 +124,12 @@ export default function Navbar() {
               unoptimized
             />
             <div className="hidden md:block text-left">
-              <p className="text-sm font-medium text-gray-900">{userData?.name || "User"}</p>
-              <p className="text-xs text-gray-500">{userData?.role || "Role"}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {userData?.name || "User"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {userData?.role || "Role"}
+              </p>
             </div>
             <i className="ri-arrow-down-s-line text-gray-400"></i>
           </button>

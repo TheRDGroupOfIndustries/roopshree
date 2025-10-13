@@ -108,3 +108,85 @@ export async function updateOrderStatus(
 
   return order;
 }
+
+export async function getOrderAnalytics() {
+  try {
+    await authenticateAdmin();
+
+    // Fetch all delivered orders
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const orders = await prisma.order.findMany({
+      where: {
+        status: "DELIVERED",
+        createdAt: { gte: oneYearAgo },
+      },
+      select: {
+        totalAmount: true,
+        createdAt: true,
+      },
+    });
+
+    // Aggregate analytics per month
+    const analytics: Record<
+      string,
+      { totalOrders: number; totalRevenue: number }
+    > = {};
+
+    orders.forEach((order) => {
+      const date = new Date(order.createdAt);
+      const monthKey = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`; // e.g., "2025-10"
+
+      if (!analytics[monthKey]) {
+        analytics[monthKey] = { totalOrders: 0, totalRevenue: 0 };
+      }
+
+      analytics[monthKey].totalOrders += 1;
+      analytics[monthKey].totalRevenue += order.totalAmount;
+    });
+
+    // Convert analytics object to array if needed
+    const result = Object.entries(analytics).map(([month, data]) => ({
+      month,
+      ...data,
+    }));
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getTodaysSale() {
+  await authenticateAdmin();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to the beginning of today
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Set to the beginning of tomorrow
+
+  const sales = await prisma.order.aggregate({
+    where: {
+      createdAt: {
+        gte: today,
+        lt: tomorrow,
+      },
+      // status: "DELIVERED",
+    },
+    _sum: {
+      totalAmount: true,
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  return {
+    totalRevenue: sales._sum.totalAmount || 0,
+    totalOrders: sales._count.id || 0,
+  };
+}

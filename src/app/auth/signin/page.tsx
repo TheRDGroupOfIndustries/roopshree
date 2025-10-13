@@ -143,7 +143,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 const SignInPage: React.FC = () => {
-  const { login,user } = useAuth();
+  const { login, user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -160,7 +160,7 @@ const SignInPage: React.FC = () => {
   //     await login(loginData.email, loginData.password);
   //     toast.success("Logged in successfully!");
   //     console.log("user: ",user);
-      
+
   //       if (user?.role === "admin") {
   //     router.push("/manage");
   //   } else {
@@ -176,24 +176,24 @@ const SignInPage: React.FC = () => {
   // };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const loggedInUser = await login(loginData.email, loginData.password); // 🔹 use returned user
-    toast.success("Logged in successfully!");
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const loggedInUser = await login(loginData.email, loginData.password); // 🔹 use returned user
+      toast.success("Logged in successfully!");
 
-    if (loggedInUser.role === "ADMIN") {
-      router.push("/manage");
-    } else {
-      router.push("/home");
+      if (loggedInUser.role === "ADMIN") {
+        router.push("/manage");
+      } else {
+        router.push("/home");
+      }
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      toast.error(error.response?.data?.error || "Login failed. Try again.");
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    console.error("Login failed:", error);
-    toast.error(error.response?.data?.error || "Login failed. Try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="-translate-y-40 absolute">

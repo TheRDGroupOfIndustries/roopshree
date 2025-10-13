@@ -3,12 +3,38 @@
 import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import ProductCard from "@/Components/ProductCard";
+import Image from "next/image";
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
+  // 🟠 Categories Data
+  const categoriesData = [
+    {
+      name: "Skincare",
+      img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400",
+    },
+    {
+      name: "Makeup",
+      img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400",
+    },
+    {
+      name: "Hair Care",
+      img: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
+    },
+    {
+      name: "Fragrance",
+      img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400",
+    },
+    {
+      name: "Accessories",
+      img: "https://images.unsplash.com/photo-1631214540553-ff044a3ff1d4?w=400",
+    },
+  ];
+
+  // 🛍️ Product Data
   const products = [
-    // 💄 Makeup
+    // Makeup
     {
       id: 1,
       name: "Luxury Foundation",
@@ -34,7 +60,7 @@ export default function SearchPage() {
       category: "Makeup",
     },
 
-    // 🧴 Skincare
+    // Skincare
     {
       id: 3,
       name: "Glow Moisturizer",
@@ -57,7 +83,7 @@ export default function SearchPage() {
       category: "Skincare",
     },
 
-    // 🌸 Fragrance
+    // Fragrance
     {
       id: 5,
       name: "Floral Perfume",
@@ -82,7 +108,7 @@ export default function SearchPage() {
       category: "Fragrance",
     },
 
-    // 💇 Haircare
+    // Hair Care
     {
       id: 7,
       name: "Keratin Shampoo",
@@ -90,7 +116,7 @@ export default function SearchPage() {
       price: "₹699",
       image: "/images/image.png",
       rating: 4,
-      category: "Haircare",
+      category: "Hair Care",
     },
     {
       id: 8,
@@ -102,10 +128,10 @@ export default function SearchPage() {
       badge: "Hot",
       badgeColor: "bg-red-500",
       rating: 5,
-      category: "Haircare",
+      category: "Hair Care",
     },
 
-    // 👓 Accessories
+    // Accessories
     {
       id: 9,
       name: "Makeup Brush Set",
@@ -127,7 +153,7 @@ export default function SearchPage() {
       category: "Accessories",
     },
 
-    // 👨 Men's Grooming
+    // Men's Grooming
     {
       id: 11,
       name: "Beard Oil",
@@ -159,12 +185,13 @@ export default function SearchPage() {
     "Sunscreen",
   ];
 
+  // 🔎 Filtered Products
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Group products by category
-  const categories = [...new Set(products.map((p) => p.category))];
+  // 🏷️ Get Unique Categories
+  const uniqueCategories = [...new Set(products.map((p) => p.category))];
 
   return (
     <div className="min-h-screen bg-white py-4 pb-20">
@@ -179,35 +206,6 @@ export default function SearchPage() {
           className="flex-1 bg-transparent outline-none ml-3 text-sm"
         />
       </div>
-{/* catogery section */}
-{/* <div className="w-full mt-6">
-  <h2 className="text-xl font-semibold mb-4 text-gray-800">Categories</h2>
-
-  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-    {[
-      { name: "Electronics", img: "https://via.placeholder.com/100?text=E" },
-      { name: "Fashion", img: "https://via.placeholder.com/100?text=F" },
-      { name: "Home", img: "https://via.placeholder.com/100?text=H" },
-      { name: "Beauty", img: "https://via.placeholder.com/100?text=B" },
-      { name: "Toys", img: "https://via.placeholder.com/100?text=T" },
-      { name: "Sports", img: "https://via.placeholder.com/100?text=S" },
-    ].map((cat, i) => (
-      <div
-        key={i}
-        className="flex flex-col items-center justify-center min-w-[90px]"
-      >
-        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-orange-500 shadow-md flex items-center justify-center bg-white">
-          <img
-            src={cat.img}
-            alt={cat.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <p className="text-sm text-gray-700 mt-2">{cat.name}</p>
-      </div>
-    ))}
-  </div>
-</div> */}
 
       {/* 🔥 Popular Searches */}
       <div className="px-4 mb-5">
@@ -227,12 +225,38 @@ export default function SearchPage() {
         </div>
       </div>
 
+      {/* 🟣 Category Section */}
+      <div className="w-full mt-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 pl-3">
+          Categories
+        </h2>
+
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {categoriesData.map((cat, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center justify-center min-w-[90px]"
+            >
+              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-orange-500 shadow-md flex items-center justify-center bg-white">
+                <Image
+                  src={cat.img}
+                  alt={cat.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <p className="text-sm text-gray-700 mt-2">{cat.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* 🛍️ Products Section */}
       <div className="px-4">
         {searchTerm ? (
           <>
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
-              Results for {searchTerm}
+              Results for "{searchTerm}"
             </h3>
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
@@ -247,7 +271,7 @@ export default function SearchPage() {
             )}
           </>
         ) : (
-          categories.map((category) => (
+          uniqueCategories.map((category) => (
             <div key={category} className="mb-8">
               <h3 className="font-semibold text-lg text-gray-900 mb-3">
                 {category}

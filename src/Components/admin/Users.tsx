@@ -53,7 +53,7 @@ const Users = () => {
         {(selectedRole === "admin" || selectedRole === "delivery_boy") && (
           <button
             onClick={() => setShowModal(true)}
-            className="px-5 py-2 bg-[#7e57c2] text-white rounded-lg font-medium hover:bg-[#6d48b0] transition-all duration-150 shadow-md hover:shadow-lg"
+            className="px-5 py-2 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-all duration-150 shadow-md hover:shadow-lg"
           >
             + Add {selectedRole === "admin" ? "Admin" : "Delivery Boy"}
           </button>
@@ -70,7 +70,7 @@ const Users = () => {
             }
             className={`px-5 py-2 rounded-lg font-medium transition-all duration-150 ${
               selectedRole === role
-                ? "bg-[#7e57c2] text-white shadow"
+                ? "bg-amber-600 text-white shadow"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >

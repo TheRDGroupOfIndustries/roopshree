@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X, Edit, Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/Components/ConfirmDialog"; // Import the dialog component
 
 interface Employee {
   id: string;
@@ -22,6 +23,8 @@ const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   // Fetch employees
   useEffect(() => {
@@ -45,12 +48,15 @@ const Employees = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this employee? This action cannot be undone."
-    );
-    if (!confirmDelete) return;
+    setPendingDeleteId(id);
+    setIsDialogOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    const id = pendingDeleteId!;
     setDeletingId(id);
+
     try {
       const res = await fetch(`/api/employee/${id}`, {
         method: "DELETE",
@@ -67,7 +73,13 @@ const Employees = () => {
       alert(err instanceof Error ? err.message : "Delete failed");
     } finally {
       setDeletingId(null);
+      setPendingDeleteId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setPendingDeleteId(null);
   };
 
   return (
@@ -77,7 +89,7 @@ const Employees = () => {
         <h2 className="text-3xl font-bold text-gray-800">Employee Management</h2>
         <button
           onClick={() => router.push("/manage/employee/create")}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg font-medium hover:bg-amber-600 transition"
         >
           <Plus className="w-4 h-4" /> Create Employee
         </button>
@@ -121,7 +133,7 @@ const Employees = () => {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => router.push(`/manage/employee/${e.id}`)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition"
                                 title="Edit Employee"
                                 disabled={isDeleting}
                               >
@@ -182,7 +194,7 @@ const Employees = () => {
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => router.push(`/manage/employee/${e.id}`)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition"
                         title="Edit Employee"
                         disabled={isDeleting}
                       >
@@ -206,6 +218,14 @@ const Employees = () => {
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        isOpen={isDialogOpen}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        title="Delete Employee?"
+        message="Are you sure you want to delete this employee? This action cannot be undone."
+      />
     </div>
   );
 };

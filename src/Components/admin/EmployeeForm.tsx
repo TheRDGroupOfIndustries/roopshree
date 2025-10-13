@@ -214,7 +214,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="John"
             />
@@ -229,7 +229,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="Doe"
             />
@@ -244,7 +244,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="john.doe@company.com"
             />
@@ -257,7 +257,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="(123) 456-7890"
             />
@@ -270,7 +270,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             />
           </div>
@@ -281,7 +281,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             >
               <option value="">Select Gender</option>
@@ -298,7 +298,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="date"
               value={hireDate}
               onChange={(e) => setHireDate(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             />
           </div>
@@ -312,7 +312,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="text"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="Software Engineer"
             />
@@ -327,7 +327,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
               type="number"
               value={salary || ""}
               onChange={(e) => setSalary(e.target.value ? Number(e.target.value) : undefined)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="75000"
               min="0"
@@ -348,7 +348,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+            className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Saving..." : isUpdateMode ? "Update Employee" : "Create Employee"}

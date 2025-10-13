@@ -149,7 +149,7 @@ const CategoryDropdown = ({
         className={`w-full p-3 border rounded-lg text-left ${
           disabled
             ? "bg-gray-100 cursor-not-allowed"
-            : "bg-white hover:border-[#7e57c2] focus:ring-2 focus:ring-[#7e57c2] focus:outline-none"
+            : "bg-white hover:border-[#7e57c2] focus:ring-2 focus:ring-[#fcd34d] focus:outline-none"
         } ${!internalSelected && !loading ? "text-gray-400" : "text-gray-900"}`}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
@@ -168,9 +168,9 @@ const CategoryDropdown = ({
               {categories.map(cat => (
                 <div
                   key={cat.id}
-                  className={`px-4 py-2 cursor-pointer hover:bg-purple-100 transition ${
+                  className={`px-4 py-2 cursor-pointer hover:bg-amber-100 transition ${
                     internalSelected === cat.name
-                      ? "bg-purple-50 font-semibold text-[#7e57c2]"
+                      ? "bg-amber-50 font-semibold text-zinc-700"
                       : "text-gray-900"
                   }`}
                   onClick={() => handleCategorySelect(cat.name)}
@@ -189,7 +189,7 @@ const CategoryDropdown = ({
                 onChange={e => setNewCat(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Add new category"
-                className="flex-1 p-2 border rounded focus:ring-2 focus:ring-[#7e57c2] focus:outline-none"
+                className="flex-1 p-2 border rounded focus:ring-2 focus:ring-[#fcd34d] focus:outline-none"
                 disabled={loading}
                 maxLength={50}
               />
@@ -197,7 +197,7 @@ const CategoryDropdown = ({
                 type="button"
                 onClick={handleAddCategory}
                 className={`px-4 py-2 rounded text-white font-medium transition ${
-                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#7e57c2] hover:bg-[#5d40a2]"
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-600"
                 }`}
                 disabled={loading}
               >

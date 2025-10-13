@@ -7,11 +7,18 @@ import { RecentOrders } from "@/app/manage/page";
 import ExpenseAnalyticsChart from "./ExpenseAnalyticsChart";
 import OrderDetailsModal from "./OrderDetails";
 
+import { Trophy } from 'lucide-react';
+
 interface Summary {
   totalSales: number;
   newOrders: number;
   activeProducts: number;
   newUsers: Number;
+}
+
+interface UserData {
+  userId: string;
+  name: string;
 }
 
 const mockData = {
@@ -103,9 +110,21 @@ export default function Dashboard({
 }) {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+
+  useEffect(() => {
+      fetch("/api/auth/me", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => setUserData(data))
+        .catch((err) => console.error("Failed to fetch user data:", err));
+    }, []);
 
   const fetchSummary = async () => {
     setLoadingSummary(true);
@@ -131,8 +150,23 @@ export default function Dashboard({
   // console.log("recentOrders", recentOrders);
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-3xl font-bold text-gray-800">Dashboard Overview</h2>
+    <div className="space-y-8 ml-30 mr-30">
+        <div className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Welcome back, {userData?.name || "Admin"}! ✨</h1>
+          <p className="text-amber-100 text-lg">
+            Your business is growing strong today. Here's your overview.
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <Trophy className="w-10 h-10 text-yellow-200" />
+          </div>
+        </div>
+      </div>
+    </div>
+      {/* <h2 className="text-3xl font-bold text-gray-800">Dashboard Overview</h2> */}
 
       {/* Summary Cards: Responsive grid used (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -3,60 +3,42 @@
 import React, { useEffect, useState } from "react";
 import { Search, Bell, Store } from "lucide-react";
 import Image from "next/image";
-import { verifyJwt } from "@/lib/jwt";
 
 interface UserData {
   userId: string;
   name: string;
   role: string;
-  image?: string;
+  profileImage?: string;
 }
 
 export default function Navbar() {
-  const [userData, setUserData] = useState<UserData>({
-    userId: "",
-    name: "Guest",
-    role: "User",
-    image: "/default-avatar.png",
-  });
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [activeOrders, setActiveOrders] = useState<number>(0); // Default static value
 
+  // Fetch user info
   useEffect(() => {
-    // Read token from cookie
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+    fetch("/api/auth/me", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => setUserData(data))
+      .catch((err) => console.error("Failed to fetch user data:", err));
+  }, []);
 
-    if (!token) return;
-
-    // Decode JWT
-    const decoded = verifyJwt(token);
-    if (!decoded) return;
-
-    // Set basic info from token first
-    setUserData((prev) => ({
-      ...prev,
-      userId: decoded.userId,
-      name: decoded.name,
-      role: decoded.role,
-    }));
-
-    // Fetch full user info (including image) from API
-    fetch(`/api/auth/${decoded.userId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: decoded.userId }),
+  // Fetch active orders count
+  useEffect(() => {
+    fetch("/api/order", {
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
-        setUserData((prev) => ({
-          ...prev,
-          image: data.image || "/default-avatar.png",
-        }));
+        if (data.totalCount !== undefined) {
+          setActiveOrders(data.totalCount);
+        }
       })
-      .catch((err) => {
-        console.error("Failed to fetch user data:", err);
-      });
+      .catch((err) => console.error("Failed to fetch orders:", err));
   }, []);
 
   return (
@@ -78,8 +60,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="w-15 h-8"></div>
-
         <div className="hidden md:block relative">
           <input
             type="text"
@@ -99,7 +79,7 @@ export default function Navbar() {
 
         <div className="text-center">
           <p className="text-xs text-amber-700 font-medium">Active Orders</p>
-          <p className="text-sm font-bold text-amber-800">47</p>
+          <p className="text-sm font-bold text-amber-800">{activeOrders}</p>
         </div>
 
         <div className="relative">
@@ -119,11 +99,12 @@ export default function Navbar() {
               height={40}
               alt="Profile"
               className="w-8 h-8 rounded-full object-cover border-2 border-amber-200"
-              src={userData.image || "/default-avatar.png"}
+              src={userData?.profileImage || "/default-avatar.png"}
+              unoptimized
             />
             <div className="hidden md:block text-left">
-              <p className="text-sm font-medium text-gray-900">{userData.name}</p>
-              <p className="text-xs text-gray-500">{userData.role}</p>
+              <p className="text-sm font-medium text-gray-900">{userData?.name || "User"}</p>
+              <p className="text-xs text-gray-500">{userData?.role || "Role"}</p>
             </div>
             <i className="ri-arrow-down-s-line text-gray-400"></i>
           </button>

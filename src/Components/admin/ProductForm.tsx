@@ -310,7 +310,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter product title"
-            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
             disabled={loading}
           />
         </div>
@@ -325,7 +325,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             placeholder="Enter product subtitle"
-            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
             disabled={loading}
           />
         </div>
@@ -338,7 +338,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter product description"
-            className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+            className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
             rows={4}
             disabled={loading}
           />
@@ -356,7 +356,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               value={price || ""}
               onChange={(e) => setPrice(Number(e.target.value))}
               placeholder="0"
-              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#6d5d8a]"
+              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
               disabled={loading}
             />
           </div>
@@ -371,7 +371,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               value={oldPrice || ""}
               onChange={(e) => setOldPrice(Number(e.target.value))}
               placeholder="0"
-              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full outline-none p-3 border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
               disabled={loading}
             />
           </div>
@@ -390,7 +390,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
                 )
               }
               placeholder="Optional"
-              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
               disabled={loading}
             />
           </div>
@@ -408,7 +408,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               value={stock || ""}
               onChange={(e) => setStock(Number(e.target.value))}
               placeholder="0"
-              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#7e57c2]"
+              className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
               disabled={loading}
             />
           </div>
@@ -444,7 +444,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
                 value={item}
                 onChange={(e) => handleChange(index, e.target.value)}
                 placeholder="Enter something..."
-                className="flex-1 outline-none p-3 rounded-lg border focus:ring-2 focus:ring-[#7e57c2]"
+                className="flex-1 outline-none p-3 rounded-lg border focus:ring-2 focus:ring-[#fcd34d]"
               />
               {items.length > 1 && (
                 <button
@@ -489,7 +489,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
               className={`w-32 h-32 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer transition ${
                 loading
                   ? "border-gray-200 text-gray-400"
-                  : "border-gray-300 hover:border-[#7e57c2]"
+                  : "border-gray-300 hover:border-[#fcd34d]"
               }`}
             >
               <Plus className="w-6 h-6 text-gray-400 mb-1" />
@@ -524,7 +524,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-[#7e57c2] text-white rounded-lg hover:bg-[#5d40a2] transition disabled:opacity-50"
+            className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Saving..." : isUpdateMode ? "Update" : "Create"}

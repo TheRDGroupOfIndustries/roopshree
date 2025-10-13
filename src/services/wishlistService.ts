@@ -6,7 +6,7 @@ import api from "@/lib/api";
 //  Add product to wishlist
 export const addToWishlist = async (productId: string) => {
   const res = await api.post("/wishlist", { productId });
-  console.log("addToWishlist,",res.data);
+  // console.log("addToWishlist,",res.data);
   
   return res.data;
 };
@@ -14,7 +14,7 @@ export const addToWishlist = async (productId: string) => {
 //  Remove product from wishlist
 export const removeFromWishlist = async (productId: string) => {
     const res = await api.delete(`/wishlist/${productId}`);
-    console.log("removeFromWishlist,",res.data);
+    // console.log("removeFromWishlist,",res.data);
   return res.data;
 };
 

@@ -80,7 +80,7 @@ const WalletPage: React.FC = () => {
 
       <div className="px-4 sm:px-6 py-6 max-w-4xl mx-auto space-y-6">
         {/* Balance Card */}
-        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl shadow-xl p-6 sm:p-8 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-br from-orange-400 to-orange-300 rounded-3xl shadow-xl p-6 sm:p-8 text-white relative overflow-hidden">
           {/* Decorative circles */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>

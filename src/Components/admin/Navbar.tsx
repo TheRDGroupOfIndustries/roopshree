@@ -14,7 +14,6 @@ interface UserData {
 
 export default function Navbar() {
   const [userData, setUserData] = useState<UserData | null>(null);
-  // const [activeOrders, setActiveOrders] = useState<number>(0); // Default static value
   const [todaysData, setTodaysData] = useState({
     totalRevenue: 0,
     totalOrders: 0,
@@ -33,17 +32,6 @@ export default function Navbar() {
 
   // Fetch active orders count
   useEffect(() => {
-    // fetch("/api/order", {
-    //   method: "GET",
-    //   credentials: "include",
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     if (data.totalCount !== undefined) {
-    //       setActiveOrders(data.totalCount);
-    //     }
-    //   })
-    //   .catch((err) => console.error("Failed to fetch orders:", err));
     const fetchTodaysData = async () => {
       try {
         const res = await getTodaysSale();
@@ -77,14 +65,14 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="hidden md:block relative">
+        {/* <div className="hidden md:block relative">
           <input
             type="text"
             placeholder="Search..."
             className="w-lg py-2 pl-10 pr-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
           />
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-        </div>
+        </div> */}
       </div>
 
       {/* Right Section */}
@@ -103,14 +91,14 @@ export default function Navbar() {
           </p>
         </div>
 
-        <div className="relative">
+        {/* <div className="relative">
           <button className="relative p-2.5 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all duration-300 cursor-pointer">
             <Bell className="text-xl" />
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
               4
             </span>
           </button>
-        </div>
+        </div> */}
 
         {/* User Avatar / Profile */}
         <div className="relative">

@@ -22,11 +22,14 @@ interface Address {
   phone: string;
 }
 
+ 
+
 interface AddressFormProps {
   initialAddress: Address | null;
   onSave: (address: Omit<Address, "id">) => void;
   onClose: () => void;
 }
+ 
 
 // --- Initial Data ---
 const initialAddresses: Address[] = [
@@ -63,6 +66,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
     phone: initialAddress?.phone || "",
   });
 
+ 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,

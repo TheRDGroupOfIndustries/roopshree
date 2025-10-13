@@ -20,8 +20,6 @@
 //   const isAdminPath = pathname.startsWith("/manage");
 //   const isUserPath = pathname.startsWith("/home") || pathname.startsWith("/profile") || pathname.startsWith("/my-cart") || pathname.startsWith("/product") || pathname.startsWith("/search" )|| pathname.startsWith("/wallet");
 
-
-  
 //    useEffect(() => {
 //     if (loading) return;
 
@@ -41,8 +39,65 @@
 //     }
 //   }, [loading, user, pathname, router, publicPaths, isAdminPath, isUserPath]);
 
-
 //   if (loading) return <LoadingSpinner/>
+//   if (!user && !publicPaths.includes(pathname)) return null;
+
+//   return (
+//     <>
+//       {user && <Navbar />}
+//       {children}
+//     </>
+//   );
+// };
+
+// export default AuthGuard;
+
+// "use client";
+
+// import React, { ReactNode, useEffect } from "react";
+// import { useAuth } from "@/context/AuthProvider";
+// import { usePathname, useRouter } from "next/navigation";
+// import Navbar from "./Navbar";
+// import LoadingSpinner from "./LoadingSpinner";
+
+// interface AuthGuardProps {
+//   children: ReactNode;
+//   publicPaths?: string[]; 
+// }
+
+// const AuthGuard: React.FC<AuthGuardProps> = ({ children, publicPaths = ["/", "/auth/signin", "/auth/signup"] }) => {
+//   const { user, loading } = useAuth();
+//   const pathname = usePathname();
+//   const router = useRouter();
+
+//   const isAdminRoute = pathname.startsWith("/manage");
+
+//   useEffect(() => {
+//     if (loading) return;
+
+//     // Not logged in → redirect to signin
+//     if (!user && !publicPaths.includes(pathname)) {
+//       router.replace("/auth/signin");
+//       return;
+//     }
+
+//     // Admin restriction
+//     if (user && user.role === "ADMIN" && !isAdminRoute) {
+//       // Admin trying to access user route → redirect to /manage
+//       router.replace("/manage");
+//       return;
+//     }
+
+//     // User restriction
+//     if (user && user.role === "USER" && isAdminRoute) {
+//       // User trying to access admin route → redirect to /home
+//       router.replace("/home");
+//       return;
+//     }
+
+//   }, [loading, user, pathname, router, publicPaths, isAdminRoute]);
+
+//   if (loading) return <LoadingSpinner />;
 //   if (!user && !publicPaths.includes(pathname)) return null;
 
 //   return (
@@ -66,42 +121,46 @@ import LoadingSpinner from "./LoadingSpinner";
 
 interface AuthGuardProps {
   children: ReactNode;
-  publicPaths?: string[]; 
+  publicPaths?: string[];
 }
 
-const AuthGuard: React.FC<AuthGuardProps> = ({ children, publicPaths = ["/", "/auth/signin", "/auth/signup"] }) => {
+const AuthGuard: React.FC<AuthGuardProps> = ({
+  children,
+  publicPaths = ["/", "/auth/signin", "/auth/signup"],
+}) => {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
-  const isAdminRoute = pathname.startsWith("/manage");
-
   useEffect(() => {
     if (loading) return;
 
-    // Not logged in → redirect to signin
+    // 1️⃣ Not logged in → redirect to signin
     if (!user && !publicPaths.includes(pathname)) {
       router.replace("/auth/signin");
       return;
     }
 
-    // Admin restriction
-    if (user && user.role === "ADMIN" && !isAdminRoute) {
-      // Admin trying to access user route → redirect to /manage
-      router.replace("/manage");
+    // 2️⃣ Logged-in users cannot access auth routes
+    if (user && ["/auth/signin", "/auth/signup"].includes(pathname)) {
+      // Redirect based on role
+      router.replace(user.role === "ADMIN" ? "/manage" : "/home");
       return;
     }
 
-    // User restriction
-    if (user && user.role === "USER" && isAdminRoute) {
-      // User trying to access admin route → redirect to /home
+    // 3️⃣ Users cannot access /manage (admin area)
+    if (user && user.role === "USER" && pathname.startsWith("/manage")) {
       router.replace("/home");
       return;
     }
 
-  }, [loading, user, pathname, router, publicPaths, isAdminRoute]);
+    // 4️⃣ Admin can go anywhere → no restriction
+  }, [loading, user, pathname, router, publicPaths]);
 
+  // Show loading spinner
   if (loading) return <LoadingSpinner />;
+
+  // Prevent flicker during redirect
   if (!user && !publicPaths.includes(pathname)) return null;
 
   return (

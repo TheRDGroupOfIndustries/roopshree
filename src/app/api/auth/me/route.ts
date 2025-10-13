@@ -1,15 +1,20 @@
-import { authenticate } from "@/lib/jwt";
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyJwt } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const user = await authenticate(req);
-    if (!user)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cookieStore = cookies();
+    const token = (await cookieStore).get("token")?.value;
+
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const payload = verifyJwt(token);
+    if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const userDetails = await prisma.user.findUnique({
-      where: { id: user.userId },
+      where: { id: payload.userId },
       select: {
         id: true,
         name: true,
@@ -19,26 +24,13 @@ export async function GET(req: NextRequest) {
         orders: true,
         address: true,
         wishlist: true,
-        cart: {
-          select: {
-            items: true,
-          },
-        },
+        cart: { select: { items: true } },
       },
     });
 
-    const safeUserDetails = {
-      ...userDetails,
-      password: undefined,
-    };
-    return NextResponse.json(safeUserDetails);
+    return NextResponse.json(userDetails);
   } catch (error: any) {
-    console.error("Error fetching User Detaails: ", error);
-    return NextResponse.json(
-      {
-        error: error.message || "Error fetching User Detaails",
-      },
-      { status: 500 }
-    );
+    console.error("Error fetching User Details: ", error);
+    return NextResponse.json({ error: error.message || "Error fetching User Details" }, { status: 500 });
   }
 }

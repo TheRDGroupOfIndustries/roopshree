@@ -1,12 +1,14 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState,useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+ import { useTheme } from "next-themes";
 import {
   ShoppingCart,
   Heart,
   Gift,
   ArrowLeft,
+ 
   Share2,
   User,
   MapPin,
@@ -100,9 +102,9 @@ const Section: React.FC<SectionProps> = ({
   children,
   className = "",
 }) => (
-  <div className={`p-4 sm:p-6 bg-white my-2 ${className}`}>
+  <div className={`p-4 sm:p-6  my-2 ${className}`}>
     {title && (
-      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
+      <h3 className="text-base sm:text-lg font-semibold   mb-4">
         {title}
       </h3>
     )}
@@ -123,23 +125,23 @@ const SettingButton: React.FC<SettingButtonProps> = ({
     <button
       onClick={onClick}
       // Increased padding on hover for better click area visibility
-      className="w-full flex items-center p-3 sm:p-4 bg-white rounded-lg text-gray-700 hover:bg-gray-50 transition-colors active:bg-gray-100"
+      className="w-full border-2 border-gray-400 flex items-center p-3 sm:p-4  rounded-lg  "
     >
-      <span className="w-5 h-5 mr-3 sm:mr-4 text-gray-500 flex items-center justify-center flex-shrink-0">
+      <span className="w-5 h-5 mr-3 sm:mr-4   flex items-center justify-center flex-shrink-0">
         <Icon size={20} />
       </span>
       <div className="flex-1 text-left">
         <span className="font-medium text-sm sm:text-base block">{label}</span>
         {info && (
-          <span className="text-xs text-gray-500 block mt-0.5">{info}</span>
+          <span className="text-xs   block mt-0.5">{info}</span>
         )}
       </div>
-      <span className="ml-auto text-gray-400 flex items-center gap-2">
+      <span className="ml-auto   flex items-center gap-2">
         {hasToggle ? (
           <ToggleSwitch label={label} /> // Use sub-component for toggle
         ) : (
           <>
-            {right && <span className="text-sm text-gray-600">{right}</span>}
+            {right && <span className="text-sm ">{right}</span>}
             <ChevronRight size={18} />
           </>
         )}
@@ -156,11 +158,17 @@ const SettingButton: React.FC<SettingButtonProps> = ({
   );
 };
 
+ 
 // Sub-component for Dark Mode Toggle
 const ToggleSwitch: React.FC<{ label: string }> = () => {
-  // NOTE: This toggle needs to manage the actual theme state (e.g., via context or local storage).
-  // For this fix, we'll keep the basic local state implementation.
-  const [isToggled, setIsToggled] = useState(false);
+  const { theme, setTheme } = useTheme(); // ✅ from next-themes
+
+  // If theme === 'dark', the toggle should be ON
+  const isDark = theme === "dark";
+
+  const handleToggle = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
 
   return (
     <label
@@ -169,14 +177,15 @@ const ToggleSwitch: React.FC<{ label: string }> = () => {
     >
       <input
         type="checkbox"
-        checked={isToggled}
-        onChange={() => setIsToggled(!isToggled)}
+        checked={isDark}
+        onChange={handleToggle}
         className="sr-only peer"
       />
-      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+      <div className="w-11 h-6  rounded-full peer peer-checked:bg-orange-500 transition-colors after:content-[''] border-2 border-black after:absolute after:top-[2px] after:left-[2px] after:bg-gray-800 after:border-gray-800 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
     </label>
   );
 };
+
 
 const QuickAction: React.FC<QuickActionProps> = ({
   icon: Icon,
@@ -188,13 +197,13 @@ const QuickAction: React.FC<QuickActionProps> = ({
   badge,
 }) => (
   <Link href={link}>
-    <div className="flex flex-col items-center text-gray-700 hover:opacity-80 transition-opacity active:scale-95 relative">
+    <div className="flex flex-col items-center    hover:opacity-80 transition-opacity active:scale-95 relative">
       <div
         className={`w-12 h-12 sm:w-14 sm:h-14 ${bg} rounded-full flex items-center justify-center relative`}
       >
         <Icon className={`text-xl sm:text-2xl ${iconColor}`} />
         {count && (
-          <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
+          <span className="absolute -top-1 -right-1 bg-orange-600  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
             {count}
           </span>
         )}
@@ -216,7 +225,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
   <Link href={`/orders/${order.order}`} className="block">
     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
       <div className="flex items-center flex-1">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden bg-gray-200 flex-shrink-0 relative">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden  flex-shrink-0 relative">
           {/* Using a placeholder for dummy images */}
           <Image
             src={order.image}
@@ -227,7 +236,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm sm:text-base text-gray-800 font-semibold truncate">
+          <p className="text-sm sm:text-base   font-semibold truncate">
             {order.name}
           </p>
           <p className="text-xs text-gray-500">{order.order}</p>
@@ -270,12 +279,12 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
       <SettingButton
         icon={icon}
         label={label}
-        right={<span className="text-gray-600">{language}</span>}
+        right={<span className="">{language}</span>}
         onClick={() => setOpenLang(!openLang)}
       />
 
       {openLang && (
-        <div className="absolute right-4 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
+        <div className="absolute right-4 top-full mt-2   border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
           {LANGUAGES.map((lang) => (
             <button
               key={lang}
@@ -457,11 +466,11 @@ export default function ProfilePage() {
   // --- Render ---
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col pb-16">
+    <div className="min-h-screen  flex flex-col pb-16">
       {/* Header */}
-      <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-30">
+      <header className= "sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30">
         <button
-          className="text-gray-600 text-xl hover:text-gray-800 transition-colors p-1"
+          className=" text-xl p-1"
           onClick={() => router.back()} // Use useRouter for navigation
         >
           <ArrowLeft size={24} />
@@ -470,16 +479,16 @@ export default function ProfilePage() {
           Profile
         </h2>
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <button className="text-gray-600 hover:text-orange-500 p-1">
+          <button className="  not-last: p-1">
             <Share2 size={22} />
           </button>
           <Link
             href="/my-cart"
-            className="relative text-gray-600 hover:text-orange-500 p-1"
+            className="relative   p-1"
           >
             <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 text-[10px] font-bold text-white bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
+              <span className="absolute -top-1 -right-1 text-[10px] font-bold border-2 border-gray-300  bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
                 {cartCount}
               </span>
             )}
@@ -502,7 +511,7 @@ export default function ProfilePage() {
           {/* Ensure var(--color-brand) is defined in your CSS/Tailwind config */}
           <div className="absolute inset-0 bg-[rgba(255,100,50,0.3)]"></div>
         </div>
-        <div className="relative z-10 flex flex-col items-center py-6 sm:py-8 px-4 sm:px-6 text-white">
+        <div className="relative z-10 flex flex-col items-center py-6 sm:py-8 px-4 sm:px-6 ">
           <div className="relative w-20 h-20 sm:w-24 sm:h-24">
             <Image
               src={user.profileImage || "/images/dummy_profile.png"}
@@ -567,19 +576,19 @@ export default function ProfilePage() {
 
       {/* Premium Section */}
       <Section>
-        <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 md:p-10 rounded-3xl shadow-xl border border-gray-100 w-full">
+        <div className=" p-6 md:p-10 rounded-3xl shadow-xl bg-gradient-to-tr from-purple-400 via-purple-300  to-purple-100 border border-gray-100 w-full">
           {/* Header */}
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5 mb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+              <h1 className="text-3xl md:text-4xl font-bold   mb-1">
                 Premium Membership
               </h1>
-              <p className="text-gray-500 text-sm md:text-base">
+              <p className=" text-sm md:text-base">
                 Unlock exclusive benefits and special rewards
               </p>
             </div>
 
-            <div className="relative bg-white p-4 md:p-5 rounded-full shadow-lg flex-shrink-0">
+            <div className="relative   p-4 md:p-5 rounded-full shadow-lg flex-shrink-0">
               <span className="absolute inset-0 bg-gradient-to-tr from-purple-400 via-pink-400 to-yellow-400 opacity-20 rounded-full blur-md"></span>
               <Crown className="w-7 h-7 text-purple-600 relative z-10" />
             </div>
@@ -597,7 +606,7 @@ export default function ProfilePage() {
                 key={index}
                 className="flex items-center gap-3 bg-white/60 backdrop-blur-md rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-gray-100"
               >
-                <div className="bg-green-100 p-1.5 rounded-full">
+                <div className=" p-1.5 rounded-full">
                   <Check className="w-4 h-4 text-green-600" />
                 </div>
                 <span className="text-gray-700 font-medium">{benefit}</span>
@@ -615,12 +624,12 @@ export default function ProfilePage() {
       </Section>
 
       {/* Recent Orders */}
-      <Section title="Recent Orders">
+      <Section title="Recent Orders" className="border-2 border-gray-400">
         {recentOrders.map((order) => (
           <OrderCard key={order.order} order={order} />
         ))}
         {/* Added a view all link for better UX */}
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center ">
           <Link
             href="/my-orders"
             className="text-sm font-medium text-orange-600 hover:text-orange-700"
@@ -639,10 +648,11 @@ export default function ProfilePage() {
           }
 
           // Handle Dark Mode toggle
+          
           if (setting.hasToggle) {
             return (
               <SettingButton
-                key={i}
+                 key={i}
                 icon={setting.icon}
                 label={setting.label}
                 hasToggle
@@ -679,7 +689,7 @@ export default function ProfilePage() {
       <Section>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-3 sm:py-4 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-semibold active:bg-orange-100"
+          className="w-full flex items-center justify-center gap-2 py-3 sm:py-4 text-orange-600  rounded-lg transition-colors font-semibold active:bg-orange-100"
         >
           <LogOut size={20} />
           <span>Logout</span>

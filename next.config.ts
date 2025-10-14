@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"], 
   },
+  darkMode: "class",
   reactStrictMode: true,
   swcMinify: true,
 };

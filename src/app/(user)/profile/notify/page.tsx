@@ -11,21 +11,21 @@ const NotificationsPage: React.FC = () => {
 
   // --- Header Component ---
   const Header = () => (
-    <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
+    <header className="sticky top-0  flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
       <button
-        className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
+        className="  hover:text-sky-600 transition-colors p-2 hover:bg-sky-500 rounded-full"
         onClick={() => window.history.back()}
         aria-label="Go back"
       >
         <ArrowLeft size={24} />
       </button>
-      <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center text-gray-800">
+      <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center  ">
         Notification Settings
       </h2>
       <Link href="/my-cart" aria-label="View shopping cart">
-        <button className="relative text-gray-700 hover:text-sky-600 p-2 hover:bg-sky-50 rounded-full transition-colors">
+        <button className="relative   hover:text-sky-600 p-2 hover:bg-sky-50 rounded-full transition-colors">
           <ShoppingCart size={24} />
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+          <span className="absolute -top-1 -right-1 bg-red-600   text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
             2
           </span>
         </button>
@@ -47,11 +47,11 @@ const NotificationsPage: React.FC = () => {
       />
       <div
         className={`w-12 h-7 rounded-full peer transition-all duration-300 shadow-inner 
-          ${checked ? "bg-sky-500" : "bg-gray-300"}
+          ${checked ? "bg-sky-500" : "bg-gray-500"}
           peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sky-300`}
       >
         <div
-          className={`absolute top-0.5 left-0.5 bg-white h-6 w-6 rounded-full transition-transform duration-300 shadow-md
+          className={`absolute top-0.5 left-0.5   h-6 w-6 rounded-full transition-transform duration-300 shadow-md
             ${checked ? "translate-x-5" : "translate-x-0"}`}
         ></div>
       </div>
@@ -60,20 +60,20 @@ const NotificationsPage: React.FC = () => {
 
   // --- Main Notifications Page ---
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen  ">
       {/* 1. Sticky Header */}
       <Header />
 
       {/* 2. Main Content Wrapper */}
-      <div className="px-4 sm:px-6 py-8 flex justify-center">
-        <div className="w-full max-w-3xl bg-white shadow-2xl rounded-xl p-6 md:p-10">
+      <div className="px-4 sm:px-6 py-8 flex justify-center ">
+        <div className="w-full max-w-3xl  shadow-2xl rounded-xl border-2 border-amber-50 p-6 md:p-10">
           
           {/* Section Title */}
           <div className="flex items-center gap-4 mb-8 pb-4 border-b border-gray-100">
-            <div className="p-3 bg-sky-100 rounded-xl">
+            <div className="p-3  rounded-xl">
               <Bell className="text-sky-600 w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold">
               Manage Alerts
             </h1>
           </div>
@@ -83,7 +83,7 @@ const NotificationsPage: React.FC = () => {
             {/* Email Notifications */}
             <div className="flex items-center justify-between pt-0 pb-4">
               <div>
-                <h3 className="text-gray-800 font-semibold text-lg">
+                <h3 className=" font-semibold text-lg">
                   Email Notifications
                 </h3>
                 <p className="text-sm text-gray-500 max-w-md">
@@ -99,10 +99,10 @@ const NotificationsPage: React.FC = () => {
             {/* SMS Notifications */}
             <div className="flex items-center justify-between pt-6 pb-4">
               <div>
-                <h3 className="text-gray-800 font-semibold text-lg">
+                <h3 className=" font-semibold text-lg">
                   SMS Notifications
                 </h3>
-                <p className="text-sm text-gray-500 max-w-md">
+                <p className="text-sm  max-w-md">
                   Receive important delivery status updates and urgent account security messages via text.
                 </p>
               </div>
@@ -115,10 +115,10 @@ const NotificationsPage: React.FC = () => {
             {/* App Notifications (Push) */}
             <div className="flex items-center justify-between pt-6">
               <div>
-                <h3 className="text-gray-800 font-semibold text-lg">
+                <h3 className=" font-semibold text-lg">
                   Mobile Push Notifications
                 </h3>
-                <p className="text-sm text-gray-500 max-w-md">
+                <p className="text-sm  max-w-md">
                   Get instant push alerts on your phone for new deals and in-app activity.
                 </p>
               </div>
@@ -130,7 +130,7 @@ const NotificationsPage: React.FC = () => {
           </div>
 
           {/* Info */}
-          <div className="mt-10 pt-4 border-t border-gray-100 text-center text-gray-500 text-sm">
+          <div className="mt-10 pt-4 border-t border-gray-100 text-center   text-sm">
             You can always change your preferences here.
           </div>
         </div>

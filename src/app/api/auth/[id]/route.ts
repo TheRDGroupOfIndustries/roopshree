@@ -10,7 +10,7 @@ export async function PUT(
     const body = await req.json();
 
     // Only allow certain fields to be updated
-    const allowedFields = ["name", "role", "profileImage", "email"];
+    const allowedFields = ["name", "role", "profileImage", "email", ""];
     const dataToUpdate: Record<string, any> = {};
 
     for (const key of allowedFields) {

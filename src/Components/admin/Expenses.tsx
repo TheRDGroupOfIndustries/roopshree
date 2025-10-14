@@ -216,12 +216,14 @@ const Expenses = () => {
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Expense Management</h1>
         <button
-          onClick={handleOpenCreate}
-          className="flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition duration-150 text-sm font-medium"
-        >
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Add New Expense
-        </button>
+  onClick={handleOpenCreate}
+  className="flex items-center px-3 sm:px-4 py-2 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition duration-150 text-sm font-medium"
+>
+  <PlusCircle className="w-4 sm:w-5 h-4 sm:h-5 mr-1 sm:mr-2" />
+  <span className="hidden xs:inline sm:inline md:inline">Add New Expense</span>
+  <span className="inline xs:hidden sm:hidden md:hidden">Add</span>
+</button>
+
       </header>
 
       {/* Analytics Section (Chart + Summary) */}

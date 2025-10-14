@@ -12,6 +12,8 @@ import { useAuth } from "@/context/AuthProvider";
 import { getAllCategories } from "@/services/categoryService";
 import TrendingCardSkeleton from "@/Components/TrendingCardSkeleton";
 import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
+import CategorySkeleton from "@/Components/CategorySkeleton";
+import CategoryList from "@/Components/CategoryList";
 export default function HomePage() {
   const { user, refreshUser } = useAuth();
   const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 + 45 * 60 + 27);
@@ -29,7 +31,7 @@ export default function HomePage() {
       try {
         setProductLoading(true);
         const res = await getAllProducts();
-        // console.log("Fetched Products:", res);
+        console.log("Fetched Products:", res);
         setProducts(res);
         const shuffled = [...res].sort(() => Math.random() - 0.5);
         setShuffledProducts(shuffled);
@@ -78,30 +80,6 @@ export default function HomePage() {
       .toString()
       .padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
-
-  const trendingProducts = [
-    {
-      id: 1,
-      name: "Moisturizer",
-      price: "799",
-      oldPrice: "899",
-      image: "/images/image.png",
-    },
-    {
-      id: 2,
-      name: "Lipstick",
-      price: "499",
-      oldPrice: "599",
-      image: "/images/image.png",
-    },
-    {
-      id: 3,
-      name: "Perfume",
-      price: "1299",
-      oldPrice: "1399",
-      image: "/images/image.png",
-    },
-  ];
 
   return (
     <div className="bg-gray-100 min-h-screen pb-20">
@@ -167,7 +145,7 @@ export default function HomePage() {
         </div>
 
         {/* Categories */}
-        <div className="mt-6 px-4">
+        {/* <div className="mt-6 px-4">
           <h3 className="font-semibold text-lg mb-3">Categories</h3>
           <div className="flex gap-6 overflow-x-auto scrollbar-hide ">
             {categoryLoading ? (
@@ -184,21 +162,14 @@ export default function HomePage() {
                 ))}
               </div>
             ) : (
-              // ✅ Show all categories
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
                 {categories.map((cat: any) => (
                   <div
                     key={cat.id}
                     className="flex flex-col items-center cursor-pointer "
                   >
-                    <div className="w-14 h-14 rounded-full bg-white shadow flex items-center justify-center">
-                      <Image
-                        src="/images/placeholder_image.png"
-                        alt={cat.name}
-                        width={50}
-                        height={50}
-                        className="object-contain rounded-full"
-                      />
+                    <div className="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-lg font-semibold text-[var(--color-brand)]">
+                      {cat.name?.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium mt-2 text-center truncate max-w-[6rem]">
                       {cat.name}
@@ -208,7 +179,18 @@ export default function HomePage() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
+
+<div className="mt-6 px-4">
+  <h3 className="font-semibold text-lg mb-3">Categories</h3>
+  <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+    {categoryLoading ? (
+      <CategorySkeleton />
+    ) : (
+      <CategoryList categories={categories} />
+    )}
+  </div>
+</div>
 
         {/* Flash Sale */}
         <div className="mx-4 mt-6 bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] text-white p-4 rounded-xl flex justify-between items-center">
@@ -255,6 +237,7 @@ export default function HomePage() {
                     description={product.description}
                     price={product.price}
                     oldPrice={product.oldPrice}
+                    category={product.category}
                     image={
                       product.images?.[0] || "/images/placeholder_image.png"
                     }

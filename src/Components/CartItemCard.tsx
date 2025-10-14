@@ -124,7 +124,13 @@ const CartItemCard: React.FC<CartItemProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => onUpdateQuantity(id, -1)}
-                  className="w-6 h-6 flex items-center justify-center border border-gray-300 hover:bg-gray-200 rounded-full transition-colors"
+                  disabled={quantity === 1}
+                  className={`w-6 h-6 flex items-center justify-center border rounded-full transition-colors
+        ${
+          quantity === 1
+            ? "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-100"
+            : "border-gray-300 hover:bg-gray-200 text-gray-700"
+        }`}
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3 h-3 text-gray-700" />

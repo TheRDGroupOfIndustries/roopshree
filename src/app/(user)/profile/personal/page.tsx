@@ -45,7 +45,7 @@ const PersonalInfoPage: React.FC = () => {
           <ArrowLeft size={24} />
         </button>
         <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center text-gray-800">
-          Super Rewards
+          Profile
         </h2>
         <Link href="/my-cart">
           <button className="relative text-gray-700 hover:text-blue-600 p-2 hover:bg-blue-50 rounded-full transition-colors">

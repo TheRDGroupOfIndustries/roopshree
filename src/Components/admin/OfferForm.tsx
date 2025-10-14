@@ -72,15 +72,15 @@ const OfferForm = ({ id, mode = "create", offer }: OfferFormProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100 space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-8">
+      <div className="max-w-lg mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg border border-gray-100 space-y-4 sm:space-y-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
           {isUpdateMode ? "Update Offer" : "Create Offer"}
         </h2>
 
         {message && (
           <div
-            className={`p-3 rounded-lg ${
+            className={`p-3 rounded-lg text-sm sm:text-base ${
               message.isError
                 ? "bg-red-100 text-red-800"
                 : "bg-green-100 text-green-800"
@@ -92,7 +92,7 @@ const OfferForm = ({ id, mode = "create", offer }: OfferFormProps) => {
 
         {/* Title */}
         <div>
-          <label className="block text-gray-700 font-medium mb-1">
+          <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             Title <span className="text-red-500">*</span>
           </label>
           <input
@@ -100,14 +100,14 @@ const OfferForm = ({ id, mode = "create", offer }: OfferFormProps) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter offer title"
-            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
             disabled={loading}
           />
         </div>
 
         {/* Subtitle */}
         <div>
-          <label className="block text-gray-700 font-medium mb-1">
+          <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             Subtitle
           </label>
           <input
@@ -115,31 +115,31 @@ const OfferForm = ({ id, mode = "create", offer }: OfferFormProps) => {
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
             placeholder="Enter offer subtitle (optional)"
-            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
             disabled={loading}
           />
         </div>
 
         {/* Date */}
         <div>
-          <label className="block text-gray-700 font-medium mb-1">
+          <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             Date <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full p-3 outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base outline-none border rounded-lg focus:ring-2 focus:ring-amber-400"
             disabled={loading}
           />
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-4 justify-end pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end pt-2 sm:pt-4">
           <button
             type="button"
             onClick={() => router.push("/manage/sale")}
-            className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
             disabled={loading}
           >
             Cancel
@@ -147,7 +147,7 @@ const OfferForm = ({ id, mode = "create", offer }: OfferFormProps) => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
             disabled={loading}
           >
             {loading

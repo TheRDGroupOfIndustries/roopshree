@@ -187,16 +187,16 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100 space-y-6">
-        <h2 className="text-3xl font-bold text-gray-800">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-8">
+      <div className="max-w-3xl mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg border border-gray-100 space-y-4 sm:space-y-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
           {isUpdateMode ? `Update Employee${firstName ? `: ${firstName} ${lastName}` : ''}` : "Create Employee"}
         </h2>
 
         {/* Message */}
         {message && (
           <div
-            className={`p-4 rounded-lg ${
+            className={`p-3 sm:p-4 rounded-lg text-sm sm:text-base ${
               message.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
             }`}
           >
@@ -204,17 +204,17 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {/* First Name */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               First Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="John"
             />
@@ -222,14 +222,14 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Last Name */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Last Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="Doe"
             />
@@ -237,14 +237,14 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Email */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="john.doe@company.com"
             />
@@ -252,12 +252,12 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Phone */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Phone</label>
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">Phone</label>
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="(123) 456-7890"
             />
@@ -265,23 +265,23 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Date of Birth */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Date of Birth</label>
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">Date of Birth</label>
             <input
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             />
           </div>
 
           {/* Gender */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Gender</label>
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">Gender</label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             >
               <option value="">Select Gender</option>
@@ -293,26 +293,26 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Hire Date */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Hire Date</label>
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">Hire Date</label>
             <input
               type="date"
               value={hireDate}
               onChange={(e) => setHireDate(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
             />
           </div>
 
           {/* Position */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Position <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="Software Engineer"
             />
@@ -320,14 +320,14 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
 
           {/* Salary */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
+            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Salary <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
               value={salary || ""}
               onChange={(e) => setSalary(e.target.value ? Number(e.target.value) : undefined)}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
+              className="w-full p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-amber-100 focus:outline-none"
               disabled={loading}
               placeholder="75000"
               min="0"
@@ -336,11 +336,11 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-4 justify-end pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end pt-2 sm:pt-4">
           <button
             type="button"
             onClick={() => router.push("/manage/employee")}
-            className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-50"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-50"
             disabled={loading}
           >
             Cancel
@@ -348,7 +348,7 @@ const EmployeeForm = ({ id, mode = "create", employee }: EmployeeFormProps) => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Saving..." : isUpdateMode ? "Update Employee" : "Create Employee"}

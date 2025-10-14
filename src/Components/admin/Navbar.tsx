@@ -77,19 +77,19 @@ export default function Navbar() {
 
       {/* Right Section */}
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="text-xs text-amber-700 font-medium">Today's Sales</p>
           <p className="text-sm font-bold text-amber-800">
             {(todaysData.totalRevenue / 100).toFixed(2)}k
           </p>
-        </div>
+        </div> */}
 
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="text-xs text-amber-700 font-medium">Active Orders</p>
           <p className="text-sm font-bold text-amber-800">
             {todaysData.totalOrders}
           </p>
-        </div>
+        </div> */}
 
         {/* <div className="relative">
           <button className="relative p-2.5 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all duration-300 cursor-pointer">

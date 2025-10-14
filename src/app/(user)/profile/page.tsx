@@ -188,28 +188,31 @@ const QuickAction: React.FC<QuickActionProps> = ({
   badge,
 }) => (
   <Link href={link}>
-    <div className="flex flex-col items-center text-gray-700 hover:opacity-80 transition-opacity active:scale-95 relative">
+    <div className="flex flex-col items-center text-gray-700 relative">
       <div
-        className={`w-12 h-12 sm:w-14 sm:h-14 ${bg} rounded-full flex items-center justify-center relative`}
+        className={`px-10 h-12  ${bg} rounded-full flex items-center justify-center gap-3 relative shadow-sm`}
       >
-        <Icon className={`text-xl sm:text-2xl ${iconColor}`} />
+        <Icon className={`text-base ${iconColor}`} />
+        <span className="text-sm  font-medium text-gray-800">
+          {label}
+        </span>
+
         {count && (
           <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
             {count}
           </span>
         )}
       </div>
-      <span className="text-xs sm:text-sm mt-2 text-center font-medium">
-        {label}
-      </span>
+
       {badge && (
-        <span className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+        <span className="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">
           {badge}
         </span>
       )}
     </div>
   </Link>
 );
+
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
   // Wrapped in Link for better UX, assuming the card is clickable
@@ -311,6 +314,10 @@ export default function ProfilePage() {
   }
 
   const cartCount = user?.cart?.items.length || 0;
+  const orderCount= user?.orders?.length;
+  const wishListCount=user?.wishlist?.length
+
+  
 
   const handleLogout = () => {
     logout();
@@ -330,56 +337,56 @@ export default function ProfilePage() {
     {
       icon: ShoppingCart,
       label: "My Orders",
-      bg: "bg-orange-50",
-      iconColor: "text-orange-600",
+      bg: "bg-[var(--color-brand)]/25",
+      iconColor: "text-[var(--color-brand)]",
       link: "/my-orders", // Changed to 'my-orders' for clarity
-      count: 28,
+      count: orderCount,
     },
     {
       icon: Heart,
       label: "Wishlist",
-      bg: "bg-orange-50",
+      bg: "bg-red-100",
       iconColor: "text-orange-600",
       link: "/wishlist",
-      count: 12,
+      count: wishListCount,
     },
-    {
-      icon: Gift,
-      label: "Rewards",
-      bg: "bg-purple-100",
-      iconColor: "text-purple-600",
-      link: "/rewards",
-      badge: "156 pts",
-    },
-    {
-      icon: Wallet,
-      label: "Wallet",
-      bg: "bg-green-100",
-      iconColor: "text-green-600",
-      link: "/wallet",
-      badge: "₹2,450",
-    },
+    // {
+    //   icon: Gift,
+    //   label: "Rewards",
+    //   bg: "bg-purple-100",
+    //   iconColor: "text-purple-600",
+    //   link: "/rewards",
+    //   badge: "156 pts",
+    // },
+    // {
+    //   icon: Wallet,
+    //   label: "Wallet",
+    //   bg: "bg-green-100",
+    //   iconColor: "text-green-600",
+    //   link: "/wallet",
+    //   badge: "₹2,450",
+    // },
   ];
 
   const accountSettings: AccountSetting[] = [
     {
       icon: User,
       label: "Personal Information",
-      link: "/profile/personal",
+      link: `/profile/personal/${user.id}`,
       info: user.email || "Add email address",
     },
     {
       icon: MapPin,
       label: "Delivery Addresses",
       link: "/profile/addresses",
-      info: "3 saved addresses",
+      info: " saved addresses",
     },
-    {
-      icon: CreditCard,
-      label: "Payment Methods",
-      link: "/profile/payments",
-      info: "2 cards saved",
-    },
+    // {
+    //   icon: CreditCard,
+    //   label: "Payment Methods",
+    //   link: "/profile/payments",
+    //   info: "2 cards saved",
+    // },
     {
       icon: Bell,
       label: "Notifications",
@@ -440,18 +447,18 @@ export default function ProfilePage() {
     {
       icon: Globe,
       label: "Language",
-      right: "English", // Default value, will be managed in LanguageSetting component
+      right: "English", 
     },
     {
       icon: Moon,
       label: "Dark Mode",
       hasToggle: true,
     },
-    {
-      icon: Shield,
-      label: "Privacy Settings",
-      link: "/profile/privacy",
-    },
+    // {
+    //   icon: Shield,
+    //   label: "Privacy Settings",
+    //   link: "/profile/privacy",
+    // },
   ];
 
   // --- Render ---
@@ -532,7 +539,7 @@ export default function ProfilePage() {
 
       {/* Quick Actions */}
       <Section title="Quick Actions">
-        <div className="grid grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {quickActions.map((action, i) => (
             <QuickAction key={i} {...action} />
           ))}

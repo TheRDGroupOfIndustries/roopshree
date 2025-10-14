@@ -40,7 +40,7 @@ interface Product {
   // discountPercent: number;
   // rating: number;
   // totalReviews: number;
-  // badge?: string;
+  category?: string;
   insideBox: string[];
   cartQuantity: number;
   images: string[];
@@ -231,11 +231,11 @@ export default function ProductDetails() {
 
       {/* Product Info */}
       <div className="flex-1 bg-white px-3 py-6  my-1">
-        {/* {product.badge && (
+        {product.category && (
           <span className="bg-orange-100 text-[var(--color-brand)] px-3 py-1 rounded text-xs font-medium">
-            {product.badge}
+            {product.category}
           </span>
-        )} */}
+        )}
 
         <h1 className="text-2xl font-bold mt-3">{product.title}</h1>
         <p className="text-gray-500 mt-2">{product.description}</p>

@@ -4,179 +4,34 @@ import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import ProductCard from "@/Components/ProductCard";
 import Image from "next/image";
+import CategorySkeleton from "@/Components/CategorySkeleton";
+import CategoryList from "@/Components/CategoryList";
+import { getAllCategories } from "@/services/categoryService";
+import { getAllProducts } from "@/services/productService";
+import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoryLoading(true);
+        const res = await getAllCategories();
+        // console.log("Fetched Categories:", res);
+        setCategories(res);
+      } catch (error) {
+        console.log("Error fetching categories:", error);
+      } finally {
+        setCategoryLoading(false);
+      }
+    };
 
-  // 🟠 Categories Data
-  const categoriesData = [
-    {
-      name: "Skincare",
-      img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400",
-    },
-    {
-      name: "Makeup",
-      img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400",
-    },
-    {
-      name: "Hair Care",
-      img: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400",
-    },
-    {
-      name: "Fragrance",
-      img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400",
-    },
-    {
-      name: "Accessories",
-      img: "https://images.unsplash.com/photo-1631214540553-ff044a3ff1d4?w=400",
-    },
-  ];
-
-  // 🛍️ Product Data
-  // const products = [
-  //   // Makeup
-  //   {
-  //     id: 1,
-  //     name: "Luxury Foundation",
-  //     description: "Perfect coverage for all skin types",
-  //     price: "₹1,299",
-  //     oldPrice: "₹1,599",
-  //     image: "/images/image.png",
-  //     badge: "New",
-  //     badgeColor: "bg-orange-400",
-  //     rating: 4,
-  //     category: "Makeup",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Matte Lipstick",
-  //     description: "Smooth and long-lasting finish",
-  //     price: "₹499",
-  //     oldPrice: "₹699",
-  //     image: "/images/image.png",
-  //     badge: "Best Seller",
-  //     badgeColor: "bg-green-600",
-  //     rating: 5,
-  //     category: "Makeup",
-  //   },
-
-  //   // Skincare
-  //   {
-  //     id: 3,
-  //     name: "Glow Moisturizer",
-  //     description: "Keeps your skin hydrated all day",
-  //     price: "₹799",
-  //     image: "/images/image.png",
-  //     rating: 4,
-  //     category: "Skincare",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Vitamin C Serum",
-  //     description: "Brightens dull and tired skin",
-  //     price: "₹999",
-  //     oldPrice: "₹1,299",
-  //     image: "/images/image.png",
-  //     badge: "Popular",
-  //     badgeColor: "bg-pink-500",
-  //     rating: 5,
-  //     category: "Skincare",
-  //   },
-
-  //   // Fragrance
-  //   {
-  //     id: 5,
-  //     name: "Floral Perfume",
-  //     description: "A light, elegant fragrance for daily wear",
-  //     price: "₹1,499",
-  //     image: "/images/image.png",
-  //     badge: "New",
-  //     badgeColor: "bg-blue-400",
-  //     rating: 4,
-  //     category: "Fragrance",
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Woody Musk Eau De Parfum",
-  //     description: "Strong, long-lasting aroma for evenings",
-  //     price: "₹1,899",
-  //     oldPrice: "₹2,199",
-  //     image: "/images/image.png",
-  //     badge: "Limited",
-  //     badgeColor: "bg-purple-600",
-  //     rating: 5,
-  //     category: "Fragrance",
-  //   },
-
-  //   // Hair Care
-  //   {
-  //     id: 7,
-  //     name: "Keratin Shampoo",
-  //     description: "Smoothens and strengthens hair",
-  //     price: "₹699",
-  //     image: "/images/image.png",
-  //     rating: 4,
-  //     category: "Hair Care",
-  //   },
-  //   {
-  //     id: 8,
-  //     name: "Argan Oil Hair Serum",
-  //     description: "Adds shine and reduces frizz",
-  //     price: "₹899",
-  //     oldPrice: "₹1,099",
-  //     image: "/images/image.png",
-  //     badge: "Hot",
-  //     badgeColor: "bg-red-500",
-  //     rating: 5,
-  //     category: "Hair Care",
-  //   },
-
-  //   // Accessories
-  //   {
-  //     id: 9,
-  //     name: "Makeup Brush Set",
-  //     description: "Soft bristles for a perfect blend",
-  //     price: "₹1,099",
-  //     image: "/images/image.png",
-  //     badge: "Trending",
-  //     badgeColor: "bg-yellow-500",
-  //     rating: 4,
-  //     category: "Accessories",
-  //   },
-  //   {
-  //     id: 10,
-  //     name: "Compact Mirror",
-  //     description: "Portable and stylish mirror for travel",
-  //     price: "₹299",
-  //     image: "/images/image.png",
-  //     rating: 4,
-  //     category: "Accessories",
-  //   },
-
-  //   // Men's Grooming
-  //   {
-  //     id: 11,
-  //     name: "Beard Oil",
-  //     description: "Softens and nourishes beard",
-  //     price: "₹649",
-  //     image: "/images/image.png",
-  //     badge: "Top Rated",
-  //     badgeColor: "bg-green-500",
-  //     rating: 5,
-  //     category: "Men’s Grooming",
-  //   },
-  //   {
-  //     id: 12,
-  //     name: "Charcoal Face Wash",
-  //     description: "Deep cleans pores and removes dirt",
-  //     price: "₹499",
-  //     image: "/images/image.png",
-  //     rating: 4,
-  //     category: "Men’s Grooming",
-  //   },
-  // ];
+    fetchCategories();
+  }, []);
 
   const popularSearches = [
     "Lipstick",
@@ -190,23 +45,19 @@ export default function SearchPage() {
 
   // 🔹 Fetch products dynamically from API
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products");
-        if (!res.ok) throw new Error("Failed to fetch products");
+  const fetchProducts = async () => {
+    try {
+      const data = await getAllProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const data = await res.json();
-        console.log("🔥 API response:", data);
-        setProducts(data.products || data || []);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  fetchProducts();
+}, []);
 
   // 🔹 Filter products based on search term (using title)
   // 🔎 Filtered Products
@@ -215,7 +66,7 @@ export default function SearchPage() {
   );
 
   // 🔹 Get unique categories
-   // 🏷️ Get Unique Categories
+  // 🏷️ Get Unique Categories
   const uniqueCategories = [...new Set(products.map((p) => p.category))];
 
   return (
@@ -234,7 +85,7 @@ export default function SearchPage() {
 
       {/* 🔥 Popular Searches */}
       <div className="px-4 mb-5">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">
+        <h3 className="text-base font-semibold text-gray-700 mb-2">
           Popular Searches
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -252,42 +103,30 @@ export default function SearchPage() {
 
       {/* 🛍️ Product Section */}
       {/* 🟣 Category Section */}
-      <div className="w-full mt-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800 pl-3">
-          Categories
-        </h2>
-
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          {categoriesData.map((cat, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center justify-center min-w-[90px]"
-            >
-              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-orange-500 shadow-md flex items-center justify-center bg-white">
-                <Image
-                  src={cat.img}
-                  alt={cat.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <p className="text-sm text-gray-700 mt-2">{cat.name}</p>
-            </div>
-          ))}
+      <div className="mt-6 px-4">
+        <h3 className="font-semibold text-base mb-3">Categories</h3>
+        <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+          {categoryLoading ? (
+            <CategorySkeleton />
+          ) : (
+            <CategoryList categories={categories} />
+          )}
         </div>
       </div>
 
       {/* 🛍️ Products Section */}
       <div className="px-4">
         {loading ? (
-          <p className="text-gray-500 text-sm text-center mt-10">
-            Loading products...
-          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
         ) : searchTerm ? (
           <>
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
               Results for “{searchTerm}”
-             </h3>
+            </h3>
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
                 {filteredProducts.map((p) => (

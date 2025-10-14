@@ -22,7 +22,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { itemId: st
 
         const updatedItem = await prisma.cartItem.update({
             where: { id: itemId },
-            data: { quantity: item.quantity + quantity }
+            // data: { quantity: item.quantity + quantity }
+            data: { quantity: quantity }
         });
 
         return NextResponse.json(updatedItem);

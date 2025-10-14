@@ -4,9 +4,7 @@
 // import ProductCard from "@/Components/ProductCard";
 // import { BiSearch } from "react-icons/bi";
 
-
 // const WishlistPage: React.FC = () => {
-  
 
 //    const discount = (original: number, current: number): number => {
 //     return Math.round(((original - current) / original) * 100);
@@ -51,7 +49,6 @@
 
 // export default WishlistPage;
 
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -80,10 +77,12 @@ const WishlistPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchWishlist = async () => {
+    
     try {
       setLoading(true);
       const data = await getWishlist();
       setWishlist(data);
+      // console.log("Wishlist API response:", data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
     } finally {
@@ -94,7 +93,6 @@ const WishlistPage: React.FC = () => {
   useEffect(() => {
     fetchWishlist();
   }, []);
-
 
   return (
     <div className="min-h-screen bg-gray-50 mb-20">
@@ -114,30 +112,38 @@ const WishlistPage: React.FC = () => {
           Your Favorites
         </h1>
         <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-600">
-          Wishlist ({wishlist.length} {wishlist.length === 1 ? "item" : "items"})
+          Wishlist ({wishlist.length} {wishlist.length === 1 ? "item" : "items"}
+          )
         </h2>
       </div>
 
       {/* Loading */}
       {loading ? (
-        <LoadingSpinner  message="Loading wishlist..."/>
+        <LoadingSpinner message="Loading wishlist..." />
       ) : wishlist.length === 0 ? (
         <p className="text-center text-gray-600">Your wishlist is empty.</p>
       ) : (
         <div className="px-4 sm:px-6 lg:px-8 pb-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {wishlist.map(({ product }) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.title}
-                description={product.description}
-                price={product.price}
-                oldPrice={product.oldPrice}
-                image={product.images?.[0]}
-                refreshWishlist={fetchWishlist}
-              />
-            ))}
+             {Array.isArray(wishlist) && wishlist.length > 0 ? (
+              wishlist.map(({ product }) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.title}
+                  description={product.description}
+                  price={product.price}
+                  oldPrice={product.oldPrice}
+                  image={product.images?.[0]}
+                  refreshWishlist={fetchWishlist}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-600">
+                Your wishlist is empty.
+              </p>
+            )}
+            
           </div>
         </div>
       )}

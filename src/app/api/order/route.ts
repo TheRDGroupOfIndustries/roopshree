@@ -1,23 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
-import { Order, Status } from "@/generated/prisma/client";
 
 //all order
 export async function GET() {
   try {
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
+
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     const payload = await verifyJwt(token);
+
     if (!payload) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    let orders;
+    let totalCount = 0;
+
     if (payload.role.includes("ADMIN")) {
-      const orders = await prisma.order.findMany({
+      // Admin: get all orders and count
+      orders = await prisma.order.findMany({
         orderBy: { createdAt: "desc" },
         include: {
           product: true,
@@ -25,24 +32,29 @@ export async function GET() {
           address: true,
         },
       });
-      return NextResponse.json(orders);
+
+      totalCount = await prisma.order.count(); // count of all orders
+    } else {
+      const userId = payload.userId.toString();
+
+      // User: get only their orders and count
+      orders = await prisma.order.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        include: {
+          product: true,
+        },
+      });
+
+      totalCount = await prisma.order.count({ where: { userId } });
     }
 
-    const userId = payload.userId.toString();
-    const orders = await prisma.order.findMany({
-      where: {
-        userId: userId,
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        product: true,
-      },
-    });
-    return NextResponse.json(orders);
+    return NextResponse.json({ totalCount, orders });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 interface CreateOrder {
   totalAmount: number;

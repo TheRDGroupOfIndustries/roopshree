@@ -149,7 +149,6 @@
 
 // export default PersonalInfoPage;
 
-
 "use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
@@ -162,18 +161,17 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthProvider";
 
 const PersonalInfoPage: React.FC = () => {
-  const {refreshUser}=useAuth();
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const { refreshUser } = useAuth();
+  const [profileImage, setProfileImage] = useState<any>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>('');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    // phone: "",
   });
-
   const [loading, setLoading] = useState(false);
-   const params = useParams();
-   const router = useRouter();
-    const userId = params?.id as string;
+  const params = useParams();
+  const router = useRouter();
+  const userId = params?.id as string;
   // ✅ Fetch user data on mount
   useEffect(() => {
     const fetchUser = async () => {
@@ -186,7 +184,7 @@ const PersonalInfoPage: React.FC = () => {
             email: res.users.email || "",
             // phone: res.users.phone || "",
           });
-          setProfileImage(res.users.profileImage || null);
+          setPreviewUrl(res.users.profileImage || null);
         }
       } catch (err) {
         console.error("Error fetching user:", err);
@@ -198,35 +196,69 @@ const PersonalInfoPage: React.FC = () => {
     fetchUser();
   }, [userId]);
 
+  // Handle image selection and preview
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("file", file);
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      setProfileImage(file);
+      const preview = URL.createObjectURL(file);
+      console.log("preview", preview);
+      setPreviewUrl(preview);
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // ✅ Handle profile update
+  // Handle profile update and image upload
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    let uploadedImageUrl = previewUrl;
+
+    // If a new image is selected, upload it
+    if (profileImage instanceof File) {
+      const formDataForImage = new FormData();
+      formDataForImage.append("files", profileImage);
+      formDataForImage.append("type", "profile");
+
+      try {
+        const res = await fetch("/api/upload-images", {
+          method: "POST",
+          body: formDataForImage,
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok && data.urls?.[0]) {
+          uploadedImageUrl = data.urls[0];
+        } else {
+          throw new Error(data.error || "Image upload failed");
+        }
+      } catch (err) {
+        toast.error("Image upload failed");
+        setLoading(false);
+        return;
+      }
+    }
+    console.log("uploadedImageUrl", uploadedImageUrl);
+
+    // Update user profile
     try {
-      setLoading(true);
       const updatedData = {
         name: formData.name,
         email: formData.email,
-        profileImage: profileImage || undefined,
+        profileImage: uploadedImageUrl,
       };
-
-      const res = await updateUser(userId, updatedData);
-      console.log("Profile updated:", res);
+      await updateUser(userId, updatedData);
       toast.success("Profile Updated Successfully!");
       refreshUser();
     } catch (err) {
-      console.error("Error updating profile:", err);
       toast.error("Failed to update profile. Try again!");
     } finally {
       setLoading(false);
@@ -263,10 +295,7 @@ const PersonalInfoPage: React.FC = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative w-28 h-28">
             <Image
-              src={
-                profileImage ||
-                "/images/dummy_profile.png"
-              }
+              src={previewUrl || "/images/dummy_profile.png"}
               fill
               alt="Profile"
               className="w-28 h-28 rounded-full object-cover border-4 border-gray-200"
@@ -285,14 +314,18 @@ const PersonalInfoPage: React.FC = () => {
               />
             </label>
           </div>
-          <p className="text-sm text-gray-500 mt-2">Tap camera to change photo</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Tap camera to change photo
+          </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5 mb-12">
           {/* Name */}
           <div>
-            <label className="block text-gray-600 text-sm mb-1">Full Name</label>
+            <label className="block text-gray-600 text-sm mb-1">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"

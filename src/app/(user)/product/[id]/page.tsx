@@ -419,7 +419,7 @@ export default function ProductDetails() {
           </button>
         )}
 
-        <button className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0">
+        <button onClick={()=>router.push(`/checkout/${product.id}`)} className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0">
           <LuShoppingBag className="text-lg flex-shrink-0" />
           <span className="truncate">Buy Now</span>
         </button>

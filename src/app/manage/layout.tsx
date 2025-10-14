@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Navbar from "@/Components/admin/Navbar";
 import Sidebar from "@/Components/admin/Sidebar";
 import { useAuth } from "@/context/AuthProvider";
@@ -10,11 +10,10 @@ export default function ManageLayout({
 }: {
   children: React.ReactNode;
 }) {
-    const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
-
-   useEffect(() => {
+  useEffect(() => {
     if (!loading) {
       if (!user) {
         router.replace("/auth/signin");
@@ -23,8 +22,10 @@ export default function ManageLayout({
       }
     }
   }, [user, loading, router]);
-   if (loading || !user) return null;
+
+  if (loading || !user) return null;
   if (user.role !== "ADMIN") return null;
+
   return (
     <div className="w-screen h-screen flex flex-col">
       {/* Navbar at top */}

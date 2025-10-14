@@ -138,7 +138,7 @@ const ExpenseFormModal = ({
         htmlFor={id}
         className="text-sm font-medium text-gray-700 flex items-center"
       >
-        {Icon && <Icon className="w-4 h-4 mr-2 text-indigo-500" />}
+        {Icon && <Icon className="w-4 h-4 mr-2 text-amber-600" />}
         {label}
       </label>
       {children}
@@ -177,7 +177,7 @@ const ExpenseFormModal = ({
                 id="title"
                 type="text"
                 placeholder="Enter expense title"
-                className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500 transition ${
+                className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-amber-600 focus:border-amber-600 transition ${
                   errors.title ? "border-red-500" : "border-gray-300"
                 }`}
                 {...register("title", {
@@ -203,7 +203,7 @@ const ExpenseFormModal = ({
             >
               <select
                 id="category"
-                className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white transition ${
+                className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-amber-600 focus:border-amber-600 bg-white transition ${
                   errors.category ? "border-red-500" : "border-gray-300"
                 }`}
                 {...register("category", {
@@ -231,7 +231,7 @@ const ExpenseFormModal = ({
               id="amount"
               type="text"
               placeholder="1000"
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500 transition ${
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm text-sm focus:ring-amber-600 focus:border-amber-600 transition ${
                 errors.amount ? "border-red-500" : "border-gray-300"
               }`}
               {...register("amount", {
@@ -258,7 +258,7 @@ const ExpenseFormModal = ({
               id="description"
               rows={3}
               placeholder="Enter expense description (optional)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-indigo-500 resize-none transition focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-amber-600 resize-none transition focus:border-amber-600"
               {...register("description", {
                 maxLength: {
                   value: 500,
@@ -280,7 +280,7 @@ const ExpenseFormModal = ({
             <button
               type="submit"
               disabled={loading || fetching}
-              className="flex items-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center px-6 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 shadow-lg transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading || fetching ? (
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />

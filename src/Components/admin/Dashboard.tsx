@@ -3,11 +3,21 @@
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Package, Users, LoaderCircle } from "lucide-react";
 import { BiRupee } from "react-icons/bi";
-import { RecentOrders } from "@/app/manage/page";
+import { OrderAnalytics, RecentOrders } from "@/app/manage/page";
 import ExpenseAnalyticsChart from "./ExpenseAnalyticsChart";
 import OrderDetailsModal from "./OrderDetails";
 
-import { Trophy } from 'lucide-react';
+import { Trophy } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 interface Summary {
   totalSales: number;
@@ -105,8 +115,10 @@ const StatusTag = ({ status }: { status: string }) => {
 
 export default function Dashboard({
   recentOrders,
+  orderAnalytics,
 }: {
   recentOrders: RecentOrders[];
+  orderAnalytics: OrderAnalytics[] | undefined;
 }) {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -115,16 +127,15 @@ export default function Dashboard({
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-
   useEffect(() => {
-      fetch("/api/auth/me", {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((data) => setUserData(data))
-        .catch((err) => console.error("Failed to fetch user data:", err));
-    }, []);
+    fetch("/api/auth/me", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => setUserData(data))
+      .catch((err) => console.error("Failed to fetch user data:", err));
+  }, []);
 
   const fetchSummary = async () => {
     setLoadingSummary(true);
@@ -148,24 +159,27 @@ export default function Dashboard({
   }, []);
 
   // console.log("recentOrders", recentOrders);
+  console.log("orderAnalytics", orderAnalytics);
 
   return (
-    <div className="space-y-8 ml-30 mr-30">
-        <div className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {userData?.name || "Admin"}! ✨</h1>
-          <p className="text-amber-100 text-lg">
-            Your business is growing strong today. Here's your overview.
-          </p>
-        </div>
-        <div className="hidden md:block">
-          <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <Trophy className="w-10 h-10 text-yellow-200" />
+    <div className="space-y-8">
+      <div className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome back, {userData?.name || "Admin"}! ✨
+            </h1>
+            <p className="text-amber-100 text-lg">
+              Your business is growing strong today. Here's your overview.
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Trophy className="w-10 h-10 text-yellow-200" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
       {/* <h2 className="text-3xl font-bold text-gray-800">Dashboard Overview</h2> */}
 
       {/* Summary Cards: Responsive grid used (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4) */}
@@ -202,17 +216,42 @@ export default function Dashboard({
       {/* Charts & Latest Activity: Responsive grid used (grid-cols-1 lg:grid-cols-3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sales Chart Placeholder */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        <div className="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
           <h3 className="text-xl font-semibold mb-4 text-gray-800">
             Sales Analytics (Monthly)
           </h3>
           <div className="h-64 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-            [ Placeholder for Bar/Line Chart component ]
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                width={500}
+                height={300}
+                data={orderAnalytics}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="totalOrders" stackId="a" fill="#8884d8" />
+                <Bar
+                  radius={[4, 4, 0, 0]}
+                  dataKey="totalRevenue"
+                  stackId="a"
+                  fill="#F39500"
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
         {/* Top Products/Categories */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        {/* <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
           <h3 className="text-xl font-semibold mb-4 text-gray-800">
             Top Performing Categories
           </h3>
@@ -229,7 +268,7 @@ export default function Dashboard({
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </div>
 
       {/* Charts & Latest Activity: Responsive grid used (grid-cols-1 lg:grid-cols-3) */}

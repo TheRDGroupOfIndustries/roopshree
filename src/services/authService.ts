@@ -35,7 +35,6 @@ export const getMe = async () => {
   return res.data;
 };
 
-
 export const sendOtpEmail = async (email: string) => {
   try {
     const res = await api.post("/auth/send-otp", { email });

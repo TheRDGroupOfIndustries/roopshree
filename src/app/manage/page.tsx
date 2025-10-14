@@ -1,4 +1,5 @@
 import Dashboard from "@/Components/admin/Dashboard";
+import { getOrderAnalytics } from "@/lib/actions/orderActions";
 import prisma from "@/lib/prisma";
 
 export interface RecentOrders {
@@ -9,6 +10,12 @@ export interface RecentOrders {
   user: {
     name: string;
   };
+}
+
+export interface OrderAnalytics {
+  month: string;
+  totalOrders: number;
+  totalRevenue: number;
 }
 
 export default async function Page() {
@@ -28,5 +35,7 @@ export default async function Page() {
     take: 10,
   });
 
-  return <Dashboard recentOrders={recentOrders} />;
+  const orderAnalytics = await getOrderAnalytics()
+
+  return <Dashboard recentOrders={recentOrders} orderAnalytics={orderAnalytics} />;
 }

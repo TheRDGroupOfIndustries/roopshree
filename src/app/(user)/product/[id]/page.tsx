@@ -20,6 +20,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
 import { getReviews, addReview, deleteReview } from "@/services/reviewService";
 import Image from "next/image";
+import ProductDetailsSkeleton from "@/Components/ProductDetailsSkeleton";
 
 interface Shade {
   id: number;
@@ -216,7 +217,8 @@ export default function ProductDetails() {
     { id: 4, color: "bg-pink-200" },
   ];
 
-  if (loading) return <LoadingSpinner message="Loading product details…" />;
+ if (loading) return <ProductDetailsSkeleton />;
+
   if (!product) return <p className="p-4">Product not found</p>;
 
   return (

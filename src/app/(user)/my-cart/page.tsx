@@ -11,6 +11,7 @@ import {
   updateCartItem,
   removeCartItem,
   clearCart as clearCartService,
+  clearCart,
 } from "@/services/cartService";
 import LoadingSpinner from "@/Components/LoadingSpinner";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
@@ -122,6 +123,7 @@ const Cart: React.FC = () => {
       await createOrder(orderData);
       toast.success("Order placed successfully!");
       setCartItems([]);
+      clearCart();
       refreshUser();
     } catch (error: any) {
       console.error("Checkout failed:", error);

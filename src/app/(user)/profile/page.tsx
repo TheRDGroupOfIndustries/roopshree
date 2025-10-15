@@ -2,38 +2,38 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
- import { useTheme } from "next-themes";
+import { useTheme } from "next-themes";
 import {
   ShoppingCart,
   Heart,
-   ArrowLeft,
- 
+  ArrowLeft,
   Share2,
   User,
   MapPin,
-   Bell,
+  Bell,
   Globe,
   Moon,
-   Headphones,
+  Headphones,
   Check,
   HelpCircle,
   Star,
   Info,
   LogOut,
   ChevronRight,
-   LucideIcon,
+  LucideIcon,
   Crown,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/Components/LoadingSpinner";
+import RecentOrdersSection from "@/Components/RecentOrdersSection";
 
 // --- Type Definitions ---
 
 interface ProfileStat {
   label: string;
-  value: string;
+  value: number;
 }
 interface QuickAction {
   icon: LucideIcon;
@@ -63,15 +63,15 @@ interface AppSetting {
   link?: string;
   hasToggle?: boolean;
 }
-interface RecentOrder {
-  name: string;
-  order: string;
-  status: string;
-  price: string;
-  statusColor: string;
-  action: string;
-  image: string;
-}
+// interface RecentOrder {
+//   name: string;
+//   order: string;
+//   status: string;
+//   price: string;
+//   statusColor: string;
+//   action: string;
+//   image: string;
+// }
 interface SectionProps {
   title?: string;
   children: React.ReactNode;
@@ -87,9 +87,9 @@ interface SettingButtonProps {
   link?: string; // Added link prop for easier wrapping
 }
 interface QuickActionProps extends QuickAction {}
-interface OrderCardProps {
-  order: RecentOrder;
-}
+// interface OrderCardProps {
+//   order: RecentOrder;
+// }
 
 // --- Component Helpers ---
 
@@ -100,9 +100,7 @@ const Section: React.FC<SectionProps> = ({
 }) => (
   <div className={`p-4 sm:p-6  my-2 ${className}`}>
     {title && (
-      <h3 className="text-base sm:text-lg font-semibold   mb-4">
-        {title}
-      </h3>
+      <h3 className="text-base sm:text-lg font-semibold   mb-4">{title}</h3>
     )}
     <div className="space-y-1">{children}</div>
   </div>
@@ -128,9 +126,7 @@ const SettingButton: React.FC<SettingButtonProps> = ({
       </span>
       <div className="flex-1 text-left">
         <span className="font-medium text-sm sm:text-base block">{label}</span>
-        {info && (
-          <span className="text-xs   block mt-0.5">{info}</span>
-        )}
+        {info && <span className="text-xs   block mt-0.5">{info}</span>}
       </div>
       <span className="ml-auto   flex items-center gap-2">
         {hasToggle ? (
@@ -154,7 +150,6 @@ const SettingButton: React.FC<SettingButtonProps> = ({
   );
 };
 
- 
 // Sub-component for Dark Mode Toggle
 const ToggleSwitch: React.FC<{ label: string }> = () => {
   const { theme, setTheme } = useTheme(); // ✅ from next-themes
@@ -182,7 +177,6 @@ const ToggleSwitch: React.FC<{ label: string }> = () => {
   );
 };
 
-
 const QuickAction: React.FC<QuickActionProps> = ({
   icon: Icon,
   label,
@@ -193,14 +187,12 @@ const QuickAction: React.FC<QuickActionProps> = ({
   badge,
 }) => (
   <Link href={link}>
-      <div className="flex flex-col items-center text-gray-700 relative">
-       <div
-        className={`px-10 h-12  ${bg} rounded-full flex items-center justify-center gap-3 relative shadow-sm`}
+    <div className="flex flex-col items-center text-gray-700 relative">
+      <div
+        className={`px-8 h-12  ${bg} rounded-full flex items-center justify-center gap-2 relative shadow-sm`}
       >
         <Icon className={`text-base ${iconColor}`} />
-        <span className="text-sm  font-medium text-gray-800">
-          {label}
-        </span>
+        <span className="text-sm  font-medium text-gray-800">{label}</span>
 
         {count && (
           <span className="absolute -top-1 -right-1 bg-orange-600  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
@@ -218,49 +210,50 @@ const QuickAction: React.FC<QuickActionProps> = ({
   </Link>
 );
 
+// const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
+//   // Wrapped in Link for better UX, assuming the card is clickable
+//   <Link href={`/orders/${order.order}`} className="block">
+//     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+//       <div className="flex items-center flex-1">
+//         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden  flex-shrink-0 relative">
+//           {/* Using a placeholder for dummy images */}
+//           <Image
+//             src={order.image}
+//             alt={order.name}
+//             fill
+//             className="object-cover rounded-xl"
+//             sizes="(max-width: 640px) 48px, 56px"
+//           />
+//         </div>
+//         <div className="flex-1 min-w-0">
+//           <p className="text-sm sm:text-base   font-semibold truncate">
+//             {order.name}
+//           </p>
+//           <p className="text-xs text-gray-500">{order.order}</p>
+//           <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>
+//             {order.status}
+//           </p>
+//         </div>
+//       </div>
+//       <div className="flex flex-col items-end ml-4">
+//         <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">
+//           {order.price}
+//         </span>
+//         <button
+//           onClick={(e) => {
+//             e.preventDefault(); // Prevent link navigation for the button click
+//             // Add action logic here
+//           }}
+//           className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700 active:text-orange-800"
+//         >
+//           {order.action}
+//         </button>
+//       </div>
+//     </div>
+//   </Link>
+// );
 
-const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
-  // Wrapped in Link for better UX, assuming the card is clickable
-  <Link href={`/orders/${order.order}`} className="block">
-    <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-      <div className="flex items-center flex-1">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden  flex-shrink-0 relative">
-          {/* Using a placeholder for dummy images */}
-          <Image
-            src={order.image}
-            alt={order.name}
-            fill
-            className="object-cover rounded-xl"
-            sizes="(max-width: 640px) 48px, 56px"
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm sm:text-base   font-semibold truncate">
-            {order.name}
-          </p>
-          <p className="text-xs text-gray-500">{order.order}</p>
-          <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>
-            {order.status}
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-col items-end ml-4">
-        <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">
-          {order.price}
-        </span>
-        <button
-          onClick={(e) => {
-            e.preventDefault(); // Prevent link navigation for the button click
-            // Add action logic here
-          }}
-          className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700 active:text-orange-800"
-        >
-          {order.action}
-        </button>
-      </div>
-    </div>
-  </Link>
-);
+
 
 // Sub-component for Language Dropdown (Fixes the Rule of Hooks error)
 const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
@@ -315,14 +308,12 @@ export default function ProfilePage() {
   // Handle case where user might not be logged in immediately (though useAuth should handle this)
   if (!user) {
     // Optionally return a loading state or redirect if user is required
-    return <LoadingSpinner message="Loading Profile..."/>;
+    return <LoadingSpinner message="Loading Profile..." />;
   }
 
   const cartCount = user?.cart?.items.length || 0;
-  const orderCount= user?.orders?.length;
-  const wishListCount=user?.wishlist?.length
-
-  
+  const orderCount = user?.orders?.length;
+  const wishListCount = user?.wishlist?.length;
 
   const handleLogout = () => {
     logout();
@@ -333,8 +324,8 @@ export default function ProfilePage() {
   // --- Data Definitions ---
 
   const profileStats: ProfileStat[] = [
-    { label: "Orders", value: "28" },
-    { label: "Points", value: "156" },
+    { label: "Orders", value: orderCount },
+    { label: "Points", value: 156 },
     { label: "Saved", value: "₹12,480" },
   ];
 
@@ -344,7 +335,7 @@ export default function ProfilePage() {
       label: "My Orders",
       bg: "bg-[var(--color-brand)]/25",
       iconColor: "text-[var(--color-brand)]",
-      link: "/my-orders", // Changed to 'my-orders' for clarity
+      link: "/my-orders",
       count: orderCount,
     },
     {
@@ -452,7 +443,7 @@ export default function ProfilePage() {
     {
       icon: Globe,
       label: "Language",
-      right: "English", 
+      right: "English",
     },
     {
       icon: Moon,
@@ -471,10 +462,10 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen  flex flex-col pb-16">
       {/* Header */}
-      <header className= "sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30">
+      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30 bg-white shadow-md">
         <button
           className=" text-xl p-1"
-          onClick={() => router.back()} // Use useRouter for navigation
+          onClick={() => router.back()} 
         >
           <ArrowLeft size={24} />
         </button>
@@ -485,10 +476,7 @@ export default function ProfilePage() {
           <button className="  not-last: p-1">
             <Share2 size={22} />
           </button>
-          <Link
-            href="/my-cart"
-            className="relative   p-1"
-          >
+          <Link href="/my-cart" className="relative   p-1">
             <ShoppingCart size={22} />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 text-[10px] font-bold border-2 border-gray-300  bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
@@ -577,70 +565,9 @@ export default function ProfilePage() {
         ))}
       </Section>
 
-      {/* Premium Section */}
-      <Section>
-        <div className=" p-6 md:p-10 rounded-3xl shadow-xl bg-gradient-to-tr from-purple-400 via-purple-300  to-purple-100 border border-gray-100 w-full">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5 mb-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold   mb-1">
-                Premium Membership
-              </h1>
-              <p className=" text-sm md:text-base">
-                Unlock exclusive benefits and special rewards
-              </p>
-            </div>
-
-            <div className="relative   p-4 md:p-5 rounded-full shadow-lg flex-shrink-0">
-              <span className="absolute inset-0 bg-gradient-to-tr from-purple-400 via-pink-400 to-yellow-400 opacity-20 rounded-full blur-md"></span>
-              <Crown className="w-7 h-7 text-purple-600 relative z-10" />
-            </div>
-          </div>
-
-          {/* Benefits List */}
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-            {[
-              "Free express delivery on all orders",
-              "Early access to sales & new launches",
-              "Double reward points on every purchase",
-              "Priority customer support 24/7",
-            ].map((benefit, index) => (
-              <li
-                key={index}
-                className="flex items-center gap-3 bg-white/60 backdrop-blur-md rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-gray-100"
-              >
-                <div className=" p-1.5 rounded-full">
-                  <Check className="w-4 h-4 text-green-600" />
-                </div>
-                <span className="text-gray-700 font-medium">{benefit}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* Upgrade Button */}
-          <Link href="/profile/upgrade">
-            <button className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 active:scale-95">
-              Upgrade Now ✨
-            </button>
-          </Link>
-        </div>
-      </Section>
-
-      {/* Recent Orders */}
-      <Section title="Recent Orders" className="border-2 border-gray-400">
-        {recentOrders.map((order) => (
-          <OrderCard key={order.order} order={order} />
-        ))}
-        {/* Added a view all link for better UX */}
-        <div className="mt-4 text-center ">
-          <Link
-            href="/my-orders"
-            className="text-sm font-medium text-orange-600 hover:text-orange-700"
-          >
-            View All Orders &rarr;
-          </Link>
-        </div>
-      </Section>
+      <div>
+        <RecentOrdersSection />
+      </div>
 
       {/* App Settings */}
       <Section title="App Settings">
@@ -651,11 +578,11 @@ export default function ProfilePage() {
           }
 
           // Handle Dark Mode toggle
-          
+
           if (setting.hasToggle) {
             return (
               <SettingButton
-                 key={i}
+                key={i}
                 icon={setting.icon}
                 label={setting.label}
                 hasToggle
@@ -701,3 +628,68 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+// {/* Premium Section */}
+//       <Section>
+//         <div className=" p-6 md:p-10 rounded-3xl shadow-xl bg-gradient-to-tr from-purple-400 via-purple-300  to-purple-100 border border-gray-100 w-full">
+//           {/* Header */}
+//           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5 mb-8">
+//             <div>
+//               <h1 className="text-3xl md:text-4xl font-bold   mb-1">
+//                 Premium Membership
+//               </h1>
+//               <p className=" text-sm md:text-base">
+//                 Unlock exclusive benefits and special rewards
+//               </p>
+//             </div>
+
+//             <div className="relative   p-4 md:p-5 rounded-full shadow-lg flex-shrink-0">
+//               <span className="absolute inset-0 bg-gradient-to-tr from-purple-400 via-pink-400 to-yellow-400 opacity-20 rounded-full blur-md"></span>
+//               <Crown className="w-7 h-7 text-purple-600 relative z-10" />
+//             </div>
+//           </div>
+
+//           {/* Benefits List */}
+//           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+//             {[
+//               "Free express delivery on all orders",
+//               "Early access to sales & new launches",
+//               "Double reward points on every purchase",
+//               "Priority customer support 24/7",
+//             ].map((benefit, index) => (
+//               <li
+//                 key={index}
+//                 className="flex items-center gap-3 bg-white/60 backdrop-blur-md rounded-xl p-3 shadow-sm hover:shadow-md transition-all border border-gray-100"
+//               >
+//                 <div className=" p-1.5 rounded-full">
+//                   <Check className="w-4 h-4 text-green-600" />
+//                 </div>
+//                 <span className="text-gray-700 font-medium">{benefit}</span>
+//               </li>
+//             ))}
+//           </ul>
+
+//           {/* Upgrade Button */}
+//           <Link href="/profile/upgrade">
+//             <button className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 active:scale-95">
+//               Upgrade Now ✨
+//             </button>
+//           </Link>
+//         </div>
+//       </Section>
+
+// {/* Recent Orders */}
+// <Section title="Recent Orders" className="border-2 border-gray-400 mx-4 rounded-lg">
+//   {recentOrders.map((order) => (
+//     <OrderCard key={order.order} order={order} />
+//   ))}
+//   {/* Added a view all link for better UX */}
+//   <div className="mt-4 text-center ">
+//     <Link
+//       href="/my-orders"
+//       className="text-sm font-medium text-orange-600 hover:text-orange-700"
+//     >
+//       View All Orders &rarr;
+//     </Link>
+//   </div>
+// </Section>

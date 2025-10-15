@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import TrandingNow from "@/Components/TrendingNow";
 
 import ProductCard from "@/Components/ProductCard";
 import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
-import TrendingCard from "@/Components/TrendingNow";
 import TrendingCardSkeleton from "@/Components/TrendingCardSkeleton";
 import CategoryList from "@/Components/CategoryList";
 import CategorySkeleton from "@/Components/CategorySkeleton";
@@ -431,18 +431,12 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* ---------- FEATURED PRODUCTS ---------- */}
+          {/* ---------- Tranding PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg text-gray-900">
-                Featured Products
+                Tranding Products
               </h3>
-              <button
-                className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]"
-                onClick={() => setShowAllProducts(!showAllProducts)}
-              >
-                {showAllProducts ? "Show Less" : "View All"}
-              </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {productLoading
@@ -451,17 +445,8 @@ export default function HomePage() {
                   ))
                 : (showAllProducts ? products : products.slice(0, 4)).map(
                     (product) => (
-                      <ProductCard
-                        key={product.id}
-                        id={product.id}
-                        name={product.title}
-                        description={product.description}
-                        price={product.price}
-                        oldPrice={product.oldPrice}
-                        image={
-                          product.images?.[0] || "/images/placeholder_image.png"
-                        }
-                      />
+                     <TrandingNow key={product.id} product={product} />
+                    
                     )
                   )}
             </div>

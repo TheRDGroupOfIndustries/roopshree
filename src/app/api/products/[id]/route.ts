@@ -46,6 +46,7 @@ interface updateProductBody {
   oldPrice: number;
   exclusive?: number;
   category: string;
+  colour?: string[];
 }
 
 export async function PUT(
@@ -88,6 +89,7 @@ export async function PUT(
       price,
       oldPrice,
       exclusive,
+      colour,
     } = body;
 
     const updated = await prisma.products.update({
@@ -102,6 +104,7 @@ export async function PUT(
         oldPrice,
         exclusive,
         category: body.category,
+        colour,
       },
     });
 

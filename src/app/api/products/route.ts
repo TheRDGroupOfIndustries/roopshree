@@ -25,6 +25,7 @@ interface CreateProductBody {
   oldPrice: number;
   exclusive?: number;
   category: string;
+  colour?: string[];
 }
 
 export async function POST(req: Request) {
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
     }
 
     const userId = payload.userId.toString();
-    const { title, description, images, details, insideBox, initialStock } =
+    const { title, description, images, details, insideBox, initialStock, colour } =
       body;
     if (
       !title ||
@@ -76,6 +77,7 @@ export async function POST(req: Request) {
         oldPrice: body.oldPrice,
         exclusive: body.exclusive,
         category: body.category ,
+        colour
       },
     });
 

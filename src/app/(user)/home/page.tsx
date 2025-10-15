@@ -289,7 +289,7 @@ export default function HomePage() {
       ) : (
         <>
           {/* ---------- BANNER CAROUSEL ---------- */}
-          <div className="relative mx-4 mt-3 overflow-hidden rounded-2xl">
+          <div className="relative mx-4 mt-3 h-38  overflow-hidden rounded-2xl">
             {bannerLoading ? (
               <div className="h-40 bg-gray-200 animate-pulse rounded-xl"></div>
             ) : banners.length > 0 ? (

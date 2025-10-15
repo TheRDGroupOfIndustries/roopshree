@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { X, Plus } from "lucide-react";
 import Image from "next/image";
 import CategoryDropdown from "@/Components/CategoryDropdown";
-
+import validator from "validator";
+import { toast } from "react-hot-toast";
 interface PreviewImage {
   id: string;
   url: string;
@@ -21,7 +22,10 @@ interface ProductFormProps {
 
 const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   const [items, setItems] = useState<string[]>([""]); // initial input
+  const [colour, setColour] = useState<string[]>([""]); // initial input
 
+
+  
   const handleChange = (index: number, value: string) => {
     const newItems = [...items];
     newItems[index] = value;
@@ -37,6 +41,35 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     const newItems = items.filter((_, i) => i !== index);
     setItems(newItems.length ? newItems : [""]);
   };
+
+  
+  // ✅ Separate handlers for colour
+  const handleColourChange = (index: number, value: string) => {
+    const newColours = [...colour];
+    newColours[index] = value;
+    setColour(newColours);
+
+    if (index === colour.length - 1 && validator.isHexColor(value)) {
+      setColour([...newColours, ""]);
+    }
+
+    // Show error only when not empty and invalid
+    if (value && !validator.isHexColor(value)) {
+      toast.error("Invalid HEX color (e.g., #FF5733 or #FFF)");
+    }
+  };
+
+  
+  const handleColourRemove = (index: number) => {
+    const newColours = colour.filter((_, i) => i !== index);
+    setColour(newColours.length ? newColours : [""]);
+  };
+
+  // ✅ Final clean HEX array — only valid HEX codes as strings
+  const finalHexColours: string[] = colour
+    .map((c) => c.trim())
+    .filter((c) => validator.isHexColor(c))
+    .map((c) => String(c)); // ensure they are strings
 
   // Product form
   const router = useRouter();
@@ -75,6 +108,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setExclusive(product.exclusive || undefined);
     setCategory(product.category || "");
     setItems(product.insideBox?.length ? product.insideBox : [""]);
+    setColour(product.colour?.length ? [...product.colour, ""] : [""]);
 
     if (product.images?.length) {
       const serverImages = product.images.map((img: any) => ({
@@ -168,12 +202,13 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           description,
           images: [], // Upload separately
           details,
-          insideBox: items.filter(i => i.trim() !== ""),
+          insideBox: items.filter((i) => i.trim() !== ""),
           initialStock: stock,
           price,
           oldPrice,
           exclusive: exclusive || undefined,
           category,
+          colour: finalHexColours, // Upload separately
         }),
       });
 
@@ -240,7 +275,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         exclusive,
         category,
         details,
-        insideBox: items.filter(i => i.trim() !== ""),
+        colour: finalHexColours, // Upload separately
+        insideBox: items.filter((i) => i.trim() !== ""),
       };
 
       const res = await fetch(`/api/products/${id}`, {
@@ -426,6 +462,60 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           </div>
         </div>
 
+        {/* Colour */}
+
+        <div className="space-y-2">
+      <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
+        Colour <span className="text-gray-400 text-xs">(optional)</span>
+      </label>
+
+      {colour.map((col, index) => (
+        <div
+          key={index}
+          className="rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3"
+        >
+          <div className="flex items-center gap-2 w-full">
+            <input
+              type="text"
+              value={col}
+              onChange={(e) => handleColourChange(index, e.target.value.trim())}
+              placeholder="#FF5733 (optional)"
+              className={`flex-1 outline-none p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border focus:ring-2 ${
+                col
+                  ? validator.isHexColor(col)
+                    ? "focus:ring-green-400 border-green-400"
+                    : "focus:ring-red-400 border-gray-300"
+                  : "focus:ring-yellow-200 border-gray-300"
+              }`}
+            />
+            {validator.isHexColor(col) && (
+              <div
+                className="w-8 h-8 rounded-md border"
+                style={{ backgroundColor: col }}
+              />
+            )}
+          </div>
+
+          {colour.length > 1 && (
+            <button
+              onClick={() => handleColourRemove(index)}
+              className="text-red-500 font-bold px-3 py-2 text-sm sm:text-base border rounded-lg hover:bg-red-200 whitespace-nowrap"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      ))}
+
+      {/* Optional: display final string array */}
+      {finalHexColours.length > 0 && (
+        <div className="text-sm text-gray-600 mt-2">
+          <strong>Final HEX Colours:</strong>{" "}
+          {JSON.stringify(finalHexColours, null, 2)}
+        </div>
+      )}
+    </div>
+
         {/* inside box */}
         <div className="space-y-2">
           {/* Single label at the top */}
@@ -456,7 +546,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             </div>
           ))}
         </div>
-        
+
         {/* Images */}
         <div>
           <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
@@ -464,7 +554,10 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           </label>
           <div className="flex flex-wrap gap-3 sm:gap-4">
             {images.map((imgObj) => (
-              <div key={imgObj.id} className="relative w-24 h-24 sm:w-32 sm:h-32">
+              <div
+                key={imgObj.id}
+                className="relative w-24 h-24 sm:w-32 sm:h-32"
+              >
                 <div className="w-full h-full rounded-lg overflow-hidden border border-gray-200">
                   <Image
                     src={imgObj.url}

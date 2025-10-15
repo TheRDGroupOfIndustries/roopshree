@@ -89,6 +89,8 @@ model Products {
   oldPrice    Int
   price       Int
   category    String
+  colour      String[]   @default([])
+  size        String[]   @default([])
   cart        CartItem[]
   orders      Order[]
   user        User       @relation("UserProducts", fields: [userId], references: [id])
@@ -147,7 +149,7 @@ model Order {
   size          String?
   address       Address   @relation(fields: [addressId], references: [id])
   deliveryBoy   User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
-  product       Products  @relation(fields: [productId], references: [id])
+  product       Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user          User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
   orderOtp      OrderOtp?
 }
@@ -235,7 +237,7 @@ model Offer {
   updatedAt DateTime @updatedAt
 }
 
-model Banners{
+model Banners {
   id        String   @id @default(cuid())
   title     String
   subtitle  String?

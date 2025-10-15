@@ -17,6 +17,7 @@ import CategorySkeleton from "@/Components/CategorySkeleton";
 import { getAllProducts } from "@/services/productService";
 import { getAllCategories } from "@/services/categoryService";
 import { useAuth } from "@/context/AuthProvider";
+import TrendingCard from "@/Components/TrendingNow";
 
 export default function HomePage() {
   const { user, refreshUser } = useAuth();
@@ -366,7 +367,7 @@ export default function HomePage() {
 
           {/* ---------- FLASH SALE ---------- */}
           {!offerExpired && offers.length > 0 && (
-            <div className="relative mx-4 mt-6 overflow-hidden rounded-xl">
+            <div className="relative  mt-6 overflow-hidden rounded-xl">
               {/* Carousel Container */}
               <div
                 className="flex w-full transition-transform duration-700 ease-in-out"
@@ -431,26 +432,7 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* ---------- Tranding PRODUCTS ---------- */}
-          <div className="mt-6 px-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg text-gray-900">
-                Tranding Products
-              </h3>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {productLoading
-                ? Array.from({ length: 4 }).map((_, i) => (
-                    <ProductCardSkeleton key={i} />
-                  ))
-                : (showAllProducts ? products : products.slice(0, 4)).map(
-                    (product) => (
-                     <TrandingNow key={product.id} product={product} />
-                    
-                    )
-                  )}
-            </div>
-          </div>
+       
 
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
@@ -487,6 +469,35 @@ export default function HomePage() {
                   )}
             </div>
           </div>
+
+            {/* Trending Now */}
+
+        <div className="mt-6 relative px-4">
+          {/* Header */}
+          <div className="mb-4">
+            <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+          </div>
+
+          {/* Horizontal Scrollable Container */}
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {productLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <TrendingCardSkeleton key={i} />
+                ))
+              : shuffledProducts.map((product) => (
+                  <TrendingCard
+                    key={product.id}
+                    id={product.id}
+                    name={product.title}
+                    price={product.price}
+                    oldPrice={product.oldPrice}
+                    image={
+                      product.images?.[0] || "/images/placeholder_image.png"
+                    }
+                  />
+                ))}
+          </div>
+        </div>
         </>
       )}
     </div>

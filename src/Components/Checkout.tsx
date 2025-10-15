@@ -171,6 +171,11 @@ export default function Checkout({ productId }: { productId: string }) {
   // Simulates the payment process
   const handlePlaceOrder = async () => {
     if (isProcessing) return;
+    if (!selectedAddress) {
+      toast.error("Please select or add a delivery address");
+      return;
+    }
+
     setIsProcessing(true);
 
     const order = {

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface FormData {
   name: string;
   email: string;
-  phone: string;
+  // phone: string;
   password: string;
   confirmPassword: string;
   otp: string;
@@ -20,7 +20,7 @@ const SignUpPage: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
-    phone: "",
+    // phone: "",
     password: "",
     confirmPassword: "",
     otp: "",
@@ -72,11 +72,11 @@ const SignUpPage: React.FC = () => {
     e.preventDefault();
 
     if (!otpSent) {
-      const phoneDigitsOnly = formData.phone.replace(/\D/g, "");
-      if (phoneDigitsOnly.length !== 10) {
-        toast.error("Phone Number must be 10 digits long!");
-        return;
-      }
+      // const phoneDigitsOnly = formData.phone.replace(/\D/g, "");
+      // if (phoneDigitsOnly.length !== 10) {
+      //   toast.error("Phone Number must be 10 digits long!");
+      //   return;
+      // }
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match!");
         return;
@@ -172,7 +172,7 @@ const SignUpPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-gray-700 font-semibold mb-2">
                 Phone
               </label>
@@ -188,7 +188,7 @@ const SignUpPage: React.FC = () => {
                   className="w-full outline-none bg-transparent"
                 />
               </div>
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-gray-700 font-semibold mb-2">

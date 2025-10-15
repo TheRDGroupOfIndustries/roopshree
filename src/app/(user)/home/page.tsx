@@ -4,10 +4,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { BiHeart } from "react-icons/bi";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import TrandingNow from "@/Components/TrendingNow";
-
 import ProductCard from "@/Components/ProductCard";
 import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
 import TrendingCardSkeleton from "@/Components/TrendingCardSkeleton";

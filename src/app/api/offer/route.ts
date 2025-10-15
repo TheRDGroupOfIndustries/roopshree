@@ -5,15 +5,15 @@ import { verifyJwt } from "@/lib/jwt";
 
 export async function GET() {
     try {
-        const requestCookies = cookies();
-        const token = (await requestCookies).get("token")?.value;
-        if (!token) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-        const payload = verifyJwt(token);
-        if (!payload || !payload.role.includes("ADMIN")) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        // const requestCookies = cookies();
+        // const token = (await requestCookies).get("token")?.value;
+        // if (!token) {
+        //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        // }
+        // const payload = verifyJwt(token);
+        // if (!payload || !payload.role.includes("ADMIN")) {
+        //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        // }
         const offers = await prisma.offer.findMany();
         return NextResponse.json(offers);
 

@@ -95,8 +95,6 @@ const PaymentOption = ({
   );
 };
 
-
-
 export default function Checkout({ productId }: { productId: string }) {
   const router = useRouter();
   const [product, setProduct] = useState<any>(null);
@@ -156,6 +154,8 @@ export default function Checkout({ productId }: { productId: string }) {
     } catch (error) {
       toast.error("Order failed!");
       console.log(error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 

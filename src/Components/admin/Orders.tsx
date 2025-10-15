@@ -301,7 +301,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="">
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
         {/* <button className="flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition duration-150 text-sm font-medium">
@@ -315,7 +315,7 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
           <p>Loading Orders...</p>
         </div>
       ) : orders && orders.length > 0 ? (
-        <div className="bg-white shadow-xl rounded-xl overflow-hidden p-6">
+        <div className="bg-white shadow-xl rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">

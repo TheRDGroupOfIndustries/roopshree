@@ -221,7 +221,7 @@ const AddressesPage: React.FC = () => {
         await fetchAddresses();
       } catch (err: any) {
         console.error("Failed to delete address", err);
-        toast.error(err.response?.data?.error || "Failed to delete address");
+        toast.error(err.response?.data?.message || "Failed to delete address");
       } finally {
         setDeletingId(null);
       }
@@ -258,7 +258,7 @@ const AddressesPage: React.FC = () => {
                 handleOpenModal();
               }}
               className="flex items-center bg-sky-600 text-white py-1.5 px-3 sm:py-2 sm:px-4 rounded-full text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-60"
-              disabled={addresses.length >= 2} 
+              disabled={addresses.length >= 2}
             >
               <Plus size={16} className="mr-1" /> Add
             </button>

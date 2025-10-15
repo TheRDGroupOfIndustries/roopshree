@@ -8,35 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-  EXCLUSIVE_USER
-  DELIVERY_BOY
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum Status {
-  CONFIRMED
-  DISPATCH
-  OUTOFDELIVERY
-  CANCELLED
-  DELIVERED
-}
-
-enum ExpenseCategory {
-  INVENTORY
-  LOGISTICS
-  MARKETING
-  SALARY
-  OTHER
-}
-
 model User {
   id                  String         @id @default(cuid())
   name                String
@@ -144,10 +115,9 @@ model Order {
   referralCode  String?
   createdAt     DateTime  @default(now())
   deliveryBoyId String?
-  addressId     String
   color         String?
   size          String?
-  address       Address   @relation(fields: [addressId], references: [id])
+  address       Address?
   deliveryBoy   User?     @relation("OrderDeliveryBoy", fields: [deliveryBoyId], references: [id])
   product       Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user          User      @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
@@ -218,7 +188,8 @@ model Address {
   name    String
   userId  String
   user    User    @relation(fields: [userId], references: [id])
-  orders  Order[]
+  orderId String? @unique
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -244,4 +215,33 @@ model Banners {
   image     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  EXCLUSIVE_USER
+  DELIVERY_BOY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  CONFIRMED
+  DISPATCH
+  OUTOFDELIVERY
+  CANCELLED
+  DELIVERED
+}
+
+enum ExpenseCategory {
+  INVENTORY
+  LOGISTICS
+  MARKETING
+  SALARY
+  OTHER
 }

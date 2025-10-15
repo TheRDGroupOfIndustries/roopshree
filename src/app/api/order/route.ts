@@ -55,7 +55,6 @@ export async function GET() {
   }
 }
 
-
 interface CreateOrder {
   totalAmount: number;
   address: string;
@@ -86,10 +85,9 @@ export async function POST(req: Request) {
     const body = (await req.json()) as CreateOrder;
     const { products, totalAmount, address, paymentMode, referralCode } = body;
 
-    if(!address || !userId || products.length === 0){
-      NextResponse.json({error: "Required fields missing"}, {status: 400})
+    if (!address || !userId || products.length === 0) {
+      NextResponse.json({ error: "Required fields missing" }, { status: 400 });
     }
-
 
     // validate the address id belongs to the user
     const existAddress = await prisma.address.findUnique({
@@ -103,14 +101,16 @@ export async function POST(req: Request) {
       );
     }
 
-//  create order for each products
+    //  create order for each products
     const orders = await Promise.all(
       products.map(async (product) => {
         const { productId, quantity, size, color } = product;
         const order = await prisma.order.create({
           data: {
             productId,
-            addressId: address,
+            address: {
+              connect: { id: address },
+            },
             userId,
             quantity,
             totalAmount,
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
           },
         });
 
-        // Update stock on order  
+        // Update stock on order
         await prisma.stock.update({
           where: { productId },
           data: {
@@ -132,9 +132,6 @@ export async function POST(req: Request) {
         return order;
       })
     );
-
-
-
 
     // const order = await prisma.order.create({
     //   data: {

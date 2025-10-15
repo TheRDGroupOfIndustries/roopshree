@@ -73,7 +73,9 @@ export default function Sidebar() {
       {/* Backdrop (mobile only) - FIXED */}
       <div
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 md:hidden ${
-          isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+          isOpen
+            ? "opacity-100 visible"
+            : "opacity-0 invisible pointer-events-none"
         }`}
         onClick={closeSidebar}
         aria-hidden="true"
@@ -85,7 +87,7 @@ export default function Sidebar() {
           w-64 transform transition-transform duration-300 ease-in-out
           md:sticky md:top-0 md:translate-x-0 md:shadow-xl md:border-r md:border-gray-200
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          flex flex-col h-screen
+          flex flex-col 
         `}
       >
         {/* Close Button - Mobile Only - NEW */}
@@ -106,46 +108,58 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-grow p-4 space-y-1.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive =
-              item.path === "/manage"
-                ? pathname === "/manage"
-                : pathname.startsWith(item.path);
+        <nav className="flex-1 flex flex-col justify-between">
+          <div className=" p-4 space-y-1.5 ">
+            {navItems.map((item) => {
+              const isActive =
+                item.path === "/manage"
+                  ? pathname === "/manage"
+                  : pathname.startsWith(item.path);
 
-            return (
-              <Link
-                key={item.path}
-                href={item.path}
-                onClick={closeSidebar}
-                className={`relative flex items-center py-2.5 px-4 rounded-xl text-base font-medium transition-all duration-200 group
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  onClick={closeSidebar}
+                  className={`relative flex items-center py-2.5 px-4 rounded-xl text-base font-medium transition-all duration-200 group
                   ${
                     isActive
                       ? "bg-amber-50 text-amber-600 shadow-sm"
                       : "text-gray-700 hover:bg-gray-100"
                   }
                 `}
-              >
-                <item.icon
-                  className={`w-5 h-5 mr-4 transition-colors ${
-                    isActive
-                      ? "text-amber-600"
-                      : "text-gray-500 group-hover:text-gray-700"
-                  }`}
-                />
-                <span>{item.name}</span>
-                
-                {/* Active Indicator - NEW */}
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-amber-600 rounded-r-full"></span>
-                )}
-              </Link>
-            );
-          })}
+                >
+                  <item.icon
+                    className={`w-5 h-5 mr-4 transition-colors ${
+                      isActive
+                        ? "text-amber-600"
+                        : "text-gray-500 group-hover:text-gray-700"
+                    }`}
+                  />
+                  <span>{item.name}</span>
+
+                  {/* Active Indicator - NEW */}
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-amber-600 rounded-r-full"></span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center py-2.5 px-4 rounded-xl text-sm w-full transition-colors duration-200 text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <LogOut className="w-5 h-5 mr-4 text-red-500" />
+              <span className="font-medium">Sign Out</span>
+            </button>
+          </div>
         </nav>
 
         {/* Sign Out */}
-        <div className="p-4 border-t border-gray-200">
+        {/* <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleSignOut}
             className="flex items-center py-2.5 px-4 rounded-xl text-sm w-full transition-colors duration-200 text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -153,7 +167,7 @@ export default function Sidebar() {
             <LogOut className="w-5 h-5 mr-4 text-red-500" />
             <span className="font-medium">Sign Out</span>
           </button>
-        </div>
+        </div> */}
       </aside>
     </>
   );

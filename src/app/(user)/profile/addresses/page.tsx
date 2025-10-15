@@ -266,10 +266,10 @@ const AddressesPage: React.FC = () => {
 
           {/* Loading */}
           {loading ? (
-            <p className="text-center text-gray-500 py-8 flex items-center justify-center gap-2">
+            <div className="text-center text-gray-500 py-8 flex items-center justify-center gap-2">
               <SmallLoadingSpinner />
               Loading addresses...
-            </p>
+            </div>
           ) : addresses.length ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {addresses.map((address) => (

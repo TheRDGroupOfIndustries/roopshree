@@ -83,7 +83,7 @@
 //     <>
 //     <h2 className="mx-4 mb-2 font-semibold">Recent Orders</h2>
 //      <section title="Recent Orders" className="border-2 border-gray-400 mx-4 rounded-lg">
-        
+
 //       {recentOrders.map((order) => {
 //         const cfg = getStatusConfig(order.status);
 //         return (
@@ -134,13 +134,11 @@
 //       </div>
 //     </section>
 //     </>
-   
+
 //   );
 // };
 
 // export default RecentOrdersSection;
-
-
 
 "use client";
 
@@ -169,17 +167,35 @@ interface Order {
 const getStatusConfig = (status: Status) => {
   switch (status) {
     case Status.CONFIRMED:
-      return { badge: "bg-blue-100 text-blue-700", icon: <Clock className="w-3 h-3" /> };
+      return {
+        badge: "bg-blue-100 text-blue-700",
+        icon: <Clock className="w-3 h-3" />,
+      };
     case Status.DISPATCH:
-      return { badge: "bg-purple-100 text-purple-700", icon: <Package className="w-3 h-3" /> };
+      return {
+        badge: "bg-purple-100 text-purple-700",
+        icon: <Package className="w-3 h-3" />,
+      };
     case Status.OUTOFDELIVERY:
-      return { badge: "bg-amber-100 text-amber-700", icon: <Clock className="w-3 h-3" /> };
+      return {
+        badge: "bg-amber-100 text-amber-700",
+        icon: <Clock className="w-3 h-3" />,
+      };
     case Status.DELIVERED:
-      return { badge: "bg-green-100 text-green-700", icon: <CheckCircle2 className="w-3 h-3" /> };
+      return {
+        badge: "bg-green-100 text-green-700",
+        icon: <CheckCircle2 className="w-3 h-3" />,
+      };
     case Status.CANCELLED:
-      return { badge: "bg-red-100 text-red-700", icon: <XCircle className="w-3 h-3" /> };
+      return {
+        badge: "bg-red-100 text-red-700",
+        icon: <XCircle className="w-3 h-3" />,
+      };
     default:
-      return { badge: "bg-gray-100 text-gray-700", icon: <Package className="w-3 h-3" /> };
+      return {
+        badge: "bg-gray-100 text-gray-700",
+        icon: <Package className="w-3 h-3" />,
+      };
   }
 };
 
@@ -208,7 +224,8 @@ const RecentOrdersSection: React.FC = () => {
         const res = await getOrders();
         const orders = res.orders || [];
         const sorted = orders.sort(
-          (a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a: Order, b: Order) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setRecentOrders(sorted.slice(0, 3));
       } catch (err) {
@@ -224,13 +241,18 @@ const RecentOrdersSection: React.FC = () => {
     const date = new Date(dateString);
     return `${date.getDate().toString().padStart(2, "0")}/${(
       date.getMonth() + 1
-    ).toString().padStart(2, "0")}/${date.getFullYear()}`;
+    )
+      .toString()
+      .padStart(2, "0")}/${date.getFullYear()}`;
   };
 
   return (
     <>
       <h2 className="mx-4 mb-2 font-semibold">Recent Orders</h2>
-      <section title="Recent Orders" className="border-2 border-gray-400 mx-4 rounded-lg pb-2">
+      <section
+        title="Recent Orders"
+        className="border-2 border-gray-400 mx-4 rounded-lg pb-2"
+      >
         {loading ? (
           // 👇 Skeleton shimmer shown while loading
           <>
@@ -239,7 +261,15 @@ const RecentOrdersSection: React.FC = () => {
             <OrderSkeleton />
           </>
         ) : recentOrders.length === 0 ? (
-          <p className="text-center text-gray-500 p-4">No recent orders</p>
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-gray-500 mb-3">No recent orders</p>
+            <Link
+              href="/home"
+              className="bg-[var(--color-brand)] text-white px-4 py-2 rounded-lg text-sm "
+            >
+              Shop Now
+            </Link>
+          </div>
         ) : (
           <>
             {recentOrders.map((order) => {
@@ -253,7 +283,10 @@ const RecentOrdersSection: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-14 rounded-md overflow-hidden bg-gray-200">
                       <Image
-                        src={order.product.images?.[0] || "/images/placeholder_image.png"}
+                        src={
+                          order.product.images?.[0] ||
+                          "/images/placeholder_image.png"
+                        }
                         alt={order.product.title}
                         width={56}
                         height={56}
@@ -264,9 +297,12 @@ const RecentOrdersSection: React.FC = () => {
                       <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
                         {order.product.title}
                       </h3>
-                      <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(order.createdAt)}
+                      </p>
                       <p className="text-sm text-gray-800 font-medium">
-                        ₹{order.totalAmount.toLocaleString()} • Qty: {order.quantity}
+                        ₹{order.totalAmount.toLocaleString()} • Qty:{" "}
+                        {order.quantity}
                       </p>
                     </div>
                   </div>

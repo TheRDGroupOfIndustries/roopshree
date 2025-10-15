@@ -461,7 +461,7 @@ const OrdersPage: React.FC = () => {
         </p>
         <button
           onClick={() => router.push("/home")}
-          className="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:shadow transition"
+          className="bg-[var(--color-brand)] text-white px-6 py-3 rounded-xl font-semibold hover:shadow transition"
         >
           Shop Now
         </button>

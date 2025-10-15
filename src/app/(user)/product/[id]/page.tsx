@@ -18,6 +18,8 @@ import {
 import { LuShoppingBag } from "react-icons/lu";
 import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
+import { getReviews, addReview, deleteReview } from "@/services/reviewService";
+import Image from "next/image";
 
 interface Shade {
   id: number;
@@ -25,10 +27,15 @@ interface Shade {
 }
 
 interface Review {
-  id: number;
-  name: string;
+  id: string;
   rating: number;
   comment: string;
+  createdAt: string;
+  user?: {
+    id: string;
+    name: string;
+    profileImage?: string;
+  };
 }
 
 interface Product {
@@ -61,22 +68,45 @@ export default function ProductDetails() {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
-  
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const [quantity, setQuantity] = useState<number>(1);
+  const [selectedShade, setSelectedShade] = useState<number | null>(null);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] =
+    useState<boolean>(false);
+
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+  const handleShadeSelect = (shadeId: number) => setSelectedShade(shadeId);
+  const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  // Calculate average rating
+  const averageRating =
+    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length ||
+    0;
+
+  const discountPercent =
+    product && product.oldPrice > product.price
+      ? Math.round(
+          ((product.oldPrice - product.price) / product.oldPrice) * 100
+        )
+      : 0;
 
   useEffect(() => {
-  if (!user || !product) return;
+    if (!user || !product) return;
 
-  const wishlistExists = user.wishlist?.some(
-    (item: any) => item.productId === product.id
-  );
-  setIsInWishlist(!!wishlistExists);
+    const wishlistExists = user.wishlist?.some(
+      (item: any) => item.productId === product.id
+    );
+    setIsInWishlist(!!wishlistExists);
 
-  const cartExists = user.cart?.items?.some(
-    (item: any) => item.productId === product.id
-  );
-  setIsInCart(!!cartExists);
-}, [user, product, id]); 
-
+    const cartExists = user.cart?.items?.some(
+      (item: any) => item.productId === product.id
+    );
+    setIsInCart(!!cartExists);
+  }, [user, product, id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -93,45 +123,91 @@ export default function ProductDetails() {
     if (id) fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const data = await getReviews(id as string);
+        const sorted = data.sort(
+          (a: Review, b: Review) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setReviews(sorted);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    if (id) fetchReviews();
+  }, [id]);
+
   const handleAddToCart = async () => {
     if (!product) return;
 
     try {
       await addToCart(product.id, quantity);
       toast.success("Added to cart");
-       refreshUser();
+      refreshUser();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to add to cart");
     }
   };
 
-   const handleWishlistToggle = async (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (!user || !product) return; 
-  
-      try {
-        setLoadingWishlist(true);
-  
-        if (isInWishlist) {
-          setIsInWishlist(false);
-          await removeFromWishlist(product?.id);
-          toast.success("Removed from wishlist");
-        } else {
-          setIsInWishlist(true);
-          await addToWishlist(product?.id);
-          toast.success("Added to wishlist");
-        }
-  
-        refreshUser(); 
-      } catch (err) {
-        console.error(err);
-        setIsInWishlist((prev) => !prev);
-        toast.error("Something went wrong");
-      } finally {
-        setLoadingWishlist(false);
-      }
-    };
+  const handleWishlistToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user || !product) return;
 
+    try {
+      setLoadingWishlist(true);
+
+      if (isInWishlist) {
+        setIsInWishlist(false);
+        await removeFromWishlist(product?.id);
+        toast.success("Removed from wishlist");
+      } else {
+        setIsInWishlist(true);
+        await addToWishlist(product?.id);
+        toast.success("Added to wishlist");
+      }
+
+      refreshUser();
+    } catch (err) {
+      console.error(err);
+      setIsInWishlist((prev) => !prev);
+      toast.error("Something went wrong");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!newReview.comment || newReview.rating === 0) {
+      toast.error("Please provide rating and comment");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true); // start loading
+      const added = await addReview(id as string, newReview);
+      toast.success("Review added successfully!");
+      setNewReview({ rating: 0, comment: "" });
+
+      // Append new review
+
+      const reviewWithUser = {
+        ...added,
+        user: {
+          id: user?.id || "",
+          name: user?.name || "User",
+          profileImage: user?.profileImage || "",
+        },
+      };
+      setReviews((prev) => [reviewWithUser, ...prev]);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to add review");
+    } finally {
+      setSubmittingReview(false); // stop loading
+    }
+  };
 
   const shades = [
     { id: 1, color: "bg-yellow-300" },
@@ -139,16 +215,6 @@ export default function ProductDetails() {
     { id: 3, color: "bg-red-200" },
     { id: 4, color: "bg-pink-200" },
   ];
-
-  const [quantity, setQuantity] = useState<number>(1);
-  const [selectedShade, setSelectedShade] = useState<number | null>(null);
-  const [isDescriptionExpanded, setIsDescriptionExpanded] =
-    useState<boolean>(false);
-
-  const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
-  const handleShadeSelect = (shadeId: number) => setSelectedShade(shadeId);
-  const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
 
   if (loading) return <LoadingSpinner message="Loading product details…" />;
   if (!product) return <p className="p-4">Product not found</p>;
@@ -247,15 +313,17 @@ export default function ProductDetails() {
               <IoStarSharp
                 key={i}
                 className={`${
-                  i < Math.floor(product.rating)
+                  i < Math.round(averageRating)
                     ? "text-yellow-400"
                     : "text-gray-300"
                 } text-lg`}
               />
             ))}
-            <span className="text-sm text-gray-600 ml-2">{product.rating}</span>
+            <span className="text-sm text-gray-600 ml-2">
+              {averageRating.toFixed(1)}
+            </span>
             <span className="text-sm text-gray-600 ml-1">
-              ({product.totalReviews})
+              ({reviews.length})
             </span>
           </div>
 
@@ -267,7 +335,7 @@ export default function ProductDetails() {
               ₹{product.oldPrice}
             </span>
             <span className="bg-green-300 rounded px-2 py-1 text-xs font-medium">
-              {product.discountPercent}% OFF
+              {discountPercent}% OFF
             </span>
           </div>
 
@@ -348,44 +416,123 @@ export default function ProductDetails() {
         </div>
       </div>
 
+      <div className="p-3 bg-white shadow-sm my-1">
+        <h3 className="font-semibold text-gray-800 text-base mb-1">
+          Write a Review
+        </h3>
+
+        {/* Star Rating */}
+        <div className="flex space-x-1 justify-start my-2">
+          {Array.from({ length: 5 }, (_, index) => (
+            <IoStarSharp
+              key={index}
+              className={`text-2xl cursor-pointer transition-colors duration-200
+          ${index < newReview.rating ? "text-yellow-400" : "text-gray-300"}`}
+              onClick={() => setNewReview({ ...newReview, rating: index + 1 })}
+            />
+          ))}
+        </div>
+
+        {/* Comment Input */}
+        <textarea
+          value={newReview.comment}
+          onChange={(e) =>
+            setNewReview({ ...newReview, comment: e.target.value })
+          }
+          placeholder="Write your comment…"
+          className="border p-1 rounded w-full text-sm h-20 resize-none"
+        />
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmitReview}
+          className={`bg-[var(--color-brand)] text-white px-3 py-2 rounded-lg w-full mt-2 text-sm flex justify-center items-center gap-2 transition-all ${
+            submittingReview ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={submittingReview}
+        >
+          {submittingReview ? "Submitting..." : "Submit"}
+        </button>
+      </div>
+
       {/* Reviews */}
       <div className="p-4 bg-white shadow-sm my-1">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold text-gray-800">
-            Reviews ({product.totalReviews || 0})
+            Reviews ({reviews.length})
           </h2>
-          {product.reviews && product.reviews.length >= 3 && (
-            <a
-              href="#"
+          {reviews.length > 3 && !showAllReviews && (
+            <button
+              onClick={() => setShowAllReviews(true)}
               className="text-[var(--color-brand)] text-sm font-medium"
             >
               View All
-            </a>
+            </button>
+          )}
+
+          {reviews.length > 4 && showAllReviews && (
+            <button
+              onClick={() => setShowAllReviews(false)}
+              className="text-[var(--color-brand)] text-sm font-medium"
+            >
+              View Less
+            </button>
           )}
         </div>
 
-        {product.reviews && product.reviews.length > 0 ? (
-          product.reviews.map((review) => (
-            <div key={review.id} className="mb-5">
-              <div className="flex gap-3 items-center mb-1">
-                <span className="w-9 h-9 rounded-full bg-orange-100 text-[var(--color-brand)] font-semibold flex items-center justify-center flex-shrink-0">
-                  {review.name?.charAt(0) || "U"}
-                </span>
-                <p className="text-gray-800 text-sm font-semibold flex-1">
-                  {review.name || "Unknown User"}
-                </p>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <IoStarSharp
-                      key={i}
-                      className={`${
-                        i < review.rating ? "text-yellow-400" : "text-gray-300"
-                      } text-sm`}
-                    />
-                  ))}
+        {reviews.length > 0 ? (
+          (showAllReviews ? reviews : reviews.slice(0, 4)).map((review) => (
+            <div className="mb-5 pb-3 border-b border-gray-100" key={review.id}>
+              <div className="flex items-start gap-4">
+                <div className="relative w-10 h-10 flex-shrink-0 rounded-full overflow-hidden border border-gray-200">
+                  <Image
+                    src={
+                      review.user?.profileImage || "/images/dummy_profile.png"
+                    }
+                    alt={review.user?.name || "User"}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex justify-between items-center mb-1">
+                    <div>
+                      <p className="text-gray-900 font-semibold text-base leading-tight">
+                        {review.user?.name || "Anonymous"}
+                      </p>
+                      <time
+                        dateTime={review.createdAt}
+                        className="text-xs text-gray-500"
+                        title={new Date(review.createdAt).toLocaleString()}
+                      >
+                        {/* You can replace this with relative time if desired */}
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </time>
+                    </div>
+
+                    <div
+                      className="flex"
+                      aria-label={`Rating: ${review.rating} out of 5`}
+                    >
+                      {[...Array(5)].map((_, i) => (
+                        <IoStarSharp
+                          key={i}
+                          className={`${
+                            i < review.rating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } text-sm`}
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-sm leading-relaxed break-words">
+                    {review.comment}
+                  </p>
                 </div>
               </div>
-              <p className="text-gray-600 text-sm">{review.comment}</p>
             </div>
           ))
         ) : (
@@ -419,7 +566,10 @@ export default function ProductDetails() {
           </button>
         )}
 
-        <button onClick={()=>router.push(`/checkout/${product.id}`)} className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0">
+        <button
+          onClick={() => router.push(`/checkout/${product.id}`)}
+          className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
+        >
           <LuShoppingBag className="text-lg flex-shrink-0" />
           <span className="truncate">Buy Now</span>
         </button>

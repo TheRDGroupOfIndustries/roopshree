@@ -195,7 +195,7 @@ const QuickAction: React.FC<QuickActionProps> = ({
         <span className="text-sm  font-medium text-gray-800">{label}</span>
 
         {count && (
-          <span className="absolute -top-1 -right-1 bg-orange-600  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
+          <span className="absolute -top-1 -right-1 bg-[var(--color-brand)]  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
             {count}
           </span>
         )}
@@ -479,7 +479,7 @@ export default function ProfilePage() {
           <Link href="/my-cart" className="relative   p-1">
             <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 text-[10px] font-bold border-2 border-gray-300  bg-orange-600 rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
+              <span className="absolute -top-1 -right-1 text-[10px] font-bold   bg-[var(--color-brand)] rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
                 {cartCount}
               </span>
             )}

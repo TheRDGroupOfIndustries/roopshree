@@ -383,12 +383,12 @@ export default function ProfilePage() {
     //   link: "/profile/payments",
     //   info: "2 cards saved",
     // },
-    {
-      icon: Bell,
-      label: "Notifications",
-      link: "/profile/notify",
-      info: "All enabled",
-    },
+    // {
+    //   icon: Bell,
+    //   label: "Notifications",
+    //   link: "/profile/notify",
+    //   info: "All enabled",
+    // },
   ];
 
   const supportHelps: SupportHelp[] = [
@@ -440,11 +440,11 @@ export default function ProfilePage() {
   ];
 
   const appSettings: AppSetting[] = [
-    {
-      icon: Globe,
-      label: "Language",
-      right: "English",
-    },
+    // {
+    //   icon: Globe,
+    //   label: "Language",
+    //   right: "English",
+    // },
     {
       icon: Moon,
       label: "Dark Mode",

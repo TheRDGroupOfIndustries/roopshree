@@ -24,6 +24,7 @@ import TrendingCardSkeleton from "@/Components/TrendingCardSkeleton";
 import { getAllAddresses } from "@/services/addressService";
 import { createOrder, OrderProduct } from "@/services/orderService";
 import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
+import PageLoader from "@/Components/PageLoader";
 interface Product {
   id: string;
   title: string;
@@ -234,7 +235,7 @@ const Cart: React.FC = () => {
   const totalAmount = subtotal + deliveryFee - deliveryFee;
 
   if (loading) {
-    return <LoadingSpinner message=" Loading your cart..." />;
+    return <PageLoader/>
   }
 
   return (

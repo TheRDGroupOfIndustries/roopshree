@@ -119,7 +119,7 @@ const SettingButton: React.FC<SettingButtonProps> = ({
     <button
       onClick={onClick}
       // Increased padding on hover for better click area visibility
-      className="w-full border-2 border-gray-400 flex items-center p-3 sm:p-4  rounded-lg  "
+      className="w-full  flex items-center p-3 sm:p-4  rounded-lg  "
     >
       <span className="w-5 h-5 mr-3 sm:mr-4   flex items-center justify-center flex-shrink-0">
         <Icon size={20} />
@@ -276,7 +276,7 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
       />
 
       {openLang && (
-        <div className="absolute right-4 top-full mt-2   border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
+        <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
           {LANGUAGES.map((lang) => (
             <button
               key={lang}
@@ -333,15 +333,15 @@ export default function ProfilePage() {
     {
       icon: ShoppingCart,
       label: "My Orders",
-      bg: "bg-[var(--color-brand)]/25",
-      iconColor: "text-[var(--color-brand)]",
+      bg: "bg-red-300",
+      iconColor: "text-orange-600",
       link: "/my-orders",
       count: orderCount,
     },
     {
       icon: Heart,
       label: "Wishlist",
-      bg: "bg-red-100",
+      bg: "bg-red-200",
       iconColor: "text-orange-600",
       link: "/wishlist",
       count: wishListCount,
@@ -462,7 +462,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen  flex flex-col pb-16">
       {/* Header */}
-      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30 bg-white shadow-md">
+      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30   shadow-md">
         <button
           className=" text-xl p-1"
           onClick={() => router.back()} 

@@ -229,28 +229,28 @@ const AddressesPage: React.FC = () => {
   };
 
   const Header = () => (
-    <header className="sticky top-0 bg-white flex justify-between items-center px-3 sm:px-6 py-3 shadow-sm z-20 border-b border-gray-200">
+    <header className="sticky top-0   flex justify-between items-center px-3 sm:px-6 py-3 shadow-sm z-20 border-b border-gray-200">
       <button
         onClick={() => router.back()}
         aria-label="Go back"
-        className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
+        className="  hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
       >
         <ArrowLeft size={22} />
       </button>
-      <h2 className="font-bold text-lg sm:text-xl text-gray-800 flex-1 text-center">
+      <h2 className="font-bold text-lg sm:text-xl   flex-1 text-center">
         Addresses
       </h2>
     </header>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen  ">
       <Header />
 
       <div className="px-3  py-2">
         <div className=" p-2  rounded-xl  max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-4 sm:mb-6 border-b pb-3">
-            <h1 className="text-base sm:text-lg font-semibold text-gray-800">
+            <h1 className="text-base sm:text-lg font-semibold  ">
               Your Saved Addresses
             </h1>
             <button
@@ -266,7 +266,7 @@ const AddressesPage: React.FC = () => {
 
           {/* Loading */}
           {loading ? (
-            <div className="text-center text-gray-500 py-8 flex items-center justify-center gap-2">
+            <div className="text-center  py-8 flex items-center justify-center gap-2">
               <SmallLoadingSpinner />
               Loading addresses...
             </div>
@@ -275,7 +275,7 @@ const AddressesPage: React.FC = () => {
               {addresses.map((address) => (
                 <div
                   key={address.id}
-                  className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
+                  className="p-4   border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="inline-block bg-sky-100 text-sky-700 text-xs font-medium px-2 py-1 rounded-full border border-sky-200">
@@ -304,21 +304,21 @@ const AddressesPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-start">
-                    <MapPin className="text-sky-600 mr-2 mt-1" size={18} />
+                    <MapPin className=" mr-2 mt-1" size={18} />
                     <div>
-                      <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                      <p className="font-semibold  text-sm sm:text-base">
                         {address.name}
                       </p>
-                      <p className="text-xs sm:text-sm text-gray-700 mt-1">
+                      <p className="text-xs sm:text-sm   mt-1">
                         {address.address}, {address.city}
                       </p>
-                      <p className="text-xs sm:text-sm text-gray-700">
+                      <p className="text-xs sm:text-sm  ">
                         {address.state},{" "}
                         {address.country === "IN" ? "India" : address.country} -{" "}
                         {address.zipCode}
                       </p>
 
-                      <p className="text-xs sm:text-sm text-sky-700 font-medium mt-2">
+                      <p className="text-xs sm:text-sm   font-medium mt-2">
                         {address.phone}
                       </p>
                     </div>
@@ -327,8 +327,8 @@ const AddressesPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 text-gray-500 border-dashed border-2 border-gray-300 rounded-lg">
-              <MapPin className="mx-auto mb-3 text-gray-400" size={28} />
+            <div className="text-center py-10  border-dashed border-2 border-gray-300 rounded-lg">
+              <MapPin className="mx-auto mb-3 " size={28} />
               <p className="font-medium text-sm">No saved addresses yet</p>
               <p className="text-xs mt-1">
                 Tap “Add” to save your first address.

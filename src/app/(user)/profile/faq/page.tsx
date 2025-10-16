@@ -192,16 +192,16 @@ const FAQPage: React.FC = () => {
   const toggleIndex = (index: number) => setOpenIndex(openIndex === index ? null : index);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col pb-20">
+    <div className="min-h-screen   flex flex-col pb-20">
       {/* Header */}
-      <header className="sticky top-0 bg-white flex items-center px-4 py-3 border-b border-gray-100 z-50 shadow-md">
+      <header className="sticky top-0   flex items-center px-4 py-3 border-b border-gray-100 z-50 shadow-md">
         <button
           onClick={() => window.history.back()}
           className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <ArrowLeft className="w-5 h-5  " />
         </button>
-        <h2 className="flex-1 text-center font-semibold text-base text-gray-800">
+        <h2 className="flex-1 text-center font-semibold text-base  ">
           Help Center
         </h2>
         <div className="w-7" />
@@ -211,15 +211,15 @@ const FAQPage: React.FC = () => {
       <main className="flex-1 p-4">
         {/* Title */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-sky-100 rounded-lg">
+          <div className="p-2  rounded-lg">
             <HelpCircle className="w-5 h-5 text-sky-600" />
           </div>
-          <h1 className="text-lg font-bold text-gray-800">
+          <h1 className="text-lg font-bold  ">
             FAQs
           </h1>
         </div>
 
-        <p className="text-gray-600 text-sm mb-5">
+        <p className=" text-sm mb-5">
           Quick answers about orders, delivery, and returns.
         </p>
 
@@ -232,13 +232,13 @@ const FAQPage: React.FC = () => {
                 key={index}
                 className={`rounded-lg border transition-all ${
                   isOpen
-                    ? "border-sky-500 bg-sky-50"
-                    : "border-gray-200 bg-white"
+                    ? "border-sky-500 "
+                    : "border-gray-200 "
                 }`}
               >
                 <button
                   onClick={() => toggleIndex(index)}
-                  className="flex justify-between w-full items-center text-left p-3 active:bg-gray-100 transition"
+                  className="flex justify-between w-full items-center text-left p-3   transition"
                   aria-expanded={isOpen}
                 >
                   <span
@@ -260,7 +260,7 @@ const FAQPage: React.FC = () => {
                     isOpen ? "max-h-40" : "max-h-0"
                   }`}
                 >
-                  <p className="text-xs text-gray-700 px-3 pb-3 leading-relaxed border-t border-gray-100">
+                  <p className="text-xs  px-3 pb-3 leading-relaxed border-t  ">
                     {item.answer}
                   </p>
                 </div>
@@ -271,11 +271,11 @@ const FAQPage: React.FC = () => {
 
         {/* Footer CTA */}
         <div className="mt-8 text-center border-t border-gray-100 pt-5">
-          <p className="text-sm text-gray-600 mb-3">
+          <p className="text-sm   mb-3">
             Still need help? Contact our support team.
           </p>
           <Link href="/profile/support">
-            <button className="px-5 py-2 bg-sky-600 text-white text-sm font-medium rounded-full hover:bg-sky-700 active:bg-sky-800 transition">
+            <button className="px-5 py-2  text-sm font-medium rounded-full hover:bg-sky-700 active:bg-sky-800 transition">
               Contact Support
             </button>
           </Link>

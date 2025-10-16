@@ -21,7 +21,7 @@ export interface CreateReviewBody {
 // Get all reviews for a product
 export const getReviews = async (productId: string): Promise<Review[]> => {
   const res = await api.get(`/products/${productId}/reviews`);
-  console.log("getReviews:",res);
+//   console.log("getReviews:",res);
   return res.data;
 };
 
@@ -31,7 +31,7 @@ export const addReview = async (
   data: CreateReviewBody
 ): Promise<Review> => {
   const res = await api.post(`/products/${productId}/reviews`, data);
-  console.log("AddReview:",res);
+//   console.log("AddReview:",res);
   
   return res.data;
 

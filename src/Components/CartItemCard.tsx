@@ -35,6 +35,8 @@ const CartItemCard: React.FC<CartItemProps> = ({
   const { user, refreshUser } = useAuth();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     if (!user) return;
     const wishlistExists = user.wishlist?.some(
@@ -71,12 +73,26 @@ const CartItemCard: React.FC<CartItemProps> = ({
   };
 
   return (
-    <div className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+    
+   <div
+  className={`relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group 
+    ${isDeleting ? "opacity-50  pointer-events-none" : "opacity-100"}`}
+>
+
+{isDeleting && (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm z-20">
+      <SmallLoadingSpinner />
+      <p className="text-gray-600 text-xs mt-1">Removing...</p>
+    </div>
+  )}
       {/* Remove Button */}
       <button
         className="absolute top-1 right-1 z-10 w-6 h-6 text-black rounded-full flex items-center justify-center text-sm"
         aria-label="Remove item"
-        onClick={() => onRemove(id)}
+         onClick={() => {
+    setIsDeleting(true);
+    setTimeout(() => onRemove(id), 500); 
+  }}
       >
         <X className="w-3 h-3" />
       </button>

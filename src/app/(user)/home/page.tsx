@@ -20,6 +20,7 @@ import TrendingCard from "@/Components/TrendingNow";
 export default function HomePage() {
   const { user, refreshUser } = useAuth();
   const cartCount = user?.cart?.items?.length || 0;
+  const wishListCount = user?.wishlist?.length || 0;
 
   // ------------------- SEARCH ------------------- //
   const [searchTerm, setSearchTerm] = useState("");
@@ -192,8 +193,10 @@ export default function HomePage() {
     setIsSearching(false);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatTime = (seconds: number) => {
@@ -215,42 +218,48 @@ export default function HomePage() {
 
   // ------------------- RENDER ------------------- //
   return (
-    <div className="  min-h-screen pb-20">
+    <div className=" min-h-screen pb-20">
       {/* ---------- HEADER ---------- */}
-      <div className="sticky top-0 z-20  shadow pb-1">
+      <div className="sticky top-0 z-20   shadow pb-1">
         <header className="flex items-center justify-between px-4 py-3">
           <h1 className="text-lg font-bold  ">Roop Shree</h1>
           <div className="flex items-center gap-4">
             <div className="relative">
               <Link href={"/my-cart"}>
-                <FiShoppingCart size={22} />
+                <FiShoppingCart size={22} className=" " />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)]   text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-red-500  font-bold text-[10px] w-4 h-4 flex items-center justify-center rounded-full ring-2 ring-white">
                     {cartCount}
                   </span>
                 )}
               </Link>
             </div>
-            <Link href={"/wishlist"}>
-              <BiHeart size={22} />
-            </Link>
+            <div className="relative">
+              <Link href={"/wishlist"}>
+                <BiHeart size={22} className="" />
+                {wishListCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white font-bold text-[10px] w-4 h-4 flex items-center justify-center rounded-full ring-2 ring-white">
+                    {wishListCount}
+                  </span>
+                )}
+              </Link>
+            </div>
           </div>
         </header>
-
         {/* Search Bar */}
-        <div className="flex items-center  rounded-xl mx-4 mb-3 px-3 py-2">
-          <AiOutlineSearch size={20} className="text-red-500" />
+        <div className="flex items-center  border rounded-xl mx-4 mb-3 px-3 py-2">
+          <AiOutlineSearch size={20} className="text-[var(--color-brand)]" />
           <input
             type="text"
             placeholder="Search cosmetics..."
             value={searchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="flex-1 bg-transparent outline-none ml-3 text-sm"
+            className="flex-1 bg-transparent text-gray-100 outline-none ml-3 text-sm  "
           />
           {searchTerm && (
             <button
               onClick={clearSearch}
-              className="  hover:text-gray-700 ml-2"
+              className="text-gray-500 hover:text-gray-700 ml-2 text-lg"
             >
               ✕
             </button>
@@ -261,8 +270,8 @@ export default function HomePage() {
       {/* ---------- SEARCH RESULTS ---------- */}
       {isSearching ? (
         <div className="px-4 mt-4">
-          <h3 className="font-semibold text-lg   mb-3">
-            Results for "{searchTerm}"
+          <h3 className="font-semibold text-lg text-gray-900 mb-3">
+            Results for &quot;{searchTerm}&quot;
           </h3>
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -275,11 +284,12 @@ export default function HomePage() {
                   price={product.price}
                   oldPrice={product.oldPrice}
                   image={product.images?.[0] || "/images/placeholder_image.png"}
+                  reviews={product.reviews}
                 />
               ))}
             </div>
           ) : (
-            <p className="  text-sm mt-10 text-center">
+            <p className="text-gray-500 text-sm mt-10 text-center">
               No products found for "{searchTerm}"
             </p>
           )}
@@ -287,9 +297,9 @@ export default function HomePage() {
       ) : (
         <>
           {/* ---------- BANNER CAROUSEL ---------- */}
-          <div className="relative mx-4 mt-3 h-38  overflow-hidden rounded-2xl">
+          <div className="relative mx-4 mt-3 h-40 overflow-hidden rounded-xl">
             {bannerLoading ? (
-              <div className="h-40   animate-pulse rounded-xl"></div>
+              <div className="h-40 bg-gray-200 animate-pulse rounded-xl"></div>
             ) : banners.length > 0 ? (
               <>
                 {/* Carousel Container */}
@@ -301,7 +311,7 @@ export default function HomePage() {
                 >
                   {banners.map((banner, i) => (
                     <div key={i} className="min-w-full flex-shrink-0">
-                      <div className="relative">
+                      <div className="relative h-40">
                         <Image
                           width={500}
                           height={300}
@@ -310,18 +320,20 @@ export default function HomePage() {
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-[var(--color-brand)]/20"></div>
-                        <div className="relative z-10 p-6 flex flex-col items-start">
-                          <h2 className="text-xl font-bold mb-2 text-white  ">
+                        <div className="relative z-10 p-6 flex flex-col items-start h-full justify-center">
+                          <h2 className="text-xl font-bold mb-2 text-white drop-shadow">
                             {banner.title}
                           </h2>
                           {banner.subtitle && (
-                            <p className="text-sm mb-4 text-white ">
+                            <p className="text-sm mb-4 text-white drop-shadow">
                               {banner.subtitle}
                             </p>
                           )}
-                          <button className="px-4 py-2   text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
-                            Shop Now
-                          </button>
+                          <Link href="/search" className="inline-block">
+                            <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-gray-900 transition-colors shadow-md">
+                              Shop Now
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -330,22 +342,23 @@ export default function HomePage() {
 
                 {/* Indicator Dots */}
                 {banners.length > 1 && (
-                  <div className="flex justify-center mt-3 space-x-2">
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center space-x-2">
                     {banners.map((_, i) => (
                       <div
                         key={i}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
                           currentBannerIndex === i
-                            ? "bg-[var(--color-brand)] scale-110"
-                            : "bg-gray-300"
+                            ? "bg-white scale-110"
+                            : "bg-gray-300/70"
                         }`}
+                        onClick={() => setCurrentBannerIndex(i)}
                       ></div>
                     ))}
                   </div>
                 )}
               </>
             ) : (
-              <div className="h-40 flex items-center justify-center  ">
+              <div className="h-40 flex items-center justify-center text-gray-500">
                 No banner available
               </div>
             )}
@@ -353,8 +366,8 @@ export default function HomePage() {
 
           {/* ---------- CATEGORIES ---------- */}
           <div className="mt-6 px-4">
-            <h3 className="font-semibold text-lg mb-3">Categories</h3>
-            <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+            <h3 className="font-semibold text-lg text-gray-900 mb-3">Categories</h3>
+            <div className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
               {categoryLoading ? (
                 <CategorySkeleton />
               ) : (
@@ -365,7 +378,7 @@ export default function HomePage() {
 
           {/* ---------- FLASH SALE ---------- */}
           {!offerExpired && offers.length > 0 && (
-            <div className="relative  mt-6 overflow-hidden rounded-xl">
+            <div className="relative mt-6 overflow-hidden">
               {/* Carousel Container */}
               <div
                 className="flex w-full transition-transform duration-700 ease-in-out"
@@ -374,8 +387,8 @@ export default function HomePage() {
                 }}
               >
                 {offers.map((offer, i) => (
-                  <div key={i} className="min-w-full flex-shrink-0 px-4 mt-6">
-                    <div className="bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)]  p-4 rounded-xl flex justify-between items-center">
+                  <div key={i} className="min-w-full flex-shrink-0 px-4">
+                    <div className="bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] p-4 rounded-xl flex justify-between items-center shadow-lg">
                       {offerLoading ? (
                         <div className="w-full flex justify-between animate-pulse">
                           <div className="space-y-2">
@@ -423,6 +436,7 @@ export default function HomePage() {
                           ? "bg-[var(--color-brand)] scale-110"
                           : "bg-gray-300"
                       }`}
+                      onClick={() => setCurrentOfferIndex(i)}
                     ></div>
                   ))}
                 </div>
@@ -430,16 +444,14 @@ export default function HomePage() {
             </div>
           )}
 
-       
-
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg  ">
+              <h3 className="font-semibold text-lg text-gray-900">
                 Featured Products
               </h3>
               <button
-                className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)]"
+                className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)] transition"
                 onClick={() => setShowAllProducts(!showAllProducts)}
               >
                 {showAllProducts ? "Show Less" : "View All"}
@@ -459,6 +471,7 @@ export default function HomePage() {
                         description={product.description}
                         price={product.price}
                         oldPrice={product.oldPrice}
+                        reviews={product.reviews}
                         image={
                           product.images?.[0] || "/images/placeholder_image.png"
                         }
@@ -468,34 +481,33 @@ export default function HomePage() {
             </div>
           </div>
 
-            {/* Trending Now */}
+          {/* Trending Now */}
+          <div className="mt-6 relative px-4">
+            {/* Header */}
+            <div className="mb-4">
+              <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+            </div>
 
-        <div className="mt-6 relative px-4">
-          {/* Header */}
-          <div className="mb-4">
-            <h3 className="font-bold text-xl  ">Trending Now</h3>
+            {/* Horizontal Scrollable Container */}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {productLoading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <TrendingCardSkeleton key={i} />
+                  ))
+                : shuffledProducts.map((product) => (
+                    <TrendingCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.title}
+                      price={product.price}
+                      oldPrice={product.oldPrice}
+                      image={
+                        product.images?.[0] || "/images/placeholder_image.png"
+                      }
+                    />
+                  ))}
+            </div>
           </div>
-
-          {/* Horizontal Scrollable Container */}
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {productLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <TrendingCardSkeleton key={i} />
-                ))
-              : shuffledProducts.map((product) => (
-                  <TrendingCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.title}
-                    price={product.price}
-                    oldPrice={product.oldPrice}
-                    image={
-                      product.images?.[0] || "/images/placeholder_image.png"
-                    }
-                  />
-                ))}
-          </div>
-        </div>
         </>
       )}
     </div>

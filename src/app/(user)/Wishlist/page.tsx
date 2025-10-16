@@ -1,54 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import ProductCard from "@/Components/ProductCard";
-// import { BiSearch } from "react-icons/bi";
-
-// const WishlistPage: React.FC = () => {
-
-//    const discount = (original: number, current: number): number => {
-//     return Math.round(((original - current) / original) * 100);
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 mb-20">
-//       {/* Navbar */}
-//       <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 bg-white shadow-md sticky top-0 z-50">
-//         {/* Logo */}
-//         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
-//           Roop Shree
-//         </h1>
-
-//         {/* Search Icon */}
-//         <button className="p-2 hover:bg-gray-100 rounded-full transition">
-//           <BiSearch className="text-gray-600 w-5 h-5 sm:w-6 sm:h-6" />
-//         </button>
-//       </nav>
-
-//       {/* Header Section */}
-//       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-//         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
-//           Your Favorites
-//         </h1>
-//         <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-600">
-//           Wishlist ({products.length} items)
-//         </h2>
-//       </div>
-
-//       {/* Products Grid */}
-//       <div className="px-4 sm:px-6 lg:px-8 pb-8">
-//         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-//           {products.map((item) => (
-//            <ProductCard/>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default WishlistPage;
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -56,6 +5,9 @@ import { BiSearch } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import { getWishlist } from "@/services/wishlistService";
 import LoadingSpinner from "@/Components/LoadingSpinner";
+import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
+import { FiHeart } from "react-icons/fi";
+import Link from "next/link";
 
 interface WishlistItem {
   id: string;
@@ -69,6 +21,8 @@ interface WishlistItem {
     images: string[];
     category: string;
     description: string;
+    // Assuming 'reviews' is a possible property on product for ProductCard
+    reviews?: number; 
   };
 }
 
@@ -77,12 +31,10 @@ const WishlistPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchWishlist = async () => {
-    
     try {
       setLoading(true);
       const data = await getWishlist();
       setWishlist(data);
-      // console.log("Wishlist API response:", data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
     } finally {
@@ -95,58 +47,69 @@ const WishlistPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen   mb-20">
+    <div className="min-h-screen mb-20">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 border-b  shadow-md sticky top-0 z-50">
+      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 border-b shadow-md sticky top-0 z-50">
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
           Roop Shree
         </h1>
         <button className="p-2 hover:bg-gray-100 rounded-full transition">
-          <BiSearch className="  w-5 h-5 sm:w-6 sm:h-6" />
+          <BiSearch className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </nav>
 
       {/* Header */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold   mb-2">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
           Your Favorites
         </h1>
-        <h2 className="text-base sm:text-lg lg:text-xl font-semibold  ">
+        <h2 className="text-base sm:text-lg lg:text-xl font-semibold">
           Wishlist ({wishlist.length} {wishlist.length === 1 ? "item" : "items"}
           )
         </h2>
       </div>
 
-      {/* Loading */}
-      {loading ? (
-        <LoadingSpinner message="Loading wishlist..." />
-      ) : wishlist.length === 0 ? (
-        <p className="text-center  ">Your wishlist is empty.</p>
-      ) : (
-        <div className="px-4 sm:px-6 lg:px-8 pb-8">
+      {/* Main Content Area: Loading, Empty State, or Product Grid */}
+      <div className="px-4 sm:px-6 lg:px-8 pb-8">
+        {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-             {Array.isArray(wishlist) && wishlist.length > 0 ? (
-              wishlist.map(({ product }) => (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  name={product.title}
-                  description={product.description}
-                  price={product.price}
-                  oldPrice={product.oldPrice}
-                  image={product.images?.[0]}
-                  refreshWishlist={fetchWishlist}
-                />
-              ))
-            ) : (
-              <p className="text-center  ">
-                Your wishlist is empty.
-              </p>
-            )}
-            
+            {/* Show 4 skeleton cards while loading */}
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
-        </div>
-      )}
+        ) : wishlist.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-20 space-y-4 ">
+            <FiHeart className="text-amber-600 w-16 h-16" />
+            <h2 className="text-2xl font-bold  ">Your Wishlist is Empty!</h2>
+            <p className="  text-center max-w-xs">
+              Looks like you haven’t added any favorites yet. Explore products and add items you love!
+            </p>
+            <Link
+              href="/home"
+              className="px-6 py-2 bg-amber-600   rounded-lg transition-colors hover:bg-amber-700"
+            >
+              Shop Now
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {wishlist.map(({ product }) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.title}
+                description={product.description}
+                price={product.price}
+                oldPrice={product.oldPrice}
+                image={product.images?.[0]}
+                refreshWishlist={fetchWishlist}
+              
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

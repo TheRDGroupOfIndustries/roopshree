@@ -18,14 +18,9 @@ import {
 import { LuShoppingBag } from "react-icons/lu";
 import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
-import { getReviews, addReview, deleteReview } from "@/services/reviewService";
+import { getReviews, addReview } from "@/services/reviewService";
 import Image from "next/image";
 import ProductDetailsSkeleton from "@/Components/ProductDetailsSkeleton";
-
-interface Shade {
-  id: number;
-  color: string;
-}
 
 interface Review {
   id: string;
@@ -44,7 +39,7 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  oldprice: number;
+  oldPrice: number;
   // discountPercent: number;
   // rating: number;
   // totalReviews: number;
@@ -52,10 +47,11 @@ interface Product {
   insideBox: string[];
   cartQuantity: number;
   images: string[];
-  shades: Shade[];
   deliveryInfo: string;
   ingredients: string[];
   reviews: Review[];
+  colour?: string[];
+  size?: string[];
 }
 
 export default function ProductDetails() {
@@ -113,6 +109,8 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const data = await getProductById(id as string);
+        console.log("data:", data);
+
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -143,11 +141,18 @@ export default function ProductDetails() {
 
   const handleAddToCart = async () => {
     if (!product) return;
+    if (product.colour && product.colour.length > 0 && selectedShade === null) {
+      toast.error("Please select a color before adding to cart");
+      return;
+    }
+    const selectedColor = product.colour
+    ? product.colour[selectedShade]
+    : null;
 
     try {
-      await addToCart(product.id, quantity);
+      await addToCart(product.id, quantity,selectedColor);
+      await refreshUser();
       toast.success("Added to cart");
-      refreshUser();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to add to cart");
     }
@@ -210,14 +215,7 @@ export default function ProductDetails() {
     }
   };
 
-  const shades = [
-    { id: 1, color: "bg-yellow-300" },
-    { id: 2, color: "bg-amber-200" },
-    { id: 3, color: "bg-red-200" },
-    { id: 4, color: "bg-pink-200" },
-  ];
-
- if (loading) return <ProductDetailsSkeleton />;
+  if (loading) return <ProductDetailsSkeleton />;
 
   if (!product) return <p className="p-4">Product not found</p>;
 
@@ -350,9 +348,30 @@ export default function ProductDetails() {
         </div>
       </div>
 
+      {/* Colors Section */}
+      {product.colour && product.colour.length > 0 && (
+        <div className="flex-1 bg-white px-3 py-6 my-1">
+          <h2 className="text-lg font-semibold mb-2">Select Color</h2>
+          <div className="flex flex-wrap gap-3">
+            {product.colour.map((color, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedShade(index)}
+                className={`w-10 h-10 rounded-full border-2 transition-all ${
+                  selectedShade === index
+                    ? "border-[var(--color-brand)] scale-110"
+                    : "border-gray-300"
+                }`}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Shades & Quantity */}
       <div className="flex-1 bg-white px-3 py-6  my-1">
-        <h2 className="text-lg font-semibold mb-2">Select Shade</h2>
+        {/* <h2 className="text-lg font-semibold mb-2">Select Shade</h2>
         <div className="flex space-x-2 mb-4" role="radiogroup">
           {shades.map((shade) => (
             <button
@@ -367,7 +386,7 @@ export default function ProductDetails() {
               aria-checked={selectedShade === shade.id}
             />
           ))}
-        </div>
+        </div> */}
 
         <h2 className="text-lg font-semibold mb-2">Quantity</h2>
         <div className="flex items-center space-x-6 mb-4">
@@ -441,7 +460,7 @@ export default function ProductDetails() {
           onChange={(e) =>
             setNewReview({ ...newReview, comment: e.target.value })
           }
-          placeholder="Write your comment…"
+          placeholder="Write your review…"
           className="border p-1 rounded w-full text-sm h-20 resize-none"
         />
 

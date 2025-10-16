@@ -17,8 +17,9 @@ interface ProductCardProps {
   price: number;
   oldPrice?: number;
   image: string;
-  category: string;
+  reviews?: { rating: number; comment: string }[];
   refreshWishlist?: () => void;
+  category?: string;
 }
 
 export default function ProductCard({
@@ -28,6 +29,7 @@ export default function ProductCard({
   price,
   oldPrice,
   image,
+  reviews,
   refreshWishlist,
 }: ProductCardProps) {
   const { user, refreshUser } = useAuth();
@@ -35,6 +37,8 @@ export default function ProductCard({
   const [isInCart, setIsInCart] = useState(false);
   const [loadingCart, setLoadingCart] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
+
+  // console.log("revie: ",reviews);
 
   // Initialize wishlist and cart state
   useEffect(() => {
@@ -116,7 +120,7 @@ export default function ProductCard({
       setIsInCart(false); // instant UI feedback
       await removeCartItem(cartItem.id);
       toast.success("Removed from cart");
-    
+
       refreshUser(); // background refresh
     } catch (err) {
       console.error(err);
@@ -127,17 +131,22 @@ export default function ProductCard({
     }
   };
 
+  const avgRating =
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
+
   return (
     <Link href={`/product/${id}`}>
-      <div className="  rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full">
+      <div className="  rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-lg transition duration-300">
         {/* Image + Wishlist */}
         <div className="relative">
           <button
-            className={`absolute top-2 right-2 rounded-full p-1.5 shadow-sm flex items-center justify-center
+            className={`absolute top-2 right-2 rounded-full p-1.5 shadow-md transition-colors flex items-center justify-center z-10
               ${
                 isInWishlist
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
               }`}
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
@@ -149,21 +158,21 @@ export default function ProductCard({
             )}
           </button>
 
-          <div className="w-full flex items-center justify-center h-auto">
+          <div className="w-full flex items-center justify-center h-48 sm:h-56"> {/* Added fixed height for better layout */}
             <Image
               src={image}
               alt={name}
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-full h-auto object-contain"
+              width={300} // Set explicit width/height for Next/Image optimization
+              height={300}
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="w-full h-full object-contain p-4"
             />
           </div>
         </div>
 
         {/* Product Info */}
         <div className="p-3 flex flex-col flex-grow">
-          <h4 className="font-semibold text-lg   mb-1">{name}</h4>
+          <h4 className="font-semibold text-base   mb-1 line-clamp-1">{name}</h4>
           <p className="text-xs   mb-3 line-clamp-2 flex-grow">
             {description}
           </p>
@@ -172,32 +181,37 @@ export default function ProductCard({
               <IoStarSharp
                 key={i}
                 className={`${
-                  i < 5 ? "text-yellow-400" : "text-gray-300"
+                  i < Math.round(avgRating)
+                    ? "text-yellow-400"
+                    : "text-gray-300"
                 } text-xs`}
               />
             ))}
-            <span className="text-sm  ">(127)</span>
+            {/* ✅ FIX: Resolved merge conflict to use dynamic review count */}
+            <span className="text-sm text-gray-500 ml-1">
+              ({reviews?.length || 0})
+            </span>
           </div>
 
           {/* Price + Cart Button */}
-          <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+          <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-[var(--color-brand)]">
-                ₹{price}
+                ₹{price.toLocaleString()} {/* Use toLocaleString for Indian currency */}
               </span>
               {oldPrice && (
-                <span className="text-xs   line-through">
-                  ₹{oldPrice}
+                <span className="text-xs text-gray-500 line-through">
+                  ₹{oldPrice.toLocaleString()}
                 </span>
               )}
             </div>
 
             <button
-              className={`p-2 rounded-lg shadow-md transition-colors flex items-center justify-center
+              className={`p-2 rounded-lg shadow-md transition-colors   flex items-center justify-center h-8 w-8
                 ${
                   isInCart
-                    ? "bg-red-500   hover:bg-red-600"
-                    : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]  "
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]"
                 }`}
               onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
               disabled={loadingCart}

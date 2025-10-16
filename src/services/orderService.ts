@@ -26,7 +26,7 @@ export const getOrders = async () => {
 // ✅ Create new order
 export const createOrder = async (data: CreateOrder) => {
   const res = await api.post("/order", data);
-  //   console.log("createOrder:", res);
+    console.log("createOrder:", res);
   //   await clearCart()
   return res.data;
 };

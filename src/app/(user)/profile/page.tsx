@@ -223,7 +223,7 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
         right={<span className="">{language}</span>}
         onClick={() => setOpenLang(!openLang)}
       />
-
+ 
       {openLang && (
         <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
           {LANGUAGES.map((lang) => (
@@ -247,6 +247,7 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
     </div>
   );
 };
+ 
 
 // --- Main Profile Page Component ---
 

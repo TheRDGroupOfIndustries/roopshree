@@ -12,9 +12,9 @@ import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
 import { useSearchParams } from "next/navigation";
 
 export default function SearchPage() {
-   const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const categoryQuery = searchParams.get("category");
-  const [searchTerm, setSearchTerm] = useState(categoryQuery ||"");
+  const [searchTerm, setSearchTerm] = useState(categoryQuery || "");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -35,6 +35,9 @@ export default function SearchPage() {
 
     fetchCategories();
   }, []);
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
 
   useEffect(() => {
     if (categoryQuery) {
@@ -54,33 +57,32 @@ export default function SearchPage() {
 
   // 🔹 Fetch products dynamically from API
   useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      const data = await getAllProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
+    const fetchProducts = async () => {
+      try {
+        const data = await getAllProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+  useEffect(() => {
+    if (categoryQuery) {
+      setSearchTerm(categoryQuery);
     }
-  };
-
-  fetchProducts();
-}, []);
-useEffect(() => {
-  if (categoryQuery) {
-    setSearchTerm(categoryQuery);
-  }
-}, [categoryQuery]);
-
+  }, [categoryQuery]);
 
   // 🔹 Filter products based on search term (using title)
   // 🔎 Filtered Products
- const filteredProducts = products.filter((product) =>
-  product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  product.category?.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // 🔹 Get unique categories
   // 🏷️ Get Unique Categories
@@ -98,6 +100,14 @@ useEffect(() => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="flex-1 bg-transparent outline-none ml-3 text-sm"
         />
+        {searchTerm && (
+          <button
+            onClick={clearSearch}
+            className="text-gray-500 hover:text-gray-700 ml-2"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {/* 🔥 Popular Searches */}
@@ -107,23 +117,21 @@ useEffect(() => {
         </h3>
         <div className="flex flex-wrap gap-2">
           {products.length > 0 && (
-  <div className="px-4 mb-5">
-    {/* <h3 className="text-base font-semibold text-gray-700 mb-2">
-      Popular Searches
-    </h3> */}
-    <div className="flex flex-wrap gap-2">
-      {products.slice(0, 5).map((product) => (
-        <button
-          key={product.id}
-          onClick={() => setSearchTerm(product.title)}
-          className="px-3 py-1.5 bg-gray-100 text-[var(--color-brand)] text-xs font-medium rounded-full hover:bg-amber-50 transition"
-        >
-          {product.title}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
+            <div className="mb-5">
+              
+              <div className="flex flex-wrap gap-2">
+                {products.slice(0, 5).map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => setSearchTerm(product.title)}
+                    className="px-3 py-1.5 bg-gray-100 text-[var(--color-brand)] text-xs font-medium rounded-full hover:bg-amber-50 transition"
+                  >
+                    {product.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -144,10 +152,10 @@ useEffect(() => {
       <div className="px-4">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <ProductCardSkeleton key={i} />
-      ))}
-    </div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
         ) : searchTerm ? (
           <>
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
@@ -169,7 +177,7 @@ useEffect(() => {
                         : "/images/placeholder.png"
                     }
                     category={p.category}
-                     reviews={p.reviews}
+                    reviews={p.reviews}
                   />
                 ))}
               </div>
@@ -202,7 +210,7 @@ useEffect(() => {
                           : "/images/placeholder.png"
                       }
                       category={p.category}
-                       reviews={p.reviews}
+                      reviews={p.reviews}
                     />
                   ))}
               </div>

@@ -21,5 +21,7 @@ export const removeFromWishlist = async (productId: string) => {
 // Fetch user's wishlist
 export const getWishlist = async () => {
   const res = await api.get("/wishlist");
+  // console.log("getWishlist: ",res);
+  
   return res.data;
 };

@@ -60,6 +60,8 @@ const wishListCount = user?.wishlist?.length ||0;
       try {
         setProductLoading(true);
         const res = await getAllProducts();        
+        console.log("product data: ",res);
+        
         setProducts(res);
         setShuffledProducts([...res].sort(() => Math.random() - 0.5));
       } catch (error) {

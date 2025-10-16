@@ -262,7 +262,7 @@ const RecentOrdersSection: React.FC = () => {
           </>
         ) : recentOrders.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6 text-center">
-            <p className="text-gray-300 mb-3">No recent orders</p>
+            <p className="text-gray-500 mb-3">No recent orders</p>
             <Link
               href="/home"
               className="bg-[var(--color-brand)] text-white px-4 py-2 rounded-lg text-sm "
@@ -297,7 +297,7 @@ const RecentOrdersSection: React.FC = () => {
                       <h3 className="text-sm font-semibold text-gray-300 line-clamp-1">
                         {order.product.title}
                       </h3>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-500">
                         {formatDate(order.createdAt)}
                       </p>
                       <p className="text-sm text-gray-400 font-medium">

@@ -4,7 +4,7 @@ import api from "@/lib/api";
 export const addToCart = async (
   productId: string,
   quantity: number = 1,
-  color?: string,
+  color?: string | null,
   size?: string
 ) => {
   const res = await api.post("/cart", { productId, quantity, color, size });

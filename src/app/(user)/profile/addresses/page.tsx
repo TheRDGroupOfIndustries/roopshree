@@ -167,6 +167,10 @@ const AddressesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
+
   const fetchAddresses = async () => {
     try {
       setLoading(true);
@@ -213,18 +217,16 @@ const AddressesPage: React.FC = () => {
 
   // ✅ Delete Address
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this address?")) {
-      try {
-        setDeletingId(id);
-        await deleteAddress(id);
-        toast.success("Address deleted successfully!");
-        await fetchAddresses();
-      } catch (err: any) {
-        console.error("Failed to delete address", err);
-        toast.error(err.response?.data?.message || "Failed to delete address");
-      } finally {
-        setDeletingId(null);
-      }
+    try {
+      setDeletingId(id);
+      await deleteAddress(id);
+      toast.success("Address deleted successfully!");
+      await fetchAddresses();
+    } catch (err: any) {
+      console.error("Failed to delete address", err);
+      toast.error(err.response?.data?.message || "Failed to delete address");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -257,7 +259,7 @@ const AddressesPage: React.FC = () => {
               onClick={() => {
                 handleOpenModal();
               }}
-              className="flex items-center bg-sky-600 text-white py-1.5 px-3 sm:py-2 sm:px-4 rounded-full text-sm font-medium hover:bg-sky-700 transition-colors disabled:opacity-60"
+              className="flex items-center bg-[var(--color-brand)] text-white py-1.5 px-3 sm:py-2 sm:px-4 rounded-full text-sm font-medium hover:bg-[var(--color-brand-hover)]  transition-colors disabled:opacity-60"
               disabled={addresses.length >= 2}
             >
               <Plus size={16} className="mr-1" /> Add
@@ -290,7 +292,10 @@ const AddressesPage: React.FC = () => {
                         <Pencil size={16} />
                       </button>
                       <button
-                        onClick={() => handleDelete(address.id)}
+                        onClick={() => {
+                          setAddressToDelete(address.id);
+                          setShowConfirm(true);
+                        }}
                         className="text-red-600 hover:text-red-800 disabled:opacity-50"
                         disabled={deletingId === address.id}
                       >
@@ -337,6 +342,42 @@ const AddressesPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white rounded-xl p-4 shadow-lg w-[80%] max-w-[300px] border border-gray-100">
+            <h4 className="text-md font-semibold mb-2 text-gray-900 text-center">
+              Delete Address
+            </h4>
+            <p className="text-gray-600 mb-4 text-sm text-center">
+              Are you sure you want to delete this address?
+            </p>
+            <div className="flex gap-2">
+              <button
+                className="flex-1 px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors"
+                onClick={() => {
+                  if (addressToDelete) {
+                    handleDelete(addressToDelete);
+                  }
+                  setShowConfirm(false);
+                  setAddressToDelete(null);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="flex-1 px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium transition-colors"
+                onClick={() => {
+                  setShowConfirm(false);
+                  setAddressToDelete(null);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {isModalOpen && (

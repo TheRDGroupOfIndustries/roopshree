@@ -9,9 +9,12 @@ import CategoryList from "@/Components/CategoryList";
 import { getAllCategories } from "@/services/categoryService";
 import { getAllProducts } from "@/services/productService";
 import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
+import { useSearchParams } from "next/navigation";
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+   const searchParams = useSearchParams();
+  const categoryQuery = searchParams.get("category");
+  const [searchTerm, setSearchTerm] = useState(categoryQuery ||"");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -58,12 +61,20 @@ export default function SearchPage() {
 
   fetchProducts();
 }, []);
+useEffect(() => {
+  if (categoryQuery) {
+    setSearchTerm(categoryQuery);
+  }
+}, [categoryQuery]);
+
 
   // 🔹 Filter products based on search term (using title)
   // 🔎 Filtered Products
-  const filteredProducts = products.filter((product) =>
-    product.title?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ const filteredProducts = products.filter((product) =>
+  product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   // 🔹 Get unique categories
   // 🏷️ Get Unique Categories
@@ -143,6 +154,7 @@ export default function SearchPage() {
                         : "/images/placeholder.png"
                     }
                     category={p.category}
+                     reviews={p.reviews}
                   />
                 ))}
               </div>
@@ -175,6 +187,7 @@ export default function SearchPage() {
                           : "/images/placeholder.png"
                       }
                       category={p.category}
+                       reviews={p.reviews}
                     />
                   ))}
               </div>

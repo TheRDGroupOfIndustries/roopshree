@@ -17,8 +17,9 @@ interface ProductCardProps {
   price: number;
   oldPrice?: number;
   image: string;
-  category: string;
+  reviews?: { rating: number; comment: string }[];
   refreshWishlist?: () => void;
+  category?:string
 }
 
 export default function ProductCard({
@@ -28,6 +29,7 @@ export default function ProductCard({
   price,
   oldPrice,
   image,
+  reviews,
   refreshWishlist,
 }: ProductCardProps) {
   const { user, refreshUser } = useAuth();
@@ -36,6 +38,8 @@ export default function ProductCard({
   const [loadingCart, setLoadingCart] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
+  // console.log("revie: ",reviews);
+  
   // Initialize wishlist and cart state
   useEffect(() => {
     if (!user) return;
@@ -116,7 +120,7 @@ export default function ProductCard({
       setIsInCart(false); // instant UI feedback
       await removeCartItem(cartItem.id);
       toast.success("Removed from cart");
-    
+
       refreshUser(); // background refresh
     } catch (err) {
       console.error(err);
@@ -126,6 +130,11 @@ export default function ProductCard({
       setLoadingCart(false);
     }
   };
+
+  const avgRating =
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
 
   return (
     <Link href={`/product/${id}`}>
@@ -172,11 +181,15 @@ export default function ProductCard({
               <IoStarSharp
                 key={i}
                 className={`${
-                  i < 5 ? "text-yellow-400" : "text-gray-300"
+                  i < Math.round(avgRating)
+                    ? "text-yellow-400"
+                    : "text-gray-300"
                 } text-xs`}
               />
             ))}
-            <span className="text-sm text-gray-500">(127)</span>
+            <span className="text-sm text-gray-500">
+              ({reviews?.length || 0})
+            </span>
           </div>
 
           {/* Price + Cart Button */}

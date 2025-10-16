@@ -7,8 +7,6 @@ import { getOrders } from "@/services/orderService";
 import { Status } from "@/generated/prisma/client";
 import toast from "react-hot-toast";
 import { CheckCircle2, Clock, XCircle, Package } from "lucide-react";
-import LoadingSpinner from "@/Components/LoadingSpinner";
-
 interface Order {
   id: string;
   totalAmount: number;
@@ -40,7 +38,7 @@ const getStatusConfig = (status: Status) => {
   }
 };
 
-// ✅ Skeleton Loader
+// Skeleton Loader
 const OrderSkeleton = () => (
   <div className="flex items-center justify-between p-3 animate-pulse">
     <div className="flex items-center gap-3">
@@ -87,8 +85,6 @@ const RecentOrdersSection: React.FC = () => {
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
 
-  // --- Conditional Rendering ---
-  if (loading) return <LoadingSpinner message="Loading recent orders..." />;
 
   return (
     <>

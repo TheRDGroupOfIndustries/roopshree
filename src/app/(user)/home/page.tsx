@@ -20,7 +20,7 @@ import TrendingCard from "@/Components/TrendingNow";
 export default function HomePage() {
   const { user, refreshUser } = useAuth();
   const cartCount = user?.cart?.items?.length || 0;
-const wishListCount = user?.wishlist?.length ||0;
+  const wishListCount = user?.wishlist?.length || 0;
 
   // ------------------- SEARCH ------------------- //
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,9 +59,7 @@ const wishListCount = user?.wishlist?.length ||0;
     const fetchProducts = async () => {
       try {
         setProductLoading(true);
-        const res = await getAllProducts();        
-        console.log("product data: ",res);
-        
+        const res = await getAllProducts();
         setProducts(res);
         setShuffledProducts([...res].sort(() => Math.random() - 0.5));
       } catch (error) {
@@ -195,10 +193,11 @@ const wishListCount = user?.wishlist?.length ||0;
     setIsSearching(false);
   };
 
-  const filteredProducts = products.filter((product) =>
-  product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  product.category?.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const formatTime = (seconds: number) => {
     const days = Math.floor(seconds / (3600 * 24));
@@ -236,8 +235,8 @@ const wishListCount = user?.wishlist?.length ||0;
               </Link>
             </div>
             <div className="relative">
-             <Link href={"/wishlist"}>
-              <BiHeart size={22} />
+              <Link href={"/wishlist"}>
+                <BiHeart size={22} />
                 {wishListCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                     {wishListCount}
@@ -331,9 +330,11 @@ const wishListCount = user?.wishlist?.length ||0;
                               {banner.subtitle}
                             </p>
                           )}
-                          <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
-                            Shop Now
-                          </button>
+                          <Link href="/search">
+                            <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
+                              Shop Now
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -442,8 +443,6 @@ const wishListCount = user?.wishlist?.length ||0;
             </div>
           )}
 
-       
-
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">
@@ -481,34 +480,34 @@ const wishListCount = user?.wishlist?.length ||0;
             </div>
           </div>
 
-            {/* Trending Now */}
+          {/* Trending Now */}
 
-        <div className="mt-6 relative px-4">
-          {/* Header */}
-          <div className="mb-4">
-            <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
-          </div>
+          <div className="mt-6 relative px-4">
+            {/* Header */}
+            <div className="mb-4">
+              <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+            </div>
 
-          {/* Horizontal Scrollable Container */}
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {productLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <TrendingCardSkeleton key={i} />
-                ))
-              : shuffledProducts.map((product) => (
-                  <TrendingCard
-                    key={product.id}
-                    id={product.id}
-                    name={product.title}
-                    price={product.price}
-                    oldPrice={product.oldPrice}
-                    image={
-                      product.images?.[0] || "/images/placeholder_image.png"
-                    }
-                  />
-                ))}
+            {/* Horizontal Scrollable Container */}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {productLoading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <TrendingCardSkeleton key={i} />
+                  ))
+                : shuffledProducts.map((product) => (
+                    <TrendingCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.title}
+                      price={product.price}
+                      oldPrice={product.oldPrice}
+                      image={
+                        product.images?.[0] || "/images/placeholder_image.png"
+                      }
+                    />
+                  ))}
+            </div>
           </div>
-        </div>
         </>
       )}
     </div>

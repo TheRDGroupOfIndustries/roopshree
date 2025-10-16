@@ -36,6 +36,12 @@ export default function SearchPage() {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (categoryQuery) {
+      setSearchTerm(categoryQuery);
+    }
+  }, []);
+
   const popularSearches = [
     "Lipstick",
     "Moisturizer",
@@ -100,15 +106,24 @@ useEffect(() => {
           Popular Searches
         </h3>
         <div className="flex flex-wrap gap-2">
-          {popularSearches.map((term, index) => (
-            <button
-              key={index}
-              onClick={() => setSearchTerm(term)}
-              className="px-3 py-1.5 bg-gray-100 text-[var(--color-brand)] text-xs font-medium rounded-full"
-            >
-              {term}
-            </button>
-          ))}
+          {products.length > 0 && (
+  <div className="px-4 mb-5">
+    {/* <h3 className="text-base font-semibold text-gray-700 mb-2">
+      Popular Searches
+    </h3> */}
+    <div className="flex flex-wrap gap-2">
+      {products.slice(0, 5).map((product) => (
+        <button
+          key={product.id}
+          onClick={() => setSearchTerm(product.title)}
+          className="px-3 py-1.5 bg-gray-100 text-[var(--color-brand)] text-xs font-medium rounded-full hover:bg-amber-50 transition"
+        >
+          {product.title}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
         </div>
       </div>
 

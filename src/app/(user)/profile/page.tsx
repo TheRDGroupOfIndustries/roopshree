@@ -254,30 +254,30 @@ const QuickAction: React.FC<QuickActionProps> = ({
 //       )}
 //     </div>
 //   );
+// // };
+//       {openLang && (
+//         <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
+//           {LANGUAGES.map((lang) => (
+//             <button
+//               key={lang}
+//               onClick={() => handleSelectLanguage(lang)}
+//               className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+//                 language === lang
+//                   ? "bg-orange-50 text-orange-600 font-medium"
+//                   : "text-gray-700 hover:bg-gray-100"
+//               }`}
+//             >
+//               {lang}
+//               {language === lang && (
+//                 <Check size={14} className="inline ml-2 align-text-bottom" />
+//               )}
+//             </button>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
 // };
-      {openLang && (
-        <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
-          {LANGUAGES.map((lang) => (
-            <button
-              key={lang}
-              onClick={() => handleSelectLanguage(lang)}
-              className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                language === lang
-                  ? "bg-orange-50 text-orange-600 font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {lang}
-              {language === lang && (
-                <Check size={14} className="inline ml-2 align-text-bottom" />
-              )}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // --- Main Profile Page Component ---
 

@@ -172,7 +172,7 @@ const ToggleSwitch: React.FC<{ label: string }> = () => {
         onChange={handleToggle}
         className="sr-only peer"
       />
-      <div className="w-11 h-6  rounded-full peer peer-checked:bg-orange-500 transition-colors after:content-[''] border-2 border-black after:absolute after:top-[2px] after:left-[2px] after:bg-gray-800 after:border-gray-800 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+      <div className="w-11 h-6  rounded-full peer bg-gray-300 peer-checked:bg-orange-500 transition-colors after:content-['']  border-black after:absolute after:top-[2px] after:left-[2px] after:bg-gray-800 after:border-gray-800 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
     </label>
   );
 };
@@ -187,12 +187,12 @@ const QuickAction: React.FC<QuickActionProps> = ({
   badge,
 }) => (
   <Link href={link}>
-    <div className="flex flex-col items-center text-gray-700 relative">
+    <div className="flex flex-col items-center text-gray-800 relative">
       <div
         className={`px-8 h-12  ${bg} rounded-full flex items-center justify-center gap-2 relative shadow-sm`}
       >
         <Icon className={`text-base ${iconColor}`} />
-        <span className="text-sm  font-medium text-gray-800">{label}</span>
+        <span className="text-sm font-medium text-gray-800 dark:text-black  dark:rounded">{label}</span>
 
         {count && (
           <span className="absolute -top-1 -right-1 bg-[var(--color-brand)]  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
@@ -211,70 +211,50 @@ const QuickAction: React.FC<QuickActionProps> = ({
 );
 
 // const OrderCard: React.FC<OrderCardProps> = ({ order }) => (
-//   // Wrapped in Link for better UX, assuming the card is clickable
-//   <Link href={`/orders/${order.order}`} className="block">
-//     <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-//       <div className="flex items-center flex-1">
-//         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl mr-3 overflow-hidden  flex-shrink-0 relative">
-//           {/* Using a placeholder for dummy images */}
-//           <Image
-//             src={order.image}
-//             alt={order.name}
-//             fill
-//             className="object-cover rounded-xl"
-//             sizes="(max-width: 640px) 48px, 56px"
-//           />
+
+
+// const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
+//   const LANGUAGES = ["English", "Hindi", "Spanish"];
+//   const [openLang, setOpenLang] = useState(false);
+//   const [language, setLanguage] = useState(LANGUAGES[0]); // Default to the first language
+
+//   const handleSelectLanguage = useCallback((lang: string) => {
+//     setLanguage(lang);
+//     setOpenLang(false);
+//   }, []);
+
+//   return (
+//     <div className="relative">
+//       <SettingButton
+//         icon={icon}
+//         label={label}
+//         right={<span className="">{language}</span>}
+//         onClick={() => setOpenLang(!openLang)}
+//       />
+
+//       {openLang && (
+//         <div className="absolute right-4 top-full mt-2   border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
+//           {LANGUAGES.map((lang) => (
+//             <button
+//               key={lang}
+//               onClick={() => handleSelectLanguage(lang)}
+//               className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+//                 language === lang
+//                   ? "bg-orange-50 text-orange-600 font-medium"
+//                   : "text-gray-700 hover:bg-gray-100"
+//               }`}
+//             >
+//               {lang}
+//               {language === lang && (
+//                 <Check size={14} className="inline ml-2 align-text-bottom" />
+//               )}
+//             </button>
+//           ))}
 //         </div>
-//         <div className="flex-1 min-w-0">
-//           <p className="text-sm sm:text-base   font-semibold truncate">
-//             {order.name}
-//           </p>
-//           <p className="text-xs text-gray-500">{order.order}</p>
-//           <p className={`text-xs sm:text-sm font-medium ${order.statusColor}`}>
-//             {order.status}
-//           </p>
-//         </div>
-//       </div>
-//       <div className="flex flex-col items-end ml-4">
-//         <span className="text-sm sm:text-base font-bold mb-2 whitespace-nowrap">
-//           {order.price}
-//         </span>
-//         <button
-//           onClick={(e) => {
-//             e.preventDefault(); // Prevent link navigation for the button click
-//             // Add action logic here
-//           }}
-//           className="text-orange-600 text-xs sm:text-sm font-medium hover:text-orange-700 active:text-orange-800"
-//         >
-//           {order.action}
-//         </button>
-//       </div>
+//       )}
 //     </div>
-//   </Link>
-// );
-
-
-
-// Sub-component for Language Dropdown (Fixes the Rule of Hooks error)
-const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
-  const LANGUAGES = ["English", "Hindi", "Spanish"];
-  const [openLang, setOpenLang] = useState(false);
-  const [language, setLanguage] = useState(LANGUAGES[0]); // Default to the first language
-
-  const handleSelectLanguage = useCallback((lang: string) => {
-    setLanguage(lang);
-    setOpenLang(false);
-  }, []);
-
-  return (
-    <div className="relative">
-      <SettingButton
-        icon={icon}
-        label={label}
-        right={<span className="">{language}</span>}
-        onClick={() => setOpenLang(!openLang)}
-      />
-
+//   );
+// };
       {openLang && (
         <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
           {LANGUAGES.map((lang) => (
@@ -333,8 +313,8 @@ export default function ProfilePage() {
     {
       icon: ShoppingCart,
       label: "My Orders",
-      bg: "bg-red-300",
-      iconColor: "text-orange-600",
+      bg: "bg-[var(--color-brand)]/50",
+      iconColor: "text-[var(--color-brand)]",
       link: "/my-orders",
       count: orderCount,
     },
@@ -464,22 +444,22 @@ export default function ProfilePage() {
       {/* Header */}
       <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30   shadow-md">
         <button
-          className=" text-xl p-1"
+          className="text-gray-800 dark:text-gray-800 text-xl p-1"
           onClick={() => router.back()} 
         >
           <ArrowLeft size={24} />
         </button>
-        <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center">
+        <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center text-gray-800 dark:text-gray-800">
           Profile
         </h2>
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <button className="  not-last: p-1">
+          <button className="text-gray-800 dark:text-gray-800 p-1">
             <Share2 size={22} />
           </button>
-          <Link href="/my-cart" className="relative   p-1">
+          <Link href="/my-cart" className="relative text-gray-800 dark:text-gray-800 p-1">
             <ShoppingCart size={22} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 text-[10px] font-bold   bg-[var(--color-brand)] rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
+              <span className="absolute -top-1 -right-1 text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center z-10">
                 {cartCount}
               </span>
             )}

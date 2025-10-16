@@ -74,54 +74,81 @@ const RecentOrdersSection: React.FC = () => {
 
   if (recentOrders.length === 0)
     return (
-      <section title="Recent Orders" className="border-2 border-gray-400 mx-4 rounded-lg">
+      <section title="Recent Orders" className=" border-gray-400 mx-4 rounded-lg">
         <p className="text-center text-gray-500 p-4">No recent orders</p>
       </section>
     );
 
   return (
     <>
-    <h2 className="mx-4 mb-2 font-semibold">Recent Orders</h2>
-     <section title="Recent Orders" className="border-2 border-gray-400 mx-4 rounded-lg">
-
-      {recentOrders.map((order) => {
-        const cfg = getStatusConfig(order.status);
-        return (
-          <div
-            key={order.id}
-            className="flex items-center justify-between p-3 border-b border-gray-200 last:border-none hover:bg-gray-50 transition"
-          >
-            {/* Product info */}
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-md overflow-hidden bg-gray-200">
-                <Image
-                  src={order.product.images?.[0] || "/images/placeholder_image.png"}
-                  alt={order.product.title}
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
-                  {order.product.title}
-                </h3>
-                <p className="text-xs text-gray-500">{formatDate(order.createdAt)}</p>
-                <p className="text-sm text-gray-800 font-medium">
-                  ₹{order.totalAmount.toLocaleString()} • Qty: {order.quantity}
-                </p>
-              </div>
-            </div>
-
-            {/* Status */}
-            <span
-              className={`text-xs px-2.5 py-1 rounded-full ${cfg.badge} flex items-center gap-1 whitespace-nowrap`}
+      <h2 className="mx-4 mb-2 font-semibold">Recent Orders</h2>
+      <section
+        title="Recent Orders"
+        className=" border-gray-400 mx-4 rounded-lg pb-2"
+      >
+        {loading ? (
+          // 👇 Skeleton shimmer shown while loading
+          <>
+            <OrderSkeleton />
+            <OrderSkeleton />
+            <OrderSkeleton />
+          </>
+        ) : recentOrders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-gray-500 mb-3">No recent orders</p>
+            <Link
+              href="/home"
+              className="bg-[var(--color-brand)] text-white px-4 py-2 rounded-lg text-sm "
             >
               {cfg.icon} {order.status}
             </span>
           </div>
-        );
-      })}
+        ) : (
+          <>
+            {recentOrders.map((order) => {
+              const cfg = getStatusConfig(order.status);
+              return (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between p-3  last:border-none hover:bg-gray-50 transition"
+                >
+                  {/* Product info */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-md overflow-hidden bg-gray-200">
+                      <Image
+                        src={
+                          order.product.images?.[0] ||
+                          "/images/placeholder_image.png"
+                        }
+                        alt={order.product.title}
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-300 line-clamp-1">
+                        {order.product.title}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(order.createdAt)}
+                      </p>
+                      <p className="text-sm text-gray-400 font-medium">
+                        ₹{order.totalAmount.toLocaleString()} • Qty:{" "}
+                        {order.quantity}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Status */}
+                  <span
+                    className={`text-xs px-2.5 py-1 rounded-full ${cfg.badge} flex items-center gap-1 whitespace-nowrap`}
+                  >
+                    {cfg.icon} {order.status}
+                  </span>
+                </div>
+              );
+            })}
 
       {/* View all link */}
       <div className="mt-4 text-center">

@@ -2,7 +2,7 @@ import api from "@/lib/api";
 
 // Get all addresses for logged-in user
 export const getAllAddresses = async () => {
-  const res = await api.get("/address");
+  const res = await api.get("/api/address");
   return res.data;
 };
 
@@ -16,7 +16,7 @@ export const createAddress = async (data: {
   phone: string;
   name: string;
 }) => {
-  const res = await api.post("/address", data);
+  const res = await api.post("/api/address", data);
   return res.data;
 };
 
@@ -30,12 +30,12 @@ export const updateAddress = async (id: string, data: Partial<{
   phone: string;
   name: string;
 }>) => {
-  const res = await api.patch(`/address/${id}`, data);
+  const res = await api.patch(`/api/address/${id}`, data);
   return res.data;
 };
 
 // Delete an address by ID
 export const deleteAddress = async (id: string) => {
-  const res = await api.delete(`/address/${id}`);
+  const res = await api.delete(`/api/address/${id}`);
   return res.data;
 };

@@ -2,7 +2,7 @@ import api from "@/lib/api";
 
 export const loginUser = async (email: string, password: string) => {
         // const res = await api.post("/auth/signin", { email, password });
-  const res = await api.post("/auth/login", { email, password });
+  const res = await api.post("/api/auth/login", { email, password });
       return res.data;
  
   };
@@ -14,7 +14,7 @@ export const registerUser = async (
   password: string,
   confirmPassword: string
 ) => {
-  const res = await api.post("/auth/signup", {
+  const res = await api.post("/api/auth/signup", {
     name,
     email,
     password,
@@ -24,12 +24,12 @@ export const registerUser = async (
 };
 
 export const logoutUser = async () => {
-  const res = await api.post("/auth/logout");
+  const res = await api.post("/api/auth/logout");
   return res.data;
 };
 
 export const getMe = async () => {
-  const res = await api.get("/auth/me");
+  const res = await api.get("/api/auth/me");
   // console.log("getMe: ", res.data);
 
   return res.data;
@@ -37,7 +37,7 @@ export const getMe = async () => {
 
 export const sendOtpEmail = async (email: string) => {
   try {
-    const res = await api.post("/auth/send-otp", { email });
+    const res = await api.post("/api/auth/send-otp", { email });
     return res.data;
   } catch (error: any) {
     console.error("Send OTP error:", error);

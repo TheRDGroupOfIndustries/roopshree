@@ -2,7 +2,7 @@ import api from "@/lib/api";
 
 // ✅ Get user by ID
 export const getUserById = async (id: string) => {
-  const res = await api.post(`/auth/${id}`);
+  const res = await api.post(`/api/auth/${id}`);
   console.log("getUserById:", res);
   return res.data;
 };
@@ -16,7 +16,7 @@ export const updateUser = async (
     email?: string;
   }
 ) => {
-  const res = await api.put(`/auth/${id}`, data);
+  const res = await api.put(`/api/auth/${id}`, data);
   console.log("updateUser:", res);
   return res.data;
 };

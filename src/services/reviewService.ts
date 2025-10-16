@@ -20,7 +20,7 @@ export interface CreateReviewBody {
 
 // Get all reviews for a product
 export const getReviews = async (productId: string): Promise<Review[]> => {
-  const res = await api.get(`/products/${productId}/reviews`);
+  const res = await api.get(`/api/products/${productId}/reviews`);
 //   console.log("getReviews:",res);
   return res.data;
 };
@@ -30,7 +30,7 @@ export const addReview = async (
   productId: string,
   data: CreateReviewBody
 ): Promise<Review> => {
-  const res = await api.post(`/products/${productId}/reviews`, data);
+  const res = await api.post(`/api/products/${productId}/reviews`, data);
 //   console.log("AddReview:",res);
   
   return res.data;
@@ -42,7 +42,7 @@ export const deleteReview = async (
   productId: string,
   reviewId: string
 ): Promise<{ message: string }> => {
-  const res = await api.delete(`/products/${productId}/reviews`, {
+  const res = await api.delete(`/api/products/${productId}/reviews`, {
     params: { reviewId },
   });
   return res.data;

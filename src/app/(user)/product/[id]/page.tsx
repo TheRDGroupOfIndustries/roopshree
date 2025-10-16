@@ -460,7 +460,7 @@ export default function ProductDetails() {
           onChange={(e) =>
             setNewReview({ ...newReview, comment: e.target.value })
           }
-          placeholder="Write your comment…"
+          placeholder="Write your review…"
           className="border p-1 rounded w-full text-sm h-20 resize-none"
         />
 

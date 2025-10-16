@@ -21,7 +21,10 @@ export async function POST(req: NextRequest) {
     const { productId } = await req.json();
 
     if (!productId) {
-      return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      );
     }
 
     const existing = await prisma.wishlist.findUnique({
@@ -34,7 +37,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (existing) {
-      return NextResponse.json({ message: "Already in wishlist" }, { status: 200 });
+      return NextResponse.json(
+        { message: "Already in wishlist" },
+        { status: 200 }
+      );
     }
 
     const wishlistItem = await prisma.wishlist.create({
@@ -47,7 +53,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(wishlistItem, { status: 201 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -68,13 +77,23 @@ export async function GET() {
 
     const wishlist = await prisma.wishlist.findMany({
       where: { userId: payload.userId },
-      include: { product: true },
+      // include: { product: true },
+      include: {
+        product: {
+          include: {
+            reviews: true,
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(wishlist, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

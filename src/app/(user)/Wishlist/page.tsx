@@ -22,7 +22,7 @@ interface WishlistItem {
     category: string;
     description: string;
     // Assuming 'reviews' is a possible property on product for ProductCard
-    reviews?: number; 
+    reviews?: number;
   };
 }
 
@@ -49,14 +49,13 @@ const WishlistPage: React.FC = () => {
   return (
     <div className="min-h-screen mb-20">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 border-b shadow-md sticky top-0 z-50">
+      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 shadow-md sticky top-0 z-50 bg-white">
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
           Roop Shree
         </h1>
-         <button className="p-2 hover:bg-gray-100 rounded-full transition">
+        <button className="p-2 hover:bg-gray-100 rounded-full transition">
           <BiSearch className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
- 
       </nav>
 
       {/* Header */}
@@ -84,7 +83,8 @@ const WishlistPage: React.FC = () => {
             <FiHeart className="text-amber-600 w-16 h-16" />
             <h2 className="text-2xl font-bold  ">Your Wishlist is Empty!</h2>
             <p className="  text-center max-w-xs">
-              Looks like you haven’t added any favorites yet. Explore products and add items you love!
+              Looks like you haven’t added any favorites yet. Explore products
+              and add items you love!
             </p>
             <Link
               href="/home"
@@ -105,7 +105,6 @@ const WishlistPage: React.FC = () => {
                 oldPrice={product.oldPrice}
                 image={product.images?.[0]}
                 refreshWishlist={fetchWishlist}
-              
               />
             ))}
           </div>

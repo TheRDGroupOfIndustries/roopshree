@@ -220,7 +220,7 @@ export default function HomePage() {
   return (
     <div className=" min-h-screen pb-20">
       {/* ---------- HEADER ---------- */}
-      <div className="sticky top-0 z-20   shadow pb-1">
+      <div className="sticky top-0 z-20 bg-white shadow pb-1">
         <header className="flex items-center justify-between px-4 py-3">
           <h1 className="text-lg font-bold  ">Roop Shree</h1>
           <div className="flex items-center gap-4">
@@ -247,14 +247,14 @@ export default function HomePage() {
           </div>
         </header>
         {/* Search Bar */}
-        <div className="flex items-center  border rounded-xl mx-4 mb-3 px-3 py-2">
+        <div className="flex items-center shadow rounded-xl mx-4 mb-3 px-3 py-2">
           <AiOutlineSearch size={20} className="text-[var(--color-brand)]" />
           <input
             type="text"
             placeholder="Search cosmetics..."
             value={searchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="flex-1 bg-transparent text-gray-100 outline-none ml-3 text-sm  "
+            className="flex-1 bg-transparent outline-none ml-3 text-sm placeholder:text-gray-400 "
           />
           {searchTerm && (
             <button
@@ -366,7 +366,9 @@ export default function HomePage() {
 
           {/* ---------- CATEGORIES ---------- */}
           <div className="mt-6 px-4">
-            <h3 className="font-semibold text-lg text-gray-900 mb-3">Categories</h3>
+            <h3 className="font-semibold text-lg text-gray-900 mb-3">
+              Categories
+            </h3>
             <div className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
               {categoryLoading ? (
                 <CategorySkeleton />

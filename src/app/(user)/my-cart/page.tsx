@@ -234,19 +234,22 @@ const Cart: React.FC = () => {
   const deliveryFee = 99;
   // NOTE: This calculation results in deliveryFee being canceled out (99 - 99 = 0 net delivery)
   // If the intent is free delivery, the calculation is correct for net total: subtotal + 0
-  const totalAmount = subtotal + deliveryFee - deliveryFee; 
+  const totalAmount = subtotal + deliveryFee - deliveryFee;
 
   if (loading) {
     return <PageLoader />;
   }
 
-  return ( // ✅ FIX: Added opening return bracket
+  return (
+    // ✅ FIX: Added opening return bracket
     <div className="min-h-screen flex flex-col pb-16 relative">
       {/* Navigation */}
 
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"> {/* Added backdrop */}
-          <div className="  rounded-xl p-4 shadow-lg w-[80%] max-w-[300px] border border-gray-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          {" "}
+          {/* Added backdrop */}
+          <div className=" bg-gray-300 rounded-xl p-4 shadow-lg w-[80%] max-w-[300px] ">
             <h4 className="text-md font-semibold mb-2 text-center  ">
               Clear Cart
             </h4>
@@ -274,7 +277,7 @@ const Cart: React.FC = () => {
         </div>
       )}
 
-      <header className="sticky top-0   flex justify-between items-center border-b px-4 py-2 shadow-sm z-20">
+      <header className="sticky top-0 bg-white flex justify-between items-center px-4 py-2 shadow-sm z-20">
         <button
           aria-label="Back"
           className="text-gray-600 hover:text-amber-600 text-xl"
@@ -306,9 +309,7 @@ const Cart: React.FC = () => {
                 size={48}
                 className="mx-auto mb-4 text-gray-400"
               />
-              <p className="text-xl font-semibold   mb-2">
-                Your cart is empty
-              </p>
+              <p className="text-xl font-semibold   mb-2">Your cart is empty</p>
               <p className="text-gray-600 mb-6">Add items to get started</p>
               <button
                 onClick={() => router.push("/home")}
@@ -340,7 +341,9 @@ const Cart: React.FC = () => {
 
               {/* Selected Address Section */}
               <div className="  shadow-sm rounded-xl p-3 mb-3 border border-gray-100">
-                <h3 className="text-md font-semibold mb-2  ">Delivery Address</h3>
+                <h3 className="text-md font-semibold mb-2  ">
+                  Delivery Address
+                </h3>
 
                 {addresses.length > 0 ? (
                   <div className="grid grid-cols-2 gap-2">
@@ -355,9 +358,7 @@ const Cart: React.FC = () => {
                         }`}
                       >
                         <div className="flex flex-col  ">
-                          <p className="font-medium  ">
-                            {addr.name}
-                          </p>
+                          <p className="font-medium  ">{addr.name}</p>
                           <p className="mt-0.5">
                             {addr.address}, {addr.city}, {addr.state}
                           </p>
@@ -376,9 +377,7 @@ const Cart: React.FC = () => {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 space-y-2">
-                    <p className="text-xs  text-center">
-                      No saved addresses
-                    </p>
+                    <p className="text-xs  text-center">No saved addresses</p>
                     <button
                       onClick={() => router.push("/profile/addresses")}
                       className="bg-[var(--color-brand)] text-white text-xs px-3 py-1.5 rounded-md hover:opacity-90"
@@ -391,9 +390,7 @@ const Cart: React.FC = () => {
 
               {/* Order Summary */}
               <div className="  p-3 rounded-lg space-y-2 mb-2 shadow-sm border border-gray-100">
-                <h3 className="  font-semibold text-sm">
-                  Order Summary
-                </h3>
+                <h3 className="  font-semibold text-sm">Order Summary</h3>
 
                 <div className="flex justify-between   text-sm font-medium">
                   <span>Subtotal ({cartItems.length} items)</span>
@@ -427,9 +424,7 @@ const Cart: React.FC = () => {
               {/* Trending Products */}
               <div className="  p-3 rounded-lg space-y-2 mb-2 shadow-sm border border-gray-100">
                 <div className="mb-4">
-                  <h3 className="font-medium text-sm  ">
-                    You might also like
-                  </h3>
+                  <h3 className="font-medium text-sm  ">You might also like</h3>
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
@@ -438,19 +433,21 @@ const Cart: React.FC = () => {
                         <TrendingCardSkeleton key={i} />
                       ))
                     : // Show actual products
-                      shuffledProducts.slice(0, 6).map((product) => (
-                        <TrendingCard
-                          key={product.id}
-                          id={product.id}
-                          name={product.title}
-                          price={product.price}
-                          oldPrice={product.oldPrice}
-                          image={
-                            product.images?.[0] ||
-                            "/images/placeholder_image.png"
-                          }
-                        />
-                      ))}
+                      shuffledProducts
+                        .slice(0, 6)
+                        .map((product) => (
+                          <TrendingCard
+                            key={product.id}
+                            id={product.id}
+                            name={product.title}
+                            price={product.price}
+                            oldPrice={product.oldPrice}
+                            image={
+                              product.images?.[0] ||
+                              "/images/placeholder_image.png"
+                            }
+                          />
+                        ))}
                 </div>
               </div>
 
@@ -467,22 +464,18 @@ const Cart: React.FC = () => {
               )}
 
               {/* Checkout Button Bar (Fixed Bottom) */}
-              <div className="fixed bottom-0 left-0 w-full   shadow-2xl border-t border-gray-200 p-3 z-30">
+              <div className="fixed bottom-0 left-0 w-full bg-white shadow-2xl border-t border-gray-200 p-3 z-30">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
                   {/* Total Amount & Delivery Time */}
                   <div className="flex w-full md:w-auto justify-between items-center gap-4 md:gap-6">
                     <div className="flex flex-col items-start">
-                      <h3 className="text-sm font-semibold  ">
-                        Total Amount:
-                      </h3>
+                      <h3 className="text-sm font-semibold  ">Total Amount:</h3>
                       <span className="text-xl font-bold text-[var(--color-brand)]">
                         ₹{totalAmount.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex flex-col items-start md:items-end">
-                      <span className="text-sm   font-medium">
-                        Deliver in
-                      </span>
+                      <span className="text-sm   font-medium">Deliver in</span>
                       <span className="text-sm font-semibold  ">2 hr</span>
                     </div>
                   </div>

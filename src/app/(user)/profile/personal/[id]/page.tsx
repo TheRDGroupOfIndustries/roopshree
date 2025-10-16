@@ -163,7 +163,7 @@ import { useAuth } from "@/context/AuthProvider";
 const PersonalInfoPage: React.FC = () => {
   const { refreshUser } = useAuth();
   const [profileImage, setProfileImage] = useState<any>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>('');
+  const [previewUrl, setPreviewUrl] = useState<string | null>("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -266,9 +266,9 @@ const PersonalInfoPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen  ">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0   flex justify-between items-center px-4 sm:px-6 py-2 shadow-md z-20 border-b border-gray-200">
+      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-2 shadow-md z-20 border-b border-gray-200">
         <button
           className="  hover:text-blue-600 transition-colors p-2 hover:bg-blue-50 rounded-full"
           onClick={() => router.back()}
@@ -280,77 +280,72 @@ const PersonalInfoPage: React.FC = () => {
         </h2>
       </header>
 
-      <div className="w-full max-w-lg  shadow-lg rounded-2xl p-6 8 mx-auto border ">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2   rounded-lg">
-            <User className="  w-6 h-6" />
+      <div className="p-4">
+        <div className="w-full max-w-lg shadow-lg rounded-2xl p-6 8 mx-auto ">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2   rounded-lg">
+              <User className="  w-6 h-6" />
+            </div>
+            <h1 className="text-xl font-semibold  ">Personal Information</h1>
           </div>
-          <h1 className="text-xl font-semibold  ">
-            Personal Information
-          </h1>
-        </div>
 
-        {/* Profile Image */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="relative w-28 h-28">
-            <Image
-              src={previewUrl || "/images/dummy_profile.png"}
-              fill
-              alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border-4 border-gray-200"
-            />
-            <label
-              htmlFor="upload"
-              className="absolute bottom-0 right-0  p-2 rounded-full cursor-pointer  "
-            >
-              <Camera className="w-4 h-4" />
-              <input
-                type="file"
-                id="upload"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
+          {/* Profile Image */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative w-28 h-28">
+              <Image
+                src={previewUrl || "/images/dummy_profile.png"}
+                fill
+                alt="Profile"
+                className="w-28 h-28 rounded-full object-cover border-4 border-gray-200"
               />
-            </label>
-          </div>
-          <p className="text-sm   mt-2">
-            Tap camera to change photo
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5 mb-12">
-          {/* Name */}
-          <div>
-            <label className="block   text-sm mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Priya Sharma"
-              className="w-full border   rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            />
+              <label
+                htmlFor="upload"
+                className="absolute bottom-0 right-0 bg-white p-2 rounded-full cursor-pointer shadow "
+              >
+                <Camera className="w-4 h-4 " />
+                <input
+                  type="file"
+                  id="upload"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+            <p className="text-sm   mt-2">Tap camera to change photo</p>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block  text-sm mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="priya.sharma@email.com"
-              className="w-full border   rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            />
-          </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5 mb-12">
+            {/* Name */}
+            <div>
+              <label className="block   text-sm mb-1">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Priya Sharma"
+                className="w-full border   rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              />
+            </div>
 
-          {/* Phone */}
-          {/* <div>
+            {/* Email */}
+            <div>
+              <label className="block  text-sm mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="priya.sharma@email.com"
+                className="w-full border   rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              />
+            </div>
+
+            {/* Phone */}
+            {/* <div>
             <label className="block text-gray-600 text-sm mb-1">Phone</label>
             <input
               type="tel"
@@ -362,21 +357,22 @@ const PersonalInfoPage: React.FC = () => {
             />
           </div> */}
 
-          {/* Submit */}
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2 rounded-lg  transition-all ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-800 hover:bg-gray-700"
-              }`}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
+            {/* Submit */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-2 rounded-lg  transition-all text-white ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gray-800 hover:bg-gray-700"
+                }`}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

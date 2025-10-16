@@ -93,25 +93,27 @@ export default function SearchPage() {
   );
 
   // 🔹 Get unique categories
-  const uniqueCategories = [...new Set(products.map((p) => p.category))].filter(Boolean);
+  const uniqueCategories = [...new Set(products.map((p) => p.category))].filter(
+    Boolean
+  );
 
   return (
-    <div className="min-h-screen py-4 pb-20">
+    <div className="min-h-screen pb-20">
       {/* 🔍 Search Bar */}
-      <div className="sticky top-0 z-20  shadow pb-1">
-        <div className="flex items-center border border-gray-200 shadow-sm rounded-xl mx-4 mt-3 mb-3 px-3 py-2">
+      <div className="sticky top-0 z-20 bg-white shadow py-3">
+        <div className="flex items-center border border-gray-200 shadow-sm rounded-xl mx-4 px-3 py-2">
           <AiOutlineSearch size={20} className=" " />
           <input
             type="text"
             placeholder="Search cosmetics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 bg-transparent outline-none ml-3 text-sm text-gray-200 "
+            className="flex-1 bg-transparent outline-none ml-3 text-sm placeholder:text-gray-400 "
           />
           {searchTerm && (
             <button
               onClick={clearSearch}
-              className="  hover:text-gray-700 ml-2 text-lg"
+              className="hover:text-gray-700 ml-2 text-lg"
             >
               ✕
             </button>
@@ -121,9 +123,7 @@ export default function SearchPage() {
 
       {/* 🔥 Popular Searches */}
       <div className="px-4 mb-5">
-        <h3 className="text-base font-semibold   mb-2">
-          Popular Searches
-        </h3>
+        <h3 className="text-base font-semibold   mb-2">Popular Searches</h3>
         <div className="flex flex-wrap gap-2">
           {/* Using the hardcoded popularSearches array */}
           {popularSearches.map((term, index) => (
@@ -141,15 +141,16 @@ export default function SearchPage() {
 
       {/* 🟣 Category Section */}
       <div className="mt-6 px-4">
-        <h3 className="font-semibold text-base mb-3  ">
-          Categories
-        </h3>
+        <h3 className="font-semibold text-base mb-3  ">Categories</h3>
         <div className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
           {categoryLoading ? (
             <CategorySkeleton />
           ) : (
             // Pass setSearchTerm to CategoryList for filtering
-            <CategoryList categories={categories} setSearchTerm={setSearchTerm} /> 
+            <CategoryList
+              categories={categories}
+              setSearchTerm={setSearchTerm}
+            />
           )}
         </div>
       </div>
@@ -190,7 +191,8 @@ export default function SearchPage() {
               </div>
             ) : (
               <p className=" text-sm mt-10 text-center">
-                No products found matching "{searchTerm}". Try a different search!
+                No products found matching "{searchTerm}". Try a different
+                search!
               </p>
             )}
           </>

@@ -53,7 +53,7 @@
 //       {/* 2. Main Content Wrapper */}
 //       <div className="px-4 sm:px-6 py-8 flex justify-center">
 //         <div className="w-full max-w-4xl -white shadow-2xl rounded-xl p-6 md:p-10 space-y-10">
-          
+
 //           {/* Main Title Block */}
 //           <div className="flex items-center gap-4 border-b pb-4 border-gray-100">
 //             <div className="p-3 -sky-100 rounded-xl">
@@ -72,7 +72,7 @@
 //               layout="fill"
 //               objectFit="cover"
 //               // Add priority for LCP optimization if this image is prominent
-//               priority 
+//               priority
 //             />
 //           </div>
 
@@ -145,7 +145,7 @@ const AboutUsPage: React.FC = () => {
   return (
     <div className="min-h-screen  flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 -white flex items-center px-4 py-3 border-b border-gray-100 z-50 shadow-md">
+      <header className="sticky top-0 -white flex items-center px-4 py-3 bg-white z-50 shadow-md">
         <button
           onClick={() => window.history.back()}
           className="p-2 rounded-full hover:-gray-100 active:-gray-200 transition"
@@ -191,8 +191,8 @@ const AboutUsPage: React.FC = () => {
             deliver the best in skincare and cosmetics.
           </p>
           <p className="text-sm   leading-relaxed">
-            At Roop Shree Beauty, your happiness is our priority — because when you
-            feel confident, you shine.
+            At Roop Shree Beauty, your happiness is our priority — because when
+            you feel confident, you shine.
           </p>
         </section>
 
@@ -207,9 +207,7 @@ const AboutUsPage: React.FC = () => {
                 <Heart className="w-5 h-5 text-pink-600" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold  ">
-                  Customer First
-                </h3>
+                <h3 className="text-sm font-semibold  ">Customer First</h3>
                 <p className="text-xs  ">
                   We listen, care, and prioritize your satisfaction.
                 </p>
@@ -221,9 +219,7 @@ const AboutUsPage: React.FC = () => {
                 <Target className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold  ">
-                  Sustainable Beauty
-                </h3>
+                <h3 className="text-sm font-semibold  ">Sustainable Beauty</h3>
                 <p className="text-xs  ">
                   Eco-friendly, ethical, and cruelty-free practices.
                 </p>
@@ -235,9 +231,7 @@ const AboutUsPage: React.FC = () => {
                 <Info className="w-5 h-5 text-sky-600" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold  ">
-                  Transparency
-                </h3>
+                <h3 className="text-sm font-semibold  ">Transparency</h3>
                 <p className="text-xs  ">
                   Clear communication and honest ingredients.
                 </p>
@@ -261,8 +255,8 @@ const AboutUsPage: React.FC = () => {
             </a>
           </p>
           <p>
-            <span className="font-semibold text-sky-600">Address:</span>{" "}
-            Roop Shree, Varanasi, Uttar Pradesh
+            <span className="font-semibold text-sky-600">Address:</span> Roop
+            Shree, Varanasi, Uttar Pradesh
           </p>
 
           <Link href="/support">

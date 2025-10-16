@@ -187,9 +187,9 @@ model Address {
   phone   String
   name    String
   userId  String
-  user    User    @relation(fields: [userId], references: [id])
   orderId String? @unique
   order   Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
 }
 
 model Category {

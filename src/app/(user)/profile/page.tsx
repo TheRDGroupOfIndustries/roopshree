@@ -153,7 +153,7 @@ const ToggleSwitch: React.FC<{ label: string }> = () => {
   const isDark = theme === "dark";
 
   const handleToggle = () => {
-    setTheme(isDark ? "light" : "dark");
+    // setTheme(isDark ? "light" : "dark");
   };
 
   return (
@@ -187,7 +187,9 @@ const QuickAction: React.FC<QuickActionProps> = ({
         className={`px-8 h-12  ${bg} rounded-full flex items-center justify-center gap-2 relative shadow-sm`}
       >
         <Icon className={`text-base ${iconColor}`} />
-        <span className="text-sm font-medium text-gray-800 dark:text-black  dark:rounded">{label}</span>
+        <span className="text-sm font-medium text-gray-800 dark:text-black  dark:rounded">
+          {label}
+        </span>
 
         {count && (
           <span className="absolute -top-1 -right-1 bg-[var(--color-brand)]  text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 z-10">
@@ -223,7 +225,7 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
         right={<span className="">{language}</span>}
         onClick={() => setOpenLang(!openLang)}
       />
- 
+
       {openLang && (
         <div className="absolute right-4 top-full mt-2    rounded-xl shadow-lg overflow-hidden z-20 w-32 origin-top-right animate-in fade-in-0 zoom-in-95">
           {LANGUAGES.map((lang) => (
@@ -247,7 +249,6 @@ const LanguageSetting: React.FC<AppSetting> = ({ icon, label }) => {
     </div>
   );
 };
- 
 
 // --- Main Profile Page Component ---
 
@@ -272,9 +273,9 @@ export default function ProfilePage() {
   // --- Data Definitions ---
 
   const profileStats: ProfileStat[] = [
-    { label: "Orders", value: orderCount },
+    { label: "Orders", value: orderCount as number },
     { label: "Points", value: 156 },
-    { label: "Saved", value: "₹12,480" },
+    { label: "Saved", value: "₹12,480" as any },
   ];
 
   const quickActions: QuickAction[] = [
@@ -338,7 +339,6 @@ export default function ProfilePage() {
     },
   ];
 
-
   const appSettings: AppSetting[] = [
     {
       icon: Moon,
@@ -352,11 +352,8 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen  flex flex-col pb-16">
       {/* Header */}
-      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30   shadow-md">
-        <button
-          className="  text-xl p-1"
-          onClick={() => router.back()} 
-        >
+      <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30   shadow-md bg-white">
+        <button className="  text-xl p-1" onClick={() => router.back()}>
           <ArrowLeft size={24} />
         </button>
         <h2 className="font-semibold text-lg sm:text-xl flex-1 text-center   ">
@@ -388,7 +385,7 @@ export default function ProfilePage() {
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-[rgba(255,100,50,0.3)]"></div>
+          <div className="absolute inset-0 bg-[rgba(255,100,50,0.3)] backdrop-blur-sm "></div>
         </div>
         <div className="relative z-10 flex flex-col items-center py-6 sm:py-8 px-4 sm:px-6 ">
           <div className="relative w-20 h-20 sm:w-24 sm:h-24">
@@ -458,7 +455,7 @@ export default function ProfilePage() {
       </div>
 
       {/* App Settings */}
-      <Section title="App Settings">
+      {/* <Section title="App Settings">
         {appSettings.map((setting, i) => {
           if (setting.label === "Language") {
             return <LanguageSetting key={i} {...setting} />;
@@ -496,7 +493,7 @@ export default function ProfilePage() {
             />
           );
         })}
-      </Section>
+      </Section> */}
 
       {/* Logout */}
       <Section>

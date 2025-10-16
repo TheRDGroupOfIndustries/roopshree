@@ -231,7 +231,7 @@ const AddressesPage: React.FC = () => {
   };
 
   const Header = () => (
-    <header className="sticky top-0   flex justify-between items-center px-3 sm:px-6 py-3 shadow-sm z-20 border-b border-gray-200">
+    <header className="sticky top-0   flex justify-between items-center px-3 sm:px-6 py-3 shadow-sm z-20 border-gray-200">
       <button
         onClick={() => router.back()}
         aria-label="Go back"
@@ -250,7 +250,7 @@ const AddressesPage: React.FC = () => {
       <Header />
 
       <div className="px-3  py-2">
-        <div className=" p-2  rounded-xl  max-w-3xl mx-auto">
+        <div className=" p-2 rounded-xl max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-4 sm:mb-6 border-b pb-3">
             <h1 className="text-base sm:text-lg font-semibold  ">
               Your Saved Addresses
@@ -277,7 +277,7 @@ const AddressesPage: React.FC = () => {
               {addresses.map((address) => (
                 <div
                   key={address.id}
-                  className="p-4   border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
+                  className="p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="inline-block bg-sky-100 text-sky-700 text-xs font-medium px-2 py-1 rounded-full border border-sky-200">

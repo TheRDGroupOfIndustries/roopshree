@@ -34,7 +34,7 @@ const WelcomePage: React.FC = () => {
       <div className="relative">
         {/* Continue Button */}
         <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20">
-          <Link href="/auth/signup">
+          <Link href="/auth/signin">
             <button className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 text-orange-600 font-bold rounded-full hover:bg-orange-50 transition group shadow-lg">
               <span className="text-sm sm:text-base">Continue</span>
               <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-orange-600 text-white rounded-full transition-transform group-hover:scale-110">

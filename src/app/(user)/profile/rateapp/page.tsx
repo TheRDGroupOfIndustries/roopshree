@@ -25,21 +25,22 @@ const RateAppPage: React.FC = () => {
 
   // --- Header Component ---
   const Header = () => (
-    <header className="sticky top-0 bg-white flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
+    <header className="sticky top-0  -white flex justify-between items-center px-4 sm:px-6 py-3 shadow-lg z-50 border-b border-gray-100">
       <button
-        className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover:bg-sky-50 rounded-full"
+        className="text-gray-700 hover:text-sky-600 transition-colors p-2 hover: -sky-50 rounded-full"
         onClick={() => window.history.back()}
         aria-label="Go back"
       >
         <ArrowLeft size={24} />
       </button>
-      <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center text-gray-800">
+      <h2 className="font-bold text-xl sm:text-2xl flex-1 text-center 
+      ">
         Rate & Review App
       </h2>
       <Link href="/my-cart" aria-label="View shopping cart">
-        <button className="relative text-gray-700 hover:text-sky-600 p-2 hover:bg-sky-50 rounded-full transition-colors">
+        <button className="relative text-gray-700 hover:text-sky-600 p-2 hover: -sky-50 rounded-full transition-colors">
           <ShoppingCart size={24} />
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+          <span className="absolute -top-1 -right-1  -red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
             2
           </span>
         </button>
@@ -66,18 +67,19 @@ const RateAppPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen  -gray-50">
       {/* 1. Sticky Header (Moved outside the content wrapper) */}
       <Header />
 
       {/* 2. Main Content Wrapper */}
       <div className="px-4 sm:px-6 py-8 flex justify-center">
-        <div className="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-8 md:p-10 text-center">
+        <div className="w-full max-w-2xl  -white shadow-2xl rounded-xl p-8 md:p-10 text-center">
           
-          <h1 className="text-3xl font-extrabold text-gray-800 mb-2">
+          <h1 className="text-3xl font-extrabold 
+           mb-2">
             How was your experience?
           </h1>
-          <p className="text-gray-600 text-lg mb-8 border-b pb-6 border-gray-100">
+          <p className="  text-lg mb-8 border-b pb-6 border-gray-100">
             Your honest feedback helps us improve.
           </p>
 
@@ -113,10 +115,10 @@ const RateAppPage: React.FC = () => {
             <button
               type="submit"
               disabled={rating === 0}
-              className={`w-full py-3 rounded-xl font-bold text-lg transition-all shadow-md ${
+              className={`w-full py-3 rounded-xl  font-bold text-lg transition-all shadow-md ${
                 rating === 0
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  : "bg-orange-500 text-white hover:bg-orange-600 active:scale-[0.99] shadow-orange-300/50"
+                  ? " -gray-300   cursor-not-allowed"
+                  : " -orange-500  bg-red-500 hover: -orange-600 active:scale-[0.99] "
               }`}
             >
               {rating === 0 ? "Select a Rating to Submit" : "Submit Feedback"}

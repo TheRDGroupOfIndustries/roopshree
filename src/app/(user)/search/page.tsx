@@ -70,10 +70,10 @@ export default function SearchPage() {
   const uniqueCategories = [...new Set(products.map((p) => p.category))];
 
   return (
-    <div className="min-h-screen bg-white py-4 pb-20">
+    <div className="min-h-screen   py-4 pb-20">
       {/* 🔍 Search Bar */}
-      <div className="sticky top-3 z-20 flex items-center bg-gray-100 rounded-xl mx-4 mb-3 px-3 py-2">
-        <AiOutlineSearch size={20} className="text-gray-500" />
+      <div className="sticky top-3 z-20 flex items-center  rounded-xl mx-4 mb-3 px-3 py-2">
+        <AiOutlineSearch size={20} className=" " />
         <input
           type="text"
           placeholder="Search cosmetics..."
@@ -85,7 +85,7 @@ export default function SearchPage() {
 
       {/* 🔥 Popular Searches */}
       <div className="px-4 mb-5">
-        <h3 className="text-base font-semibold text-gray-700 mb-2">
+        <h3 className="text-base font-semibold  mb-2">
           Popular Searches
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -93,7 +93,7 @@ export default function SearchPage() {
             <button
               key={index}
               onClick={() => setSearchTerm(term)}
-              className="px-3 py-1.5 bg-gray-100 text-[var(--color-brand)] text-xs font-medium rounded-full"
+              className="px-3 py-1.5   text-[var(--color-brand)] text-xs font-medium rounded-full"
             >
               {term}
             </button>
@@ -124,7 +124,7 @@ export default function SearchPage() {
     </div>
         ) : searchTerm ? (
           <>
-            <h3 className="font-semibold text-lg text-gray-900 mb-3">
+            <h3 className="font-semibold text-lg  mb-3">
               Results for “{searchTerm}”
             </h3>
             {filteredProducts.length > 0 ? (
@@ -147,7 +147,7 @@ export default function SearchPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-sm mt-10 text-center">
+              <p className=" text-sm mt-10 text-center">
                 No products found.
               </p>
             )}
@@ -155,7 +155,7 @@ export default function SearchPage() {
         ) : (
           uniqueCategories.map((category) => (
             <div key={category} className="mb-8">
-              <h3 className="font-semibold text-lg text-gray-900 mb-3">
+              <h3 className="font-semibold text-lg  mb-3">
                 {category}
               </h3>
               <div className="grid grid-cols-2 gap-4">

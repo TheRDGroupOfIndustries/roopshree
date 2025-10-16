@@ -230,10 +230,10 @@ const FAQPage: React.FC = () => {
             return (
               <div
                 key={index}
-                className={`rounded-lg border transition-all ${
+                className={`rounded-lg   transition-all ${
                   isOpen
-                    ? "border-sky-500 "
-                    : "border-gray-200 "
+                    ? "border-orange-300 "
+                    : "  "
                 }`}
               >
                 <button
@@ -243,7 +243,7 @@ const FAQPage: React.FC = () => {
                 >
                   <span
                     className={`text-sm font-medium ${
-                      isOpen ? "text-sky-700" : "text-gray-800"
+                      isOpen ? "text-orange-700" : " "
                     }`}
                   >
                     {item.question}
@@ -270,12 +270,12 @@ const FAQPage: React.FC = () => {
         </div>
 
         {/* Footer CTA */}
-        <div className="mt-8 text-center border-t border-gray-100 pt-5">
+        <div className="mt-8 text-center border-t   pt-5">
           <p className="text-sm   mb-3">
             Still need help? Contact our support team.
           </p>
           <Link href="/profile/support">
-            <button className="px-5 py-2  text-sm font-medium rounded-full hover:bg-sky-700 active:bg-sky-800 transition">
+            <button className="px-5 py-2 text-amber-700  text-sm font-medium rounded-full hover:bg-sky-700 active:bg-sky-800 transition">
               Contact Support
             </button>
           </Link>

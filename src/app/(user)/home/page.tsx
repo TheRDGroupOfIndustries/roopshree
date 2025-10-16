@@ -215,17 +215,17 @@ export default function HomePage() {
 
   // ------------------- RENDER ------------------- //
   return (
-    <div className="bg-gray-100 min-h-screen pb-20">
+    <div className="  min-h-screen pb-20">
       {/* ---------- HEADER ---------- */}
-      <div className="sticky top-0 z-20 bg-white shadow pb-1">
+      <div className="sticky top-0 z-20  shadow pb-1">
         <header className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-bold text-black">Roop Shree</h1>
+          <h1 className="text-lg font-bold  ">Roop Shree</h1>
           <div className="flex items-center gap-4">
             <div className="relative">
               <Link href={"/my-cart"}>
                 <FiShoppingCart size={22} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)]   text-xs w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
@@ -238,7 +238,7 @@ export default function HomePage() {
         </header>
 
         {/* Search Bar */}
-        <div className="flex items-center bg-gray-100 rounded-xl mx-4 mb-3 px-3 py-2">
+        <div className="flex items-center  rounded-xl mx-4 mb-3 px-3 py-2">
           <AiOutlineSearch size={20} className="text-red-500" />
           <input
             type="text"
@@ -250,7 +250,7 @@ export default function HomePage() {
           {searchTerm && (
             <button
               onClick={clearSearch}
-              className="text-gray-500 hover:text-gray-700 ml-2"
+              className="  hover:text-gray-700 ml-2"
             >
               ✕
             </button>
@@ -261,7 +261,7 @@ export default function HomePage() {
       {/* ---------- SEARCH RESULTS ---------- */}
       {isSearching ? (
         <div className="px-4 mt-4">
-          <h3 className="font-semibold text-lg text-gray-900 mb-3">
+          <h3 className="font-semibold text-lg   mb-3">
             Results for "{searchTerm}"
           </h3>
           {filteredProducts.length > 0 ? (
@@ -279,7 +279,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-sm mt-10 text-center">
+            <p className="  text-sm mt-10 text-center">
               No products found for "{searchTerm}"
             </p>
           )}
@@ -289,7 +289,7 @@ export default function HomePage() {
           {/* ---------- BANNER CAROUSEL ---------- */}
           <div className="relative mx-4 mt-3 h-38  overflow-hidden rounded-2xl">
             {bannerLoading ? (
-              <div className="h-40 bg-gray-200 animate-pulse rounded-xl"></div>
+              <div className="h-40   animate-pulse rounded-xl"></div>
             ) : banners.length > 0 ? (
               <>
                 {/* Carousel Container */}
@@ -311,15 +311,15 @@ export default function HomePage() {
                         />
                         <div className="absolute inset-0 bg-[var(--color-brand)]/20"></div>
                         <div className="relative z-10 p-6 flex flex-col items-start">
-                          <h2 className="text-xl font-bold mb-2 text-white">
+                          <h2 className="text-xl font-bold mb-2 text-white  ">
                             {banner.title}
                           </h2>
                           {banner.subtitle && (
-                            <p className="text-sm mb-4 text-white/90">
+                            <p className="text-sm mb-4 text-white ">
                               {banner.subtitle}
                             </p>
                           )}
-                          <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
+                          <button className="px-4 py-2   text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-black transition-colors">
                             Shop Now
                           </button>
                         </div>
@@ -345,7 +345,7 @@ export default function HomePage() {
                 )}
               </>
             ) : (
-              <div className="h-40 flex items-center justify-center text-gray-500">
+              <div className="h-40 flex items-center justify-center  ">
                 No banner available
               </div>
             )}
@@ -375,7 +375,7 @@ export default function HomePage() {
               >
                 {offers.map((offer, i) => (
                   <div key={i} className="min-w-full flex-shrink-0 px-4 mt-6">
-                    <div className="bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] text-white p-4 rounded-xl flex justify-between items-center">
+                    <div className="bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)]  p-4 rounded-xl flex justify-between items-center">
                       {offerLoading ? (
                         <div className="w-full flex justify-between animate-pulse">
                           <div className="space-y-2">
@@ -387,21 +387,21 @@ export default function HomePage() {
                       ) : (
                         <>
                           <div>
-                            <h4 className="font-semibold text-base sm:text-lg">
+                            <h4 className="font-semibold text-base text-white sm:text-lg">
                               {offer.title}
                             </h4>
                             {offer.subtitle && (
-                              <p className="text-sm w-[11rem] opacity-90">
+                              <p className="text-sm w-[11rem] opacity-90 text-white">
                                 {offer.subtitle}
                               </p>
                             )}
                           </div>
 
                           <div className="flex flex-col text-end">
-                            <span className="text-xs sm:text-sm opacity-90">
+                            <span className="text-xs sm:text-sm opacity-90 text-white">
                               Ends in
                             </span>
-                            <span className="font-bold text-base sm:text-lg whitespace-nowrap">
+                            <span className="font-bold text-base sm:text-lg whitespace-nowrap text-white">
                               {formatTime(timeLeft)}
                             </span>
                           </div>
@@ -435,7 +435,7 @@ export default function HomePage() {
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg text-gray-900">
+              <h3 className="font-semibold text-lg  ">
                 Featured Products
               </h3>
               <button
@@ -473,7 +473,7 @@ export default function HomePage() {
         <div className="mt-6 relative px-4">
           {/* Header */}
           <div className="mb-4">
-            <h3 className="font-bold text-xl text-gray-900">Trending Now</h3>
+            <h3 className="font-bold text-xl  ">Trending Now</h3>
           </div>
 
           {/* Horizontal Scrollable Container */}

@@ -154,20 +154,20 @@ const SupportPage: React.FC = () => {
     linkText: string;
   }) => (
     <Link href={actionLink} passHref>
-      <div className="flex items-center justify-between p-4  rounded-lg border border-gray-100 hover:bg-gray-50 active:bg-gray-100 transition-all">
+      <div className="flex items-center justify-between p-4  rounded-lg border-b border-gray-100   active:bg-gray-100 transition-all">
         <div className="flex items-start gap-3">
           <div className="p-2 bg-sky-100 rounded-full">
             <Icon className="w-5 h-5 text-sky-600" />
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold text-gray-800 leading-tight">
+            <h3 className="text-[15px] font-semibold  leading-tight">
               {title}
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">{description}</p>
           </div>
         </div>
 
-        <span className="text-xs font-medium text-sky-600 whitespace-nowrap">
+        <span className="text-xs font-medium text-sky-600 border py-1 px-2 rounded-xl whitespace-nowrap">
           {linkText}
         </span>
       </div>

@@ -127,21 +127,21 @@ const SignUpPage: React.FC = () => {
         />
       </div>
 
-      <h1 className="text-4xl text-black font-bold pl-[5vw]">Sign Up</h1>
+      <h1 className="text-4xl   font-bold pl-[5vw]">Sign Up</h1>
       <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl space-y-6 transition-all duration-300"
+        className="w-full max-w-md   backdrop-blur-md p-8 rounded-2xl border shadow-2xl space-y-6 transition-all duration-300"
       >
         {!otpSent ? (
           <>
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block   font-semibold mb-2">
                 Full Name
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                <User className="text-gray-500 w-5 h-5 mr-2" />
+              <div className="flex items-center     rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+                <User className="  w-5 h-5 mr-2" />
                 <input
                   type="text"
                   name="name"
@@ -155,10 +155,10 @@ const SignUpPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block  font-semibold mb-2">
                 Email
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+              <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
                 <Mail className="text-gray-500 w-5 h-5 mr-2" />
                 <input
                   type="email"
@@ -173,10 +173,10 @@ const SignUpPage: React.FC = () => {
             </div>
 
             {/* <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block   font-semibold mb-2">
                 Phone
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+              <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
                 <Phone className="text-gray-500 w-5 h-5 mr-2" />
                 <input
                   type="tel"
@@ -191,10 +191,10 @@ const SignUpPage: React.FC = () => {
             </div> */}
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block   font-semibold mb-2">
                 Password
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+              <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -219,10 +219,10 @@ const SignUpPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block   font-semibold mb-2">
                 Confirm Password
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+              <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
                 <input
                   type={showConfirm ? "text" : "password"}
                   name="confirmPassword"
@@ -296,7 +296,7 @@ const SignUpPage: React.FC = () => {
                       prevInput?.focus();
                     }
                   }}
-                  className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-[#F49F00] focus:outline-none transition bg-white"
+                  className="w-12 h-12 text-center text-xl font-bold  rounded-lg focus:border-[#F49F00] focus:outline-none transition bg-white"
                 />
               ))}
             </div>
@@ -311,7 +311,7 @@ const SignUpPage: React.FC = () => {
           </div>
         )}
         <div className="text-center mt-4">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-400 text-sm">
             Already have an account?{" "}
             <Link
               href="/auth/signin"

@@ -239,21 +239,21 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col pb-16 relative">
+    <div className="min-h-screen  flex flex-col pb-16 relative">
       {/* Navigation */}
 
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded-xl p-4 shadow-lg w-[80%] max-w-[300px] border border-gray-100">
-            <h4 className="text-md font-semibold mb-2 text-gray-900 text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center ">
+          <div className="rounded-xl p-4 shadow-lg w-[80%] max-w-[300px] border border-gray-100">
+            <h4 className="text-md font-semibold mb-2  text-center">
               Clear Cart
             </h4>
-            <p className="text-gray-600 mb-4 text-sm text-center">
+            <p className="mb-4 text-sm text-center">
               Are you sure you want to clear all items from the cart?
             </p>
             <div className="flex gap-2">
               <button
-                className="flex-1 px-3 py-2 rounded bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors"
+                className="flex-1 px-3 py-2 rounded bg-red-500 hover:bg-red-600   text-sm font-medium transition-colors"
                 onClick={() => {
                   setShowConfirm(false);
                   handleClearCart();
@@ -262,7 +262,7 @@ const Cart: React.FC = () => {
                 Yes
               </button>
               <button
-                className="flex-1 px-3 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium transition-colors"
+                className="flex-1 px-3 py-2 rounded   text-sm font-medium transition-colors"
                 onClick={() => setShowConfirm(false)}
               >
                 Cancel
@@ -272,10 +272,10 @@ const Cart: React.FC = () => {
         </div>
       )}
 
-      <header className="sticky top-0 bg-white flex justify-between items-center px-4 py-2 shadow-sm z-20">
+      <header className="sticky top-0  flex justify-between items-center border-b px-4 py-2 shadow-sm z-20">
         <button
           aria-label="Back"
-          className="text-gray-600 text-xl"
+          className=" hover:text-orange-500 text-xl"
           onClick={() => router.back()}
         >
           <IoArrowBackOutline />
@@ -299,18 +299,18 @@ const Cart: React.FC = () => {
       <div className="p-4 md:p-8 pb-32">
         <div className="max-w-6xl mx-auto">
           {cartItems.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+            <div className=" rounded-2xl shadow-lg p-12 text-center">
               <CgShoppingCart
                 size={48}
-                className="mx-auto mb-4 text-gray-300"
+                className="mx-auto mb-4 "
               />
-              <p className="text-xl font-semibold text-gray-900 mb-2">
+              <p className="text-xl font-semibold  mb-2">
                 Your cart is empty
               </p>
-              <p className="text-gray-500 mb-6">Add items to get started</p>
+              <p className=" mb-6">Add items to get started</p>
               <button
                 onClick={() => router.push("/home")}
-                className="bg-[var(--color-brand)] text-white font-medium py-2 px-6 rounded-lg transition"
+                className="bg-[var(--color-brand)] text-white   font-medium py-2 px-6 rounded-lg transition"
               >
                 Continue Shopping
               </button>
@@ -357,7 +357,7 @@ const Cart: React.FC = () => {
                 </p>
               </div> */}
               {/* Selected Address Section */}
-              <div className="bg-white shadow-sm rounded-xl p-3 mb-3 border border-gray-100">
+              <div className="  shadow-sm rounded-xl p-3 mb-3 border border-gray-100">
                 <h3 className="text-md font-semibold mb-2">Delivery Address</h3>
 
                 {addresses.length > 0 ? (
@@ -368,18 +368,18 @@ const Cart: React.FC = () => {
                         onClick={() => setSelectedAddress(addr.id)}
                         className={`p-2 border rounded-lg cursor-pointer transition-all text-xs ${
                           selectedAddress === addr.id
-                            ? "border-blue-500 bg-blue-50"
+                            ? "border-blue-500  "
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
                         <div className="flex flex-col">
-                          <p className="font-medium text-gray-800">
+                          <p className="font-medium  ">
                             {addr.name}
                           </p>
-                          <p className="text-gray-600 mt-0.5">
+                          <p className="  mt-0.5">
                             {addr.address}, {addr.city}, {addr.state}
                           </p>
-                          <p className="text-gray-600 mt-0.5">
+                          <p className=" mt-0.5">
                             {addr.country === "IN" ? "India" : addr.country}
                           </p>
 
@@ -394,12 +394,12 @@ const Cart: React.FC = () => {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 space-y-2">
-                    <p className="text-xs text-gray-400 text-center">
+                    <p className="text-xs   text-center">
                       No saved addresses
                     </p>
                     <button
                       onClick={() => router.push("/profile/addresses")}
-                      className="bg-[var(--color-brand)] text-white text-xs px-3 py-1.5 rounded-md "
+                      className="bg-[var(--color-brand)]  text-xs px-3 py-1.5 rounded-md "
                     >
                       Add Address
                     </button>
@@ -408,19 +408,19 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Order Summary */}
-              <div className="bg-gray-50 p-3 rounded-lg space-y-2 mb-2 shadow-sm">
-                <h3 className="text-gray-800 font-semibold text-sm">
+              <div className=" p-3 rounded-lg space-y-2 mb-2 shadow-sm">
+                <h3 className="  font-semibold text-sm">
                   Order Summary
                 </h3>
 
-                <div className="flex justify-between text-gray-500 text-sm font-medium">
+                <div className="flex justify-between  text-sm font-medium">
                   <span>Subtotal ({cartItems.length} items)</span>
-                  <span className="font-semibold text-black">
+                  <span className="font-semibold  ">
                     ₹{subtotal.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex justify-between text-gray-500 text-sm font-medium">
+                <div className="flex justify-between   text-sm font-medium">
                   <span>Delivery Fee</span>
                   <span className="font-semibold">₹{deliveryFee}</span>
                 </div>
@@ -438,7 +438,7 @@ const Cart: React.FC = () => {
                 </div> */}
 
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-                  <span className="text-gray-800 font-bold">Total Amount</span>
+                  <span className="  font-bold">Total Amount</span>
                   <span className="text-amber-600 text-lg font-bold">
                     ₹{totalAmount.toLocaleString()}
                   </span>
@@ -450,9 +450,9 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Trending Products */}
-              <div className="bg-gray-50 p-3 rounded-lg space-y-2 mb-2 shadow-sm">
+              <div className="  p-3 rounded-lg space-y-2 mb-2 shadow-sm">
                 <div className="mb-4">
-                  <h3 className="font-medium text-sm text-gray-900">
+                  <h3 className="font-medium text-sm  ">
                     You might also like
                   </h3>
                 </div>
@@ -480,10 +480,10 @@ const Cart: React.FC = () => {
               </div>
 
               {processingOrder && (
-                <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center backdrop-blur-sm bg-black/30">
-                  <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center gap-3 border border-gray-200">
+                <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center backdrop-blur-sm  ">
+                  <div className="  rounded-xl shadow-lg p-6 flex flex-col items-center justify-center gap-3 border border-gray-200">
                     <SmallLoadingSpinner />
-                    <p className="text-gray-700 font-medium text-sm">
+                    <p className="  font-medium text-sm">
                       Processing your order...
                     </p>
                   </div>
@@ -491,11 +491,11 @@ const Cart: React.FC = () => {
               )}
 
               {/* Checkout Button */}
-              <div className="fixed bottom-14 left-0 w-full bg-white shadow-2xl border-gray-200 p-3 z-30">
+              <div className="fixed bottom-14 left-0 w-full   shadow-2xl border-gray-200 p-3 z-30">
                 <div className="flex flex-col md:flex-row items-center justify-start gap-3 md:gap-6">
                   <div className="flex w-full md:w-auto justify-between items-center gap-4 md:gap-6">
                     <div className="flex flex-col items-start">
-                      <h3 className="text-sm font-semibold text-gray-700">
+                      <h3 className="text-sm font-semibold  ">
                         Total Amount:
                       </h3>
                       <span className="text-xl font-bold text-[var(--color-brand)]">
@@ -503,7 +503,7 @@ const Cart: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex flex-col items-start md:items-end">
-                      <span className="text-sm text-gray-500 font-medium">
+                      <span className="text-sm   font-medium">
                         Deliver in
                       </span>
                       <span className="text-sm font-semibold">2 hr</span>
@@ -513,12 +513,12 @@ const Cart: React.FC = () => {
                   <button
                     onClick={handleCheckout}
                     disabled={processingOrder}
-                    className={`w-full md:w-auto bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] text-white px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg duration-200 ${
+                    className={`w-full md:w-auto bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)]  px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg duration-200 ${
                       processingOrder ? "opacity-60 cursor-not-allowed" : ""
                     }`}
                   >
                     {processingOrder ? (
-                      <p className="flex items-center gap-2 text-gray-600 text-sm font-medium">
+                      <p className="flex items-center gap-2   text-sm font-medium">
                         <SmallLoadingSpinner /> Processing...
                       </p>
                     ) : (

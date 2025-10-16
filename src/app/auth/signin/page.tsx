@@ -208,18 +208,18 @@ const SignInPage: React.FC = () => {
         />
       </div>
 
-      <h1 className="text-4xl text-black font-bold pl-[5vw]">Sign In</h1>
+      <h1 className="text-4xl   font-bold pl-[5vw]">Sign In</h1>
       <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg space-y-6 mx-auto mt-8"
+        className="w-full max-w-md  p-8 rounded-xl border shadow-lg space-y-6 mx-auto mt-8"
       >
         {/* Email */}
         <div className="relative">
           <label
             htmlFor="email"
-            className="block text-gray-700 font-semibold mb-1"
+            className="block  font-semibold mb-1"
           >
             Email
           </label>
@@ -236,7 +236,7 @@ const SignInPage: React.FC = () => {
 
         {/* Password */}
         <div className="relative">
-          <label className="block text-gray-700 font-semibold mb-1">
+          <label className="block   font-semibold mb-1">
             Password
           </label>
           <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#F49F00] transition">
@@ -262,14 +262,14 @@ const SignInPage: React.FC = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300 disabled:opacity-50"
+          className="w-full bg-[#F49F00]  font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300 disabled:opacity-50"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
         {/* Signup Link */}
         <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
+          <p className="  text-sm">
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"

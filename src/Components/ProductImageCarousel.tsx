@@ -178,7 +178,7 @@ export default function ProductImageCarousel({
 
   return (
     <div
-      className="relative w-full h-56 bg-white mt-1 overflow-hidden rounded-md"
+      className="relative w-full h-56  mt-1 overflow-hidden rounded-md"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onPointerDown={handleTouchStart}
@@ -199,7 +199,7 @@ export default function ProductImageCarousel({
       {/* Wishlist Button */}
       <button
         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+        className="absolute top-4 right-4   p-2 rounded-full shadow-md "
         onClick={onWishlistToggle}
         disabled={loadingWishlist}
       >
@@ -217,13 +217,13 @@ export default function ProductImageCarousel({
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-1 rounded-full shadow hover:bg-white"
+            className="absolute left-2 top-1/2 -translate-y-1/2  p-1 rounded-full shadow hover:bg-white"
           >
             <FaChevronLeft />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-1 rounded-full shadow hover:bg-white"
+            className="absolute right-2 top-1/2 -translate-y-1/2   p-1 rounded-full shadow hover:bg-white"
           >
             <FaChevronRight />
           </button>

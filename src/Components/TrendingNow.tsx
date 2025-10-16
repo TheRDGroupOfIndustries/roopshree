@@ -164,15 +164,15 @@ export default function TrendingCard({
 
   return (
     <Link href={`/product/${id}`}>
-      <div className="flex-shrink-0 w-[140px] bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+      <div className="flex-shrink-0 w-[140px]   rounded-2xl overflow-hidden shadow-sm border border-gray-100">
         {/* Image + Wishlist */}
         <div className="relative w-full h-28">
           <button
             className={`absolute top-2 right-2 rounded-full p-1 shadow-sm z-10 transition
             ${
               isInWishlist
-                ? "bg-red-500 text-white"
-                : "bg-white text-gray-600 hover:bg-gray-100"
+                ? "bg-red-500 "
+                : " hover:bg-gray-100"
             }`}
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
@@ -196,7 +196,7 @@ export default function TrendingCard({
 
         {/* Product Info */}
         <div className="p-2">
-          <h4 className="font-medium text-sm text-gray-900 mb-1 truncate">
+          <h4 className="font-medium text-sm  mb-1 truncate">
             {name}
           </h4>
 
@@ -206,7 +206,7 @@ export default function TrendingCard({
                 ₹{price}
               </span>
               {oldPrice && oldPrice > price && (
-                <span className="text-xs text-gray-400 line-through font-medium">
+                <span className="text-xs  line-through font-medium">
                   ₹{oldPrice}
                 </span>
               )}

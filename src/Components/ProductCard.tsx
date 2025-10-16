@@ -129,7 +129,7 @@ export default function ProductCard({
 
   return (
     <Link href={`/product/${id}`}>
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full">
+      <div className="  rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full">
         {/* Image + Wishlist */}
         <div className="relative">
           <button
@@ -163,8 +163,8 @@ export default function ProductCard({
 
         {/* Product Info */}
         <div className="p-3 flex flex-col flex-grow">
-          <h4 className="font-semibold text-lg text-gray-900 mb-1">{name}</h4>
-          <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-grow">
+          <h4 className="font-semibold text-lg   mb-1">{name}</h4>
+          <p className="text-xs   mb-3 line-clamp-2 flex-grow">
             {description}
           </p>
           <div className="flex items-center gap-0.5">
@@ -176,7 +176,7 @@ export default function ProductCard({
                 } text-xs`}
               />
             ))}
-            <span className="text-sm text-gray-500">(127)</span>
+            <span className="text-sm  ">(127)</span>
           </div>
 
           {/* Price + Cart Button */}
@@ -186,7 +186,7 @@ export default function ProductCard({
                 ₹{price}
               </span>
               {oldPrice && (
-                <span className="text-xs text-gray-400 line-through">
+                <span className="text-xs   line-through">
                   ₹{oldPrice}
                 </span>
               )}
@@ -196,8 +196,8 @@ export default function ProductCard({
               className={`p-2 rounded-lg shadow-md transition-colors flex items-center justify-center
                 ${
                   isInCart
-                    ? "bg-red-500 text-white hover:bg-red-600"
-                    : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white"
+                    ? "bg-red-500   hover:bg-red-600"
+                    : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)]  "
                 }`}
               onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
               disabled={loadingCart}

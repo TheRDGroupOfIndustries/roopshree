@@ -95,23 +95,23 @@ const WishlistPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 mb-20">
+    <div className="min-h-screen   mb-20">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 bg-white shadow-md sticky top-0 z-50">
+      <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 border-b  shadow-md sticky top-0 z-50">
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
           Roop Shree
         </h1>
         <button className="p-2 hover:bg-gray-100 rounded-full transition">
-          <BiSearch className="text-gray-600 w-5 h-5 sm:w-6 sm:h-6" />
+          <BiSearch className="  w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </nav>
 
       {/* Header */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold   mb-2">
           Your Favorites
         </h1>
-        <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-600">
+        <h2 className="text-base sm:text-lg lg:text-xl font-semibold  ">
           Wishlist ({wishlist.length} {wishlist.length === 1 ? "item" : "items"}
           )
         </h2>
@@ -121,7 +121,7 @@ const WishlistPage: React.FC = () => {
       {loading ? (
         <LoadingSpinner message="Loading wishlist..." />
       ) : wishlist.length === 0 ? (
-        <p className="text-center text-gray-600">Your wishlist is empty.</p>
+        <p className="text-center  ">Your wishlist is empty.</p>
       ) : (
         <div className="px-4 sm:px-6 lg:px-8 pb-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -139,7 +139,7 @@ const WishlistPage: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-gray-600">
+              <p className="text-center  ">
                 Your wishlist is empty.
               </p>
             )}

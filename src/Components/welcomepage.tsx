@@ -18,13 +18,13 @@ const WelcomePage: React.FC = () => {
       </div>
 
       <div className="pl-[5vw]">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold   mb-4 md:mb-6 leading-tight">
           Welcome
         </h2>
       </div>
 
       <div className="pl-[5vw] pb-16">
-        <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl">
+        <p className="  text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil quis
           recusandae enim accusantium sed atque labore rerum pariatur soluta
           quia!

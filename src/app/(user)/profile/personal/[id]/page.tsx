@@ -302,7 +302,7 @@ const PersonalInfoPage: React.FC = () => {
             />
             <label
               htmlFor="upload"
-              className="absolute bottom-0 right-0  p-2 rounded-full cursor-pointer hover:bg-gray-700"
+              className="absolute bottom-0 right-0  p-2 rounded-full cursor-pointer  "
             >
               <Camera className="w-4 h-4" />
               <input

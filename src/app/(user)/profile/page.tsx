@@ -338,26 +338,6 @@ export default function ProfilePage() {
     },
   ];
 
-  const recentOrders: RecentOrder[] = [
-    {
-      name: "Luxury Foundation",
-      order: "#RP2044001",
-      status: "Delivered",
-      price: "₹1,299",
-      statusColor: "text-green-600",
-      action: "Reorder",
-      image: "/images/placeholder_image.png",
-    },
-    {
-      name: "Matte Lipstick",
-      order: "#RP2044002",
-      status: "In Transit",
-      price: "₹700",
-      statusColor: "text-orange-600",
-      action: "Track",
-      image: "/images/placeholder_image.png",
-    },
-  ];
 
   const appSettings: AppSetting[] = [
     {

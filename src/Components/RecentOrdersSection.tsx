@@ -7,8 +7,6 @@ import { getOrders } from "@/services/orderService";
 import { Status } from "@/generated/prisma/client";
 import toast from "react-hot-toast";
 import { CheckCircle2, Clock, XCircle, Package } from "lucide-react";
-import LoadingSpinner from "@/Components/LoadingSpinner";
-
 interface Order {
   id: string;
   totalAmount: number;
@@ -39,9 +37,8 @@ const getStatusConfig = (status: Status) => {
       return { badge: "bg-gray-100 text-gray-700", icon: <Package className="w-3 h-3" /> };
   }
 };
-
-// ✅ FIX: Defined the OrderSkeleton component
-const OrderSkeleton = () => (
+ 
+ const OrderSkeleton = () => (
   <div className="flex items-center justify-between p-3 border-b border-gray-100 last:border-none animate-pulse">
     <div className="flex items-center gap-3">
       <div className="w-14 h-14   rounded-md" />
@@ -86,8 +83,8 @@ const RecentOrdersSection: React.FC = () => {
       .toString()
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
-
-  return (
+ 
+   return (
     <>
       <h2 className="mx-4 mb-2 text-lg font-semibold  ">Recent Orders</h2>
       <section

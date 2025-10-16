@@ -53,9 +53,10 @@ const WishlistPage: React.FC = () => {
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
           Roop Shree
         </h1>
-        <button className="p-2 hover:bg-gray-100 rounded-full transition">
+         <button className="p-2 hover:bg-gray-100 rounded-full transition">
           <BiSearch className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
+ 
       </nav>
 
       {/* Header */}

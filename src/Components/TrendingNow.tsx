@@ -169,11 +169,7 @@ export default function TrendingCard({
         <div className="relative w-full h-28">
           <button
             className={`absolute top-2 right-2 rounded-full p-1 shadow-sm z-10 transition
-            ${
-              isInWishlist
-                ? "bg-red-500 "
-                : " hover:bg-gray-100"
-            }`}
+            ${isInWishlist ? "bg-red-500 " : " hover:bg-gray-100"}`}
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
           >
@@ -191,14 +187,13 @@ export default function TrendingCard({
             sizes="140px"
             className="object-cover"
             priority
+            unoptimized
           />
         </div>
 
         {/* Product Info */}
         <div className="p-2">
-          <h4 className="font-medium text-sm  mb-1 truncate">
-            {name}
-          </h4>
+          <h4 className="font-medium text-sm  mb-1 truncate">{name}</h4>
 
           <div className="flex items-center justify-between">
             <div className="flex gap-1 items-baseline">

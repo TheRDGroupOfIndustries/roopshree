@@ -2,18 +2,49 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "c8.alamy.com",
-      "atlas-content-cdn.pixelsquid.com",
-      "img.freepik.com",
-      "thumbs.dreamstime.com",
-      "images.unsplash.com",
-      "plus.unsplash.com",
-      "res.cloudinary.com",
-      "www.pngplay.com",
-      "plus.unsplash.com"
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "c8.alamy.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "atlas-content-cdn.pixelsquid.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "img.freepik.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "thumbs.dreamstime.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.pngplay.com",
+        pathname: "/**",
+      },
     ],
-    formats: ["image/avif", "image/webp"], 
+    formats: ["image/avif", "image/webp"],
   },
   darkMode: "class",
   reactStrictMode: true,

@@ -59,6 +59,8 @@ const Cart: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [processingOrder, setProcessingOrder] = useState(false);
 
+
+
   // Fetch cart items from API
   const fetchCart = async () => {
     try {
@@ -518,9 +520,9 @@ const Cart: React.FC = () => {
                     }`}
                   >
                     {processingOrder ? (
-                      <p className="flex items-center gap-2 text-gray-600 text-sm font-medium">
+                      <div className="flex items-center gap-2 text-gray-600 text-sm font-medium">
                         <SmallLoadingSpinner /> Processing...
-                      </p>
+                      </div>
                     ) : (
                       <>
                         <MdOutlineShoppingCartCheckout className="w-5 h-5" />

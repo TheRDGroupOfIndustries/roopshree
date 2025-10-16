@@ -66,7 +66,7 @@ export default function Navbar() {
               <div className="relative">
                 {item.icon}
                 {item.name === "cart" && cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}

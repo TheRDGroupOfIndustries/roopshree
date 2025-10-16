@@ -81,6 +81,8 @@ const WishlistPage: React.FC = () => {
     try {
       setLoading(true);
       const data = await getWishlist();
+      console.log("fetchWishlist: ",data);
+      
       setWishlist(data);
       // console.log("Wishlist API response:", data);
     } catch (error) {
@@ -136,6 +138,7 @@ const WishlistPage: React.FC = () => {
                   oldPrice={product.oldPrice}
                   image={product.images?.[0]}
                   refreshWishlist={fetchWishlist}
+                   reviews={product.reviews}
                 />
               ))
             ) : (

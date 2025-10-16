@@ -20,6 +20,7 @@ import TrendingCard from "@/Components/TrendingNow";
 export default function HomePage() {
   const { user, refreshUser } = useAuth();
   const cartCount = user?.cart?.items?.length || 0;
+const wishListCount = user?.wishlist?.length ||0;
 
   // ------------------- SEARCH ------------------- //
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +59,7 @@ export default function HomePage() {
     const fetchProducts = async () => {
       try {
         setProductLoading(true);
-        const res = await getAllProducts();
+        const res = await getAllProducts();        
         setProducts(res);
         setShuffledProducts([...res].sort(() => Math.random() - 0.5));
       } catch (error) {
@@ -193,8 +194,9 @@ export default function HomePage() {
   };
 
   const filteredProducts = products.filter((product) =>
-    product.title?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const formatTime = (seconds: number) => {
     const days = Math.floor(seconds / (3600 * 24));
@@ -225,15 +227,22 @@ export default function HomePage() {
               <Link href={"/my-cart"}>
                 <FiShoppingCart size={22} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-[var(--color-brand)] text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
               </Link>
             </div>
-            <Link href={"/wishlist"}>
+            <div className="relative">
+             <Link href={"/wishlist"}>
               <BiHeart size={22} />
-            </Link>
+                {wishListCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                    {wishListCount}
+                  </span>
+                )}
+              </Link>
+            </div>
           </div>
         </header>
 
@@ -262,7 +271,7 @@ export default function HomePage() {
       {isSearching ? (
         <div className="px-4 mt-4">
           <h3 className="font-semibold text-lg text-gray-900 mb-3">
-            Results for "{searchTerm}"
+            Results for &quot;{searchTerm}&quot;
           </h3>
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -275,6 +284,7 @@ export default function HomePage() {
                   price={product.price}
                   oldPrice={product.oldPrice}
                   image={product.images?.[0] || "/images/placeholder_image.png"}
+                  reviews={product.reviews}
                 />
               ))}
             </div>
@@ -459,6 +469,7 @@ export default function HomePage() {
                         description={product.description}
                         price={product.price}
                         oldPrice={product.oldPrice}
+                        reviews={product.reviews}
                         image={
                           product.images?.[0] || "/images/placeholder_image.png"
                         }

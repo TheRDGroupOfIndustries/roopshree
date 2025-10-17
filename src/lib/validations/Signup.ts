@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role } from "../../generated/prisma/client";
+import { Role } from "@prisma/client";
 
 // Email schema
 export const emailSchema = z.object({

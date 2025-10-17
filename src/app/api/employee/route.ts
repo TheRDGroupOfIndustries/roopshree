@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
-import { Gender } from "../../../generated/prisma/client";
+import { Gender } from "@prisma/client";
 
 //Get all Employee
 export async function GET() {

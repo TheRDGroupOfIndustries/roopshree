@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthProvider";
 import LoadingSpinner from "@/Components/LoadingSpinner";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-import { Status } from "@/generated/prisma/client";
+import { Status } from "@prisma/client";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import {

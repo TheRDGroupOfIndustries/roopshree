@@ -1,6 +1,6 @@
 "use server";
 
-import { Status } from "@/generated/prisma";
+import { Status } from "@prisma/client";
 import { authenticateAdmin } from "../auth";
 import prisma from "../prisma";
 

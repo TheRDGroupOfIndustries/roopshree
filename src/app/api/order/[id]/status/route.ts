@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
-import { Status } from "@/generated/prisma/client";
+import { Status } from "@prisma/client";
 
 interface UpdateStatusBody {
   status: Status;

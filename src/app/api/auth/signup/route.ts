@@ -4,7 +4,7 @@ import { hashPassword } from "../../../../lib/hash";
 import { signJwt } from "../../../../lib/jwt";
 import { setTokenCookie } from "../../../../lib/cookies";
 import { signupSchema } from "../../../../lib/validations/Signup";
-import { Role } from "../../../../generated/prisma/client";
+import { Role } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {

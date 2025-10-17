@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getOrders } from "@/services/orderService";
-import { Status } from "@/generated/prisma/client";
+import { Status } from "@prisma/client";
 import toast from "react-hot-toast";
 import { CheckCircle2, Clock, XCircle, Package } from "lucide-react";
 interface Order {

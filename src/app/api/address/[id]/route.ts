@@ -25,13 +25,13 @@ function validateAddress(data: any) {
   return null;
 }
 
-// UPDATE Address
+// ✅ UPDATE Address
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: addressId } = await params;
+    const { id: addressId } = await context.params; // 👈 important fix
     const user = await authenticate(req);
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,8 +43,7 @@ export async function PATCH(
       );
 
     const updateData = await req.json();
-    // const error = validateAddress(updateData);
-    // if (error) return NextResponse.json({ error }, { status: 400 });
+
     if (!updateData || Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: "Address data is required" },
@@ -52,10 +51,10 @@ export async function PATCH(
       );
     }
 
-    // Ensure address belongs to user
     const address = await prisma.address.findUnique({
       where: { id: addressId },
     });
+
     if (!address || address.userId !== user.userId) {
       return NextResponse.json(
         { error: "Address not found or forbidden" },
@@ -78,13 +77,13 @@ export async function PATCH(
   }
 }
 
-// DELETE Address
+// ✅ DELETE Address
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: addressId } = await params;
+    const { id: addressId } = await context.params; // 👈 same fix
     const user = await authenticate(req);
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -95,7 +94,6 @@ export async function DELETE(
         { status: 400 }
       );
 
-    // Ensure address belongs to user
     const address = await prisma.address.findUnique({
       where: { id: addressId },
     });
@@ -106,18 +104,18 @@ export async function DELETE(
       );
     }
 
-    // Check all order are delivered or canceled with this address id
     const orders = await prisma.order.findMany({
       where: { address: { id: addressId } },
     });
+
     if (orders.length > 0) {
-      const filtered = orders.find(
+      const activeOrder = orders.find(
         (o: any) => o.status !== "DELIVERED" && o.status !== "CANCELLED"
       );
-      if (filtered) {
+      if (activeOrder) {
         return NextResponse.json(
           {
-            message: "You have order, please cancel your order first!",
+            message: "You have an active order, please cancel your order first!",
             id: addressId,
           },
           { status: 400 }

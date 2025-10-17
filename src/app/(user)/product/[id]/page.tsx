@@ -222,10 +222,10 @@ export default function ProductDetails() {
 
   if (loading) return <ProductDetailsSkeleton />;
 
-  if (!product) return <p className="p-4">Product not found</p>;
+  if (!product) return <p className="p-4 text-black">Product not found</p>;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100 pb-32">
+    <div className="flex flex-col min-h-screen bg-gray-100 text-black pb-32">
       {/* Header */}
       <header
         className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-10"
@@ -453,7 +453,7 @@ export default function ProductDetails() {
             <IoStarSharp
               key={index}
               className={`text-2xl cursor-pointer transition-colors duration-200
-          ${index < newReview.rating ? "text-yellow-400" : "text-gray-300"}`}
+          ${index < newReview.rating ? "text-yellow-400" : "text-gray-200"}`}
               onClick={() => setNewReview({ ...newReview, rating: index + 1 })}
             />
           ))}

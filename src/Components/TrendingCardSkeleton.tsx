@@ -9,14 +9,14 @@ export default function TrendingCardSkeleton() {
       <div className="w-full h-28 relative"></div>
 
       {/* Product Info Skeleton */}
-      <div className="p-2 space-y-2">
-        <div className="h-4 rounded w-3/4"></div>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1 items-baseline">
-            <div className="h-4 w-10 rounded"></div>
-            <div className="h-3 w-6 rounded"></div>
+      <div className="p-2 bg-gray-300 space-y-2">
+        <div className="h-4 bg-gray-400 rounded w-3/4"></div>
+        <div className="flex bg-gray-400 items-center justify-between">
+          <div className="flex bg-gray-400  gap-1 items-baseline">
+            <div className="h-4 bg-gray-400  w-10 rounded"></div>
+            <div className="h-3 bg-gray-400  w-6 rounded"></div>
           </div>
-          <div className="h-6 w-6 rounded-lg"></div>
+          <div className="h-6 bg-gray-400 w-6 rounded-lg"></div>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import { Gender } from "../../../../generated/prisma/client";
+import { promises } from "dns";
 
 interface UpdateEmployeeBody {
   firstName?: string;
@@ -16,11 +17,13 @@ interface UpdateEmployeeBody {
 }
 
 // ✅ GET - Fetch single employee
-export async function GET(_: Request, context: { params: { id: string } }) {
+export async function GET(_: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
 
-    const token = cookies().get("token")?.value;
+    const requestCookies = cookies();
+    const token = (await requestCookies).get("token")?.value;
+
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -45,11 +48,11 @@ export async function GET(_: Request, context: { params: { id: string } }) {
 }
 
 // ✅ PUT - Update employee
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
-
-    const token = cookies().get("token")?.value;
+    const { id } = await context.params;
+    const requestCookies = cookies();
+    const token = (await requestCookies).get("token")?.value;
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -87,11 +90,12 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
 }
 
 // ✅ DELETE - Delete employee
-export async function DELETE(_: Request, context: { params: { id: string } }) {
+export async function DELETE(_: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
 
-    const token = cookies().get("token")?.value;
+    const requestCookies = cookies();
+    const token = (await requestCookies).get("token")?.value;
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import { generateOTP } from "@/lib/otp";
 import { deleteExpiredOtps } from "@/lib/otpHelpers"; // ✅ helper that deletes expired OTPs
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 // ✅ Configure your email transporter (Gmail example)
 const transporter = nodemailer.createTransport({
@@ -16,9 +16,9 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
 });
 
-export async function POST(_: NextRequest, { params }: Params) {
+export async function POST(_: NextRequest, context: Params) {
   try {
-    const orderId = params.id;
+    const orderId = await context;
 
     // ✅ Authenticate delivery boy
     const requestCookies = cookies();

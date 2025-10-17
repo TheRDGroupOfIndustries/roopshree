@@ -7,10 +7,10 @@ import { Status } from "@/generated/prisma/client";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
     if (!token)

@@ -3,16 +3,16 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function PATCH(req: NextRequest, { params }: { params: { itemId: string } }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ itemId: string }> }) {
     try {
         const user = await authenticate(req);
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const { quantity } = await req.json();
-        const { itemId } = await params;
+        const { id} = await context.params;
 
         const item = await prisma.cartItem.findUnique({
-            where: { id: itemId },
+            where: { id },
             include: { cart: true },
         });
 
@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { itemId: st
         }
 
         const updatedItem = await prisma.cartItem.update({
-            where: { id: itemId },
+            where: { id},
             // data: { quantity: item.quantity + quantity }
             data: { quantity: quantity }
         });
@@ -34,15 +34,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { itemId: st
 }
 
 
-export async function DELETE(req: NextRequest, { params }: { params: { itemId: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ itemId: string }> }) {
     try {
         const user = await authenticate(req);
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-        const { itemId } = await params;
+        const { id } = await context.params;
 
         const item = await prisma.cartItem.findUnique({
-            where: { id: itemId },
+            where: { id },
             include: { cart: true },
         });
 
@@ -54,8 +54,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { itemId: s
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        await prisma.cartItem.delete({ where: { id: itemId } });
-        return NextResponse.json({ message: "Item removed from cart", id: itemId });
+        await prisma.cartItem.delete({ where: { id} });
+        return NextResponse.json({ message: "Item removed from cart", id});
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

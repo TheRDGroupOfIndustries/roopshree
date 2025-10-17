@@ -9,10 +9,10 @@ interface AssignDeliveryBody {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
 
     // Authenticate admin
     const requestCookies = cookies();

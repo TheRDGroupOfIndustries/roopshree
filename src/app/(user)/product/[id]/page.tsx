@@ -139,51 +139,56 @@ export default function ProductDetails() {
     if (id) fetchReviews();
   }, [id]);
 
-  const handleAddToCart = async () => {
-    if (!product) return;
-    if (product.colour && product.colour.length > 0 && selectedShade === null) {
-      toast.error("Please select a color before adding to cart");
-      return;
+ const handleAddToCart = async () => {
+  if (!product) return;
+
+  // Ensure color is selected if required
+  if (product.colour && product.colour.length > 0 && selectedShade === null) {
+    toast.error("Please select a color before adding to cart");
+    return;
+  }
+
+  // Guard against null when indexing
+  const selectedColor =
+    product.colour && selectedShade !== null
+      ? product.colour[selectedShade]
+      : null;
+
+  try {
+    await addToCart(product.id, quantity, selectedColor);
+    await refreshUser();
+    toast.success("Added to cart");
+  } catch (error: any) {
+    toast.error(error.response?.data?.error || "Failed to add to cart");
+  }
+};
+
+
+  const handleWishlistToggle = async () => {
+  if (!user || !product) return;
+
+  try {
+    setLoadingWishlist(true);
+
+    if (isInWishlist) {
+      setIsInWishlist(false);
+      await removeFromWishlist(product?.id);
+      toast.success("Removed from wishlist");
+    } else {
+      setIsInWishlist(true);
+      await addToWishlist(product?.id);
+      toast.success("Added to wishlist");
     }
-    const selectedColor = product.colour
-    ? product.colour[selectedShade]
-    : null;
 
-    try {
-      await addToCart(product.id, quantity,selectedColor);
-      await refreshUser();
-      toast.success("Added to cart");
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to add to cart");
-    }
-  };
-
-  const handleWishlistToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!user || !product) return;
-
-    try {
-      setLoadingWishlist(true);
-
-      if (isInWishlist) {
-        setIsInWishlist(false);
-        await removeFromWishlist(product?.id);
-        toast.success("Removed from wishlist");
-      } else {
-        setIsInWishlist(true);
-        await addToWishlist(product?.id);
-        toast.success("Added to wishlist");
-      }
-
-      refreshUser();
-    } catch (err) {
-      console.error(err);
-      setIsInWishlist((prev) => !prev);
-      toast.error("Something went wrong");
-    } finally {
-      setLoadingWishlist(false);
-    }
-  };
+    refreshUser();
+  } catch (err) {
+    console.error(err);
+    setIsInWishlist((prev) => !prev);
+    toast.error("Something went wrong");
+  } finally {
+    setLoadingWishlist(false);
+  }
+};
 
   const handleSubmitReview = async () => {
     if (!newReview.comment || newReview.rating === 0) {

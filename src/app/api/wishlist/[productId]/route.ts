@@ -3,10 +3,10 @@ import prisma from "@/lib/prisma";
 import { verifyJwt } from "@/lib/jwt";
 import { cookies } from "next/headers";
 
-type Params = { params: { productId: string } };
+type Params = { params: Promise<{ productId: string }> };
 
 // Remove from Wishlist
-export async function DELETE(_: NextRequest, { params }: Params) {
+export async function DELETE(_: NextRequest, context: Params) {
   try {
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
@@ -20,7 +20,7 @@ export async function DELETE(_: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const { productId } = params;
+    const { productId } = await context.params;
     const wishlistItem = await prisma.wishlist.findFirst({
       where: { productId },
     });

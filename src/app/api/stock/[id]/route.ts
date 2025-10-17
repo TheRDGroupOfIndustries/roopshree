@@ -5,10 +5,10 @@ import { authenticate } from "@/lib/jwt";
 // GET stock by productId
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params; // <-- remove 'await' here
+    const { id } = await context.params; // <-- remove 'await' here
 
     const stock = await prisma.stock.findUnique({
       where: { productId: id },
@@ -33,11 +33,11 @@ export async function GET(
 // UPDATE stock manually (admin adjustment)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { newStock } = await req.json();
-    const { id } =  params;
+    const { id } = await context.params;
     const user = await authenticate(req);
 
     if (!user || user.role !== "ADMIN") {
@@ -91,10 +91,10 @@ export async function PUT(
 // DELETE stock record
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const user = await authenticate(req);
     if (!user || user.role !== "ADMIN") {
       NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 import { deleteExpiredOtps, isOtpExpired } from "@/lib/otpHelpers";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function POST(req: NextRequest, { params }: Params) {
+export async function POST(req: NextRequest, context: Params) {
   try {
-    const orderId = params.id;
+    const orderId = await  context;
     const { otp: providedOtp } = await req.json();
 
     if (!providedOtp) {

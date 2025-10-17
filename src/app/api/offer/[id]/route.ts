@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export async function GET(req: Request, context: Params) {
   try {
@@ -36,7 +36,7 @@ export async function PUT(req: Request, context: Params) {
     const { params } = await context; // ✅ await here
     const body = await req.json();
     const requestCookies = cookies();
-    const token = requestCookies.get("token")?.value;
+    const token = (await requestCookies).get("token")?.value;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const payload = verifyJwt(token);

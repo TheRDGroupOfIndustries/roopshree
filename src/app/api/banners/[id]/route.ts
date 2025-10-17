@@ -1,43 +1,41 @@
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 
+async function getUserFromRequest(req: NextRequest) {
+  const requestCookies = cookies();
+  const token = (await requestCookies).get("token")?.value;
+  if (!token) return null;
+  const payload = await verifyJwt(token);
+  return payload;
+}
+
 export async function DELETE(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const requestCookies = cookies();
-    const token = (await requestCookies).get("token")?.value;
-    if (!token)
+    const payload = await getUserFromRequest(req);
+    if (!payload || !payload.role.includes("ADMIN"))
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    const payload = await verifyJwt(token);
-    if (!payload)
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    if (!payload.role.includes("ADMIN"))
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
     const banner = await prisma.banners.findUnique({
       where: { id: params.id },
     });
     if (!banner)
-      return NextResponse.json(
-        { message: "Banner not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Banner not found" }, { status: 404 });
+
     await prisma.banners.delete({ where: { id: params.id } });
     return NextResponse.json({ message: "Banner deleted" }, { status: 200 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json(
-      { error: error.message || "Something went wrong" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Something went wrong" }, { status: 500 });
   }
 }
 
 export async function GET(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -47,46 +45,34 @@ export async function GET(
     return NextResponse.json(banner, { status: 200 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json(
-      { error: error.message || "Something went wrong" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Something went wrong" }, { status: 500 });
   }
 }
 
 export async function PATCH(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const requestCookies = cookies();
-    const token = (await requestCookies).get("token")?.value;
-    if (!token)
+    const payload = await getUserFromRequest(req);
+    if (!payload || !payload.role.includes("ADMIN"))
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    const payload = await verifyJwt(token);
-    if (!payload)
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    if (!payload.role.includes("ADMIN"))
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
     const banner = await prisma.banners.findUnique({
       where: { id: params.id },
     });
     if (!banner)
-      return NextResponse.json(
-        { message: "Banner not found" },
-        { status: 404 }
-      );
-    const body = await request.json();
+      return NextResponse.json({ message: "Banner not found" }, { status: 404 });
+
+    const body = await req.json();
     const updatedBanner = await prisma.banners.update({
       where: { id: params.id },
       data: body,
     });
+
     return NextResponse.json(updatedBanner, { status: 200 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json(
-      { error: error.message || "Something went wrong" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Something went wrong" }, { status: 500 });
   }
 }

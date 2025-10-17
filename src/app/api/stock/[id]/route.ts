@@ -3,9 +3,12 @@ import prisma from "@/lib/prisma";
 import { authenticate } from "@/lib/jwt";
 
 // GET stock by productId
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = await params;
+    const { id } = params; // <-- remove 'await' here
 
     const stock = await prisma.stock.findUnique({
       where: { productId: id },
@@ -34,7 +37,7 @@ export async function PUT(
 ) {
   try {
     const { newStock } = await req.json();
-    const { id } = await params;
+    const { id } =  params;
     const user = await authenticate(req);
 
     if (!user || user.role !== "ADMIN") {
@@ -91,7 +94,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const user = await authenticate(req);
     if (!user || user.role !== "ADMIN") {
       NextResponse.json({ error: "Unauthorized" }, { status: 401 });

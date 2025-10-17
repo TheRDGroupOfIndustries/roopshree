@@ -196,7 +196,7 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-end relative">
+    <div className="h-screen flex bg-white text-black flex-col justify-end relative">
       {/* Background */}
       <div className="w-screen absolute top-0 left-0 h-[400px]  ">
         <Image
@@ -258,7 +258,7 @@ const SignInPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#F49F00]  font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300 disabled:opacity-50"
+            className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300 disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

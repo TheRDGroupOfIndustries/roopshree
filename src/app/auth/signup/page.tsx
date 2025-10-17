@@ -116,7 +116,7 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-end relative">
+    <div className="h-screen bg-white text-black flex flex-col justify-end relative">
       <div className="w-screen absolute top-0 left-0 h-[400px]  ">
         <Image
           src="/Vector 2.svg"

@@ -235,7 +235,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="relative">
-              <Link href={"/wishlist"}>
+              <Link href={"/my-wishlist"}>
                 <BiHeart size={22} className="" />
                 {wishListCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white font-bold text-[10px] w-4 h-4 flex items-center justify-center rounded-full ring-2 ring-white">

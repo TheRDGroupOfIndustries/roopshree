@@ -20,7 +20,7 @@ interface Product {
   oldPrice: number;
   images: string[];
   category: string;
-  reviews: number;
+   reviews: { rating: number; comment: string }[];
 }
 
 export default function SearchPage() {
@@ -75,6 +75,8 @@ export default function SearchPage() {
     const fetchProducts = async () => {
       try {
         const data = await getAllProducts();
+        console.log("fetchProducts: ",data);
+        
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -149,7 +151,7 @@ export default function SearchPage() {
             // Pass setSearchTerm to CategoryList for filtering
             <CategoryList
               categories={categories}
-              setSearchTerm={setSearchTerm}
+              // onSelect={(cat) => setSearchTerm(cat.name)}
             />
           )}
         </div>

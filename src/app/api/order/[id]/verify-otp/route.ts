@@ -6,9 +6,9 @@ import { deleteExpiredOtps, isOtpExpired } from "@/lib/otpHelpers";
 
 type Params = { params: Promise<{ id: string }> };
 
-export async function POST(req: NextRequest, context: Params) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const orderId = await  context;
+    const { id: orderId } = await  context.params;
     const { otp: providedOtp } = await req.json();
 
     if (!providedOtp) {

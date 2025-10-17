@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Dashboard from "@/Components/admin/Dashboard";
 import { getOrderAnalytics } from "@/lib/actions/orderActions";
 import prisma from "@/lib/prisma";

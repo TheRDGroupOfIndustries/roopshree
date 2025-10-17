@@ -16,9 +16,9 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
 });
 
-export async function POST(_: NextRequest, context: Params) {
+export async function POST(_: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const orderId = await context;
+    const {id} = await context.params;
 
     // ✅ Authenticate delivery boy
     const requestCookies = cookies();
@@ -36,7 +36,7 @@ export async function POST(_: NextRequest, context: Params) {
 
     // ✅ Fetch order + user (customer)
     const order = await prisma.order.findUnique({
-      where: { id: orderId },
+      where: { id},
       include: { user: true },
     });
 
@@ -67,12 +67,12 @@ export async function POST(_: NextRequest, context: Params) {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     // ✅ Remove any existing OTP for this order
-    await prisma.orderOtp.deleteMany({ where: { orderId } });
+    await prisma.orderOtp.deleteMany({ where: { id } });
 
     // ✅ Save new OTP in DB
     await prisma.orderOtp.create({
       data: {
-        orderId,
+        orderId: id,
         otp,
         expiresAt,
         createdBy: payload.userId,
@@ -89,7 +89,7 @@ export async function POST(_: NextRequest, context: Params) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: order.user.email,
-      subject: `OTP for Order ${orderId}`,
+      subject: `OTP for Order ${id}`,
       html: `
         <div style="font-family: Arial; text-align:center; padding:20px;">
           <h2>Delivery Confirmation OTP</h2>

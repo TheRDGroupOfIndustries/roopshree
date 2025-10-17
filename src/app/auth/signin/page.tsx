@@ -153,27 +153,6 @@ const SignInPage: React.FC = () => {
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     await login(loginData.email, loginData.password);
-  //     toast.success("Logged in successfully!");
-  //     console.log("user: ",user);
-
-  //       if (user?.role === "admin") {
-  //     router.push("/manage");
-  //   } else {
-  //     router.push("/home");
-  //   }
-
-  //   } catch (error: any) {
-  //     console.error("Login failed:", error);
-  //     toast.error(error.response?.data?.error || "Login failed. Try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -182,7 +161,7 @@ const SignInPage: React.FC = () => {
       const loggedInUser = await login(loginData.email, loginData.password); // 🔹 use returned user
       toast.success("Logged in successfully!");
 
-      if (loggedInUser?.role === "ADMIN") {
+      if (user?.role === "ADMIN") {
         router.push("/manage");
       } else {
         router.push("/home");

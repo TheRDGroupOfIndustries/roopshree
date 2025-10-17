@@ -4,11 +4,10 @@ import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 
 // type Params = { params: Promise<{ id: string }> };
-type Params = { params: { id: string } };
 
-export async function GET(req: Request, context: Params) {
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { params } = await context; // ✅ await here
+    const { id } = await context.params; // ✅ await here
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,7 +18,7 @@ export async function GET(req: Request, context: Params) {
     }
 
     const offer = await prisma.offer.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!offer) {
@@ -32,9 +31,9 @@ export async function GET(req: Request, context: Params) {
   }
 }
 
-export async function PUT(req: Request, context: Params) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { params } = await context; // ✅ await here
+    const { id } = await context.params; // ✅ await here
     const body = await req.json();
     const requestCookies = cookies();
     const token = (await requestCookies).get("token")?.value;
@@ -53,7 +52,7 @@ export async function PUT(req: Request, context: Params) {
     }
 
     const updatedOffer = await prisma.offer.update({
-      where: { id: params.id },
+      where: { id},
       data: {
         title: body.title,
         subtitle: body.subtitle,

@@ -9,10 +9,10 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ itemI
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const { quantity } = await req.json();
-        const { id} = await context.params;
+        const { itemId} = await context.params;
 
         const item = await prisma.cartItem.findUnique({
-            where: { id },
+            where: { id:itemId },
             include: { cart: true },
         });
 
@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ itemI
         }
 
         const updatedItem = await prisma.cartItem.update({
-            where: { id},
+            where: {id: itemId},
             // data: { quantity: item.quantity + quantity }
             data: { quantity: quantity }
         });
@@ -39,10 +39,10 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ item
         const user = await authenticate(req);
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-        const { id } = await context.params;
+        const { itemId } = await context.params;
 
         const item = await prisma.cartItem.findUnique({
-            where: { id },
+            where: {id: itemId },
             include: { cart: true },
         });
 
@@ -54,8 +54,8 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ item
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        await prisma.cartItem.delete({ where: { id} });
-        return NextResponse.json({ message: "Item removed from cart", id});
+        await prisma.cartItem.delete({ where: { id:itemId} });
+        return NextResponse.json({ message: "Item removed from cart", itemId});
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
 
-type Params = { params: Promise<{ id: string }> };
+// type Params = { params: Promise<{ id: string }> };
+type Params = { params: { id: string } };
 
 export async function GET(req: Request, context: Params) {
   try {

@@ -246,7 +246,7 @@ const AddressesPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen  ">
+    <div className="min-h-screen  bg-white text-black">
       <Header />
 
       <div className="px-3  py-2">

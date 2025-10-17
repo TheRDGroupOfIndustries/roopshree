@@ -192,7 +192,7 @@ const FAQPage: React.FC = () => {
   const toggleIndex = (index: number) => setOpenIndex(openIndex === index ? null : index);
 
   return (
-    <div className="min-h-screen   flex flex-col pb-20">
+    <div className="min-h-screen bg-white text-black   flex flex-col pb-20">
       {/* Header */}
       <header className="sticky top-0   flex items-center px-4 py-3 border-b border-gray-100 z-50 shadow-md">
         <button

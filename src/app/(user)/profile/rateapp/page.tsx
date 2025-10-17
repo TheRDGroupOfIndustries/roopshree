@@ -67,7 +67,7 @@ const RateAppPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen  -gray-50">
+    <div className="min-h-screen text-black bg-gray-50">
       {/* 1. Sticky Header (Moved outside the content wrapper) */}
       <Header />
 

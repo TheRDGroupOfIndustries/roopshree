@@ -218,7 +218,7 @@ export default function HomePage() {
 
   // ------------------- RENDER ------------------- //
   return (
-    <div className=" min-h-screen pb-20">
+    <div className=" min-h-screen pb-20 bg-white text-black">
       {/* ---------- HEADER ---------- */}
       <div className="sticky top-0 z-20 bg-white shadow pb-1">
         <header className="flex items-center justify-between px-4 py-3">

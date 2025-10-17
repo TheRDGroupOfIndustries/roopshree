@@ -98,7 +98,7 @@ export default function SearchPage() {
   );
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-white text-black">
       {/* 🔍 Search Bar */}
       <div className="sticky top-0 z-20 bg-white shadow py-3">
         <div className="flex items-center border border-gray-200 shadow-sm rounded-xl mx-4 px-3 py-2">

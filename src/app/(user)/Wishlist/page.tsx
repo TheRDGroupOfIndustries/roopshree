@@ -47,7 +47,7 @@ const WishlistPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen mb-20">
+    <div className="min-h-screen mb-20 bg-white text-black">
       {/* Navbar */}
       <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 shadow-md sticky top-0 z-50 bg-white">
         <h1 className="text-xl sm:text-2xl font-bold text-amber-600">
@@ -88,7 +88,7 @@ const WishlistPage: React.FC = () => {
             </p>
             <Link
               href="/home"
-              className="px-6 py-2 bg-amber-600   rounded-lg transition-colors hover:bg-amber-700"
+              className="px-6 py-2 bg-amber-600 text-white  rounded-lg transition-colors hover:bg-amber-700"
             >
               Shop Now
             </Link>

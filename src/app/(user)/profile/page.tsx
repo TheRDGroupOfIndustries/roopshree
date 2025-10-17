@@ -350,7 +350,7 @@ export default function ProfilePage() {
   // --- Render ---
 
   return (
-    <div className="min-h-screen  flex flex-col pb-16">
+    <div className="min-h-screen  bg-white text-black flex flex-col pb-16">
       {/* Header */}
       <header className="sticky top-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 z-30   shadow-md bg-white">
         <button className="  text-xl p-1" onClick={() => router.back()}>

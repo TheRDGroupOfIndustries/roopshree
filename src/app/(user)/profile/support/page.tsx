@@ -154,7 +154,7 @@ const SupportPage: React.FC = () => {
     linkText: string;
   }) => (
     <Link href={actionLink} passHref>
-      <div className="flex items-center justify-between p-4  rounded-lg border-b border-gray-100   active:bg-gray-100 transition-all">
+      <div className="flex items-center justify-between p-4 bg-white text-black  rounded-lg border-b border-gray-100   active:bg-gray-100 transition-all">
         <div className="flex items-start gap-3">
           <div className="p-2 bg-sky-100 rounded-full">
             <Icon className="w-5 h-5 text-sky-600" />
@@ -175,7 +175,7 @@ const SupportPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="min-h-screen bg-white text-black flex flex-col">
       {/* Header */}
       <header className="sticky top-0   flex items-center px-4 py-3 border-b border-gray-100 z-50 shadow-md">
         <button

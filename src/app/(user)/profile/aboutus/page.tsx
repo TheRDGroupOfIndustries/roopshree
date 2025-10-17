@@ -143,7 +143,7 @@ import Image from "next/image";
 
 const AboutUsPage: React.FC = () => {
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="min-h-screen  bg-white text-black flex flex-col">
       {/* Header */}
       <header className="sticky top-0 -white flex items-center px-4 py-3 bg-white z-50 shadow-md">
         <button
@@ -152,7 +152,7 @@ const AboutUsPage: React.FC = () => {
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h2 className="flex-1 text-center font-semibold text-base">
+        <h2 className="flex-1 text-gray-950 text-center font-semibold text-base">
           About Roop Shree
         </h2>
         <div className="w-7" /> {/* Spacer for layout balance */}

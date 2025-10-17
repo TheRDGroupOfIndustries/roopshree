@@ -41,11 +41,11 @@ const getStatusConfig = (status: Status) => {
  const OrderSkeleton = () => (
   <div className="flex items-center justify-between p-3 border-b border-gray-100 last:border-none animate-pulse">
     <div className="flex items-center gap-3">
-      <div className="w-14 h-14   rounded-md" />
+      <div className="w-14 h-14  text-gray-200 rounded-md" />
       <div className="space-y-2">
-        <div className="w-32 h-3   rounded" />
-        <div className="w-24 h-3   rounded" />
-        <div className="w-20 h-3   rounded" />
+        <div className="w-32 h-3 text-gray-200  rounded" />
+        <div className="w-24 h-3  text-gray-200 rounded" />
+        <div className="w-20 h-3  text-gray-200 rounded" />
       </div>
     </div>
     <div className="w-16 h-4   rounded-full" />

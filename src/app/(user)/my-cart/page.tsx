@@ -242,7 +242,7 @@ const Cart: React.FC = () => {
 
   return (
     // ✅ FIX: Added opening return bracket
-    <div className="min-h-screen flex flex-col pb-16 relative">
+    <div className="min-h-screen flex flex-col bg-white text-black pb-16 relative">
       {/* Navigation */}
 
       {showConfirm && (

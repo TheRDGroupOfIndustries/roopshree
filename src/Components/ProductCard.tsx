@@ -138,7 +138,7 @@ export default function ProductCard({
 
   return (
     <Link href={`/product/${id}`}>
-      <div className="  rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-lg transition duration-300">
+      <div className="  rounded-2xl overflow-hidden bg-white text-black shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-lg transition duration-300">
         {/* Image + Wishlist */}
         <div className="relative">
           <button
@@ -172,8 +172,8 @@ export default function ProductCard({
 
         {/* Product Info */}
         <div className="p-3 flex flex-col flex-grow">
-          <h4 className="font-semibold text-base   mb-1 line-clamp-1">{name}</h4>
-          <p className="text-xs   mb-3 line-clamp-2 flex-grow">
+          <h4 className="font-semibold text-base text-black   mb-1 line-clamp-1">{name}</h4>
+          <p className="text-xs text-black  mb-3 line-clamp-2 flex-grow">
             {description}
           </p>
           <div className="flex items-center gap-0.5">

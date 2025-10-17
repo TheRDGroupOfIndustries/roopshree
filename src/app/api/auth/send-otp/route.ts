@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    
     const { email } = parsed.data;
     const otp = generateOTP(6);
  

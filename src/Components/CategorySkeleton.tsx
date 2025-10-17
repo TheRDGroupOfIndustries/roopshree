@@ -7,10 +7,10 @@ const CategorySkeleton = () => {
       {Array.from({ length: 5 }).map((_, i) => (
         <div
           key={i}
-          className="flex flex-col bg-gray-200 items-center min-w-max animate-pulse"
+          className="flex flex-col items-center min-w-max animate-pulse"
         >
           <div className="w-12 h-12 rounded-full bg-gray-200"></div>
-          <div className="h-3 w-14 bg-gray-300 rounded mt-2"></div>
+          <div className="h-3 w-14 bg-gray-200 rounded mt-2"></div>
         </div>
       ))}
     </div>

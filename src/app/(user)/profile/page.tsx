@@ -292,7 +292,7 @@ export default function ProfilePage() {
       label: "Wishlist",
       bg: "bg-red-200",
       iconColor: "text-orange-600",
-      link: "/wishlist",
+      link: "/my-wishlist",
       count: wishListCount,
     },
   ];

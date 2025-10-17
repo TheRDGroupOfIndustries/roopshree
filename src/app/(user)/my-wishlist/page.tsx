@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import ProductCard from "@/Components/ProductCard";
 import { getWishlist } from "@/services/wishlistService";
-import LoadingSpinner from "@/Components/LoadingSpinner";
 import ProductCardSkeleton from "@/Components/ProductCardSkeleton";
 import { FiHeart } from "react-icons/fi";
 import Link from "next/link";

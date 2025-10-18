@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { emailSchema } from "../../../../lib/validations/Signup";
 import { saveOtp } from "@/lib/otpStore";
+import prisma from "@/lib/prisma";
 
 function generateOTP(limit: number): string {
   const digits = "0123456789";
@@ -27,6 +28,17 @@ export async function POST(req: NextRequest) {
 
     
     const { email } = parsed.data;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Email is already registered. Please login instead." },
+        { status: 400 }
+      );
+    }
     const otp = generateOTP(6);
     saveOtp(email, otp);
  

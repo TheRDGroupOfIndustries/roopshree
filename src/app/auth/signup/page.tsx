@@ -3,7 +3,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
-import { registerUser, sendOtpEmail } from "@/services/authService";
+import { registerUser, sendOtpEmail, verifyOtpCode } from "@/services/authService";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -30,36 +30,86 @@ const SignUpPage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [serverOtp, setServerOtp] = useState("");
   const router = useRouter();
 
-  const sendOtp = async () => {
-    // console.log("send data: ",formData);
+  // const sendOtp = async () => {
 
+  //   // console.log("send data: ",formData);
+  //   if (!formData.email) {
+  //   toast.error("Please enter your email first!");
+  //   return;
+  // }
+
+  //   try {
+  //     setLoading(true);
+  //     const res = await sendOtpEmail(formData?.email);
+  //     console.log("sendOtp:", res);
+  //      if (res.error) {
+  //     toast.error(res.error);
+  //     return;
+  //   }
+  //     setOtpSent(true);
+  //     toast.success("OTP sent to your email!");
+  //   } catch (error: any) {
+  //      console.error("Send OTP failed:", error);
+  //     toast.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+  const sendOtp = async () => {
+  if (!formData.email) {
+    toast.error("Please enter your email!");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const res = await sendOtpEmail(formData.email);
+
+    if (res.error) {
+      toast.error(res.error);
+      return;
+    }
+
+    setOtpSent(true);
+    toast.success("OTP sent to your email!");
+  } catch (error: any) {
+    console.error("Send OTP failed:", error);
+    const message =
+      typeof error === "string"
+        ? error
+        : error?.error || "Failed to send OTP. Please try again.";
+    toast.error(message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const verifyOtp = async () => {
     try {
       setLoading(true);
-      const res = await sendOtpEmail(formData?.email);
-      console.log("sendOtp:", res);
-      setServerOtp(res.otp);
-      setOtpSent(true);
-      toast.success("OTP sent to your email!");
+      const res = await verifyOtpCode(formData.email, formData.otp);
+      toast.success(res.success || "OTP Verified Successfully!");
+
+      // Register user after OTP verification
+      await registerUser(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.confirmPassword
+      );
+
+      toast.success("Signup successful!");
+      router.push("/auth/signin");
     } catch (error: any) {
-      toast.error(" Failed to send OTP. Please try again.");
+      console.error("OTP verification or signup failed:", error);
+      toast.error(error.error || "Invalid or expired OTP");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const verifyOtp = () => {
-    if (formData.otp === serverOtp) {
-      toast.success("OTP Verified Successfully!");
-      setTimeout(() => {
-        router.push("/auth/signin");
-      }, 1000);
-      return true;
-    } else {
-      toast.error("Invalid OTP. Try again!");
-      return false;
     }
   };
 
@@ -92,27 +142,25 @@ const SignUpPage: React.FC = () => {
       return;
     }
 
-    if (!verifyOtp()) {
-      return;
-    }
+    await verifyOtp();
 
-    setLoading(true);
-    try {
-      setLoading(true);
-      await registerUser(
-        formData.name,
-        formData.email,
-        formData.password,
-        formData.confirmPassword
-      );
-      toast.success("Signup successful!");
-      router.push("/auth/signin");
-    } catch (error: any) {
-      console.error("Signup failed:", error);
-      toast.error(error.response?.data?.message || "Signup failed");
-    } finally {
-      setLoading(false);
-    }
+    // setLoading(true);
+    // try {
+    //   setLoading(true);
+    //   await registerUser(
+    //     formData.name,
+    //     formData.email,
+    //     formData.password,
+    //     formData.confirmPassword
+    //   );
+    //   toast.success("Signup successful!");
+    //   router.push("/auth/signin");
+    // } catch (error: any) {
+    //   console.error("Signup failed:", error);
+    //   toast.error(error.response?.data?.message || "Signup failed");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (

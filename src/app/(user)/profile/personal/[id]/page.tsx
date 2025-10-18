@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthProvider";
 import { getUserById, updateUser } from "@/services/userService";
-import { addToWishlist, removeFromWishlist } from "@/services/wishlistService"; // ✅ Import these
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 const PersonalInfoPage: React.FC = () => {
   const { refreshUser } = useAuth();
@@ -109,7 +109,7 @@ const PersonalInfoPage: React.FC = () => {
     }
   };
 
-  if (fetching) return <p className="p-4 text-center">Loading...</p>;
+  if (fetching) return <LoadingSpinner message="Loading Profile..."/>
 
   return (
     <div className="min-h-screen bg-white text-black">

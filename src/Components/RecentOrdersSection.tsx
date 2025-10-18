@@ -136,11 +136,13 @@ const RecentOrdersSection: React.FC = () => {
               const cfg = getStatusConfig(order.status);
               return (
                 <Link
-                  href={`/my-orders/${order.id}`}
+                  // href={`/my-orders/${order.id}`}
+                  href={`/my-orders`}
                   key={order.id}
                   className="block hover:bg-gray-50 transition" // Wrap item in Link and apply hover to the whole block
                 >
                   <div
+                   key={order.id}
                     className="flex items-center justify-between p-3 border-b border-gray-100 last:border-none"
                   >
                     {/* Product info */}

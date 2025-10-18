@@ -75,7 +75,7 @@ export default function SearchPage() {
     const fetchProducts = async () => {
       try {
         const data = await getAllProducts();
-        console.log("fetchProducts: ",data);
+        // console.log("fetchProducts: ",data);
         
         setProducts(data);
       } catch (error) {

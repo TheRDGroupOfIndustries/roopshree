@@ -64,7 +64,7 @@ const Cart: React.FC = () => {
     try {
       setLoading(true);
       const data = await getCart();
-      console.log("fetchCart: ", data);
+      // console.log("fetchCart: ", data);
 
       setCartItems(data.items || []);
     } catch (error) {

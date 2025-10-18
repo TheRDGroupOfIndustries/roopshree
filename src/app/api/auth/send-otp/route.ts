@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { emailSchema } from "../../../../lib/validations/Signup";
+import { saveOtp } from "@/lib/otpStore";
 
 function generateOTP(limit: number): string {
   const digits = "0123456789";
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
     
     const { email } = parsed.data;
     const otp = generateOTP(6);
+    saveOtp(email, otp);
  
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -57,12 +59,12 @@ export async function POST(req: NextRequest) {
 
     // ⚠️ SECURITY WARNING: Don't send OTP back in production!
     // For development/testing only:
-    if (process.env.NODE_ENV === "development") {
-      return NextResponse.json({ 
-        success: "OTP sent successfully!", 
-        otp // Only in development
-      }, { status: 200 });
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   return NextResponse.json({ 
+    //     success: "OTP sent successfully!", 
+    //     otp // Only in development
+    //   }, { status: 200 });
+    // }
 
     // ✅ Production response (no OTP included):
     return NextResponse.json({ 

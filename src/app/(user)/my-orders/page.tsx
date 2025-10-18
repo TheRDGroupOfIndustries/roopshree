@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { getOrders, cancelOrder } from "@/services/orderService";
 import { useAuth } from "@/context/AuthProvider";
-import LoadingSpinner from "@/Components/LoadingSpinner";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { Status } from "@prisma/client";
@@ -18,6 +17,13 @@ import {
 } from "lucide-react";
 import SmallLoadingSpinner from "@/Components/SmallLoadingSpinner";
 import OrdersSkeleton from "@/Components/OrdersSkeleton";
+
+type Status =
+  | "CONFIRMED"
+  | "DISPATCH"
+  | "OUTOFDELIVERY"
+  | "DELIVERED"
+  | "CANCELLED";
 
 interface Order {
   id: string;
@@ -40,42 +46,92 @@ interface Order {
   };
 }
 
+// const STATUS_OPTIONS = [
+//   { value: "ALL", label: "All Orders" },
+//   { value: Status.CONFIRMED, label: "Confirmed" },
+//   { value: Status.DISPATCH, label: "Dispatched" },
+//   { value: Status.OUTOFDELIVERY, label: "Out for Delivery" },
+//   { value: Status.DELIVERED, label: "Delivered" },
+//   { value: Status.CANCELLED, label: "Cancelled" },
+// ];
+
+// const getStatusConfig = (status: Status) => {
+//   switch (status) {
+//     case Status.CONFIRMED:
+//       return {
+//         bg: "bg-blue-50",
+//         badge: "bg-blue-100 text-blue-700",
+//         icon: <Clock className="w-4 h-4" />,
+//       };
+//     case Status.DISPATCH:
+//       return {
+//         bg: "bg-purple-50",
+//         badge: "bg-purple-100 text-purple-700",
+//         icon: <Package className="w-4 h-4" />,
+//       };
+//     case Status.OUTOFDELIVERY:
+//       return {
+//         bg: "bg-amber-50",
+//         badge: "bg-amber-100 text-amber-700",
+//         icon: <Clock className="w-4 h-4" />,
+//       };
+//     case Status.DELIVERED:
+//       return {
+//         bg: "bg-green-50",
+//         badge: "bg-green-100 text-green-700",
+//         icon: <CheckCircle2 className="w-4 h-4" />,
+//       };
+//     case Status.CANCELLED:
+//       return {
+//         bg: "bg-red-50",
+//         badge: "bg-red-100 text-red-700",
+//         icon: <XCircle className="w-4 h-4" />,
+//       };
+//     default:
+//       return {
+//         bg: "bg-gray-50",
+//         badge: "bg-gray-100 text-gray-700",
+//         icon: <Package className="w-4 h-4" />,
+//       };
+//   }
+// };
+
 const STATUS_OPTIONS = [
   { value: "ALL", label: "All Orders" },
-  { value: Status.CONFIRMED, label: "Confirmed" },
-  { value: Status.DISPATCH, label: "Dispatched" },
-  { value: Status.OUTOFDELIVERY, label: "Out for Delivery" },
-  { value: Status.DELIVERED, label: "Delivered" },
-  { value: Status.CANCELLED, label: "Cancelled" },
+  { value: "CONFIRMED", label: "Confirmed" },
+  { value: "DISPATCH", label: "Dispatched" },
+  { value: "OUTOFDELIVERY", label: "Out for Delivery" },
+  { value: "DELIVERED", label: "Delivered" },
+  { value: "CANCELLED", label: "Cancelled" },
 ];
 
 const getStatusConfig = (status: Status) => {
   switch (status) {
-    case Status.CONFIRMED:
+    case "CONFIRMED":
       return {
         bg: "bg-blue-50",
         badge: "bg-blue-100 text-blue-700",
         icon: <Clock className="w-4 h-4" />,
       };
-    case Status.DISPATCH:
+    case "DISPATCH":
       return {
         bg: "bg-purple-50",
         badge: "bg-purple-100 text-purple-700",
         icon: <Package className="w-4 h-4" />,
       };
-    case Status.OUTOFDELIVERY:
+    case "OUTOFDELIVERY":
       return {
         bg: "bg-amber-50",
         badge: "bg-amber-100 text-amber-700",
         icon: <Clock className="w-4 h-4" />,
       };
-    case Status.DELIVERED:
+    case "DELIVERED":
       return {
         bg: "bg-green-50",
         badge: "bg-green-100 text-green-700",
         icon: <CheckCircle2 className="w-4 h-4" />,
       };
-    case Status.CANCELLED:
+    case "CANCELLED":
       return {
         bg: "bg-red-50",
         badge: "bg-red-100 text-red-700",
@@ -139,7 +195,7 @@ const OrdersPage: React.FC = () => {
       toast.success("Order cancelled");
       setOrders((prev) =>
         prev.map((o) =>
-          o.id === selectedOrderId ? { ...o, status: Status.CANCELLED } : o
+          o.id === selectedOrderId ? { ...o, status: "CANCELLED" } : o
         )
       );
     } catch (err: any) {
@@ -175,7 +231,6 @@ const OrdersPage: React.FC = () => {
       </div>
     );
 
- 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -267,8 +322,8 @@ const OrdersPage: React.FC = () => {
                       {cfg.icon} {order.status}
                     </span>
 
-                    {order.status !== Status.CANCELLED &&
-                      order.status !== Status.DELIVERED && (
+                    {order.status !== "CANCELLED" &&
+                      order.status !== "DELIVERED" && (
                         <button
                           onClick={() => confirmCancelOrder(order.id)}
                           disabled={cancellingId === order.id}

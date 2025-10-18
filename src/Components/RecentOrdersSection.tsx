@@ -4,9 +4,12 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getOrders } from "@/services/orderService";
-import { Status } from "@prisma/client";
+// import { Status } from "@prisma/client";
 import toast from "react-hot-toast";
 import { CheckCircle2, Clock, XCircle, Package } from "lucide-react";
+
+type Status = "CONFIRMED" | "DISPATCH" | "OUTOFDELIVERY" | "DELIVERED" | "CANCELLED";
+
 interface Order {
   id: string;
   totalAmount: number;
@@ -21,23 +24,41 @@ interface Order {
   };
 }
 
+// const getStatusConfig = (status: Status) => {
+//   switch (status) {
+//     case Status.CONFIRMED:
+//       return { badge: "bg-blue-100 text-blue-700", icon: <Clock className="w-3 h-3" /> };
+//     case Status.DISPATCH:
+//       return { badge: "bg-purple-100 text-purple-700", icon: <Package className="w-3 h-3" /> };
+//     case Status.OUTOFDELIVERY:
+//       return { badge: "bg-amber-100 text-amber-700", icon: <Clock className="w-3 h-3" /> };
+//     case Status.DELIVERED:
+//       return { badge: "bg-green-100 text-green-700", icon: <CheckCircle2 className="w-3 h-3" /> };
+//     case Status.CANCELLED:
+//       return { badge: "bg-red-100 text-red-700", icon: <XCircle className="w-3 h-3" /> };
+//     default:
+//       return { badge: "bg-gray-100 text-gray-700", icon: <Package className="w-3 h-3" /> };
+//   }
+// };
+ 
+
 const getStatusConfig = (status: Status) => {
   switch (status) {
-    case Status.CONFIRMED:
+    case "CONFIRMED":
       return { badge: "bg-blue-100 text-blue-700", icon: <Clock className="w-3 h-3" /> };
-    case Status.DISPATCH:
+    case "DISPATCH":
       return { badge: "bg-purple-100 text-purple-700", icon: <Package className="w-3 h-3" /> };
-    case Status.OUTOFDELIVERY:
+    case "OUTOFDELIVERY":
       return { badge: "bg-amber-100 text-amber-700", icon: <Clock className="w-3 h-3" /> };
-    case Status.DELIVERED:
+    case "DELIVERED":
       return { badge: "bg-green-100 text-green-700", icon: <CheckCircle2 className="w-3 h-3" /> };
-    case Status.CANCELLED:
+    case "CANCELLED":
       return { badge: "bg-red-100 text-red-700", icon: <XCircle className="w-3 h-3" /> };
     default:
       return { badge: "bg-gray-100 text-gray-700", icon: <Package className="w-3 h-3" /> };
   }
 };
- 
+
  const OrderSkeleton = () => (
   <div className="flex items-center justify-between p-3 animate-pulse">
     <div className="flex items-center gap-3">

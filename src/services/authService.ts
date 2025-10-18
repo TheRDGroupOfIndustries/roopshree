@@ -44,3 +44,14 @@ export const sendOtpEmail = async (email: string) => {
     throw error.response?.data || { error: "Failed to send OTP" };
   }
 };
+
+
+export const verifyOtpCode = async (email: string, otp: string) => {
+  try {
+    const res = await api.post("/api/auth/verify-otp", { email, otp });
+    return res.data;
+  } catch (error: any) {
+    console.error("Verify OTP error:", error);
+    throw error.response?.data || { error: "Invalid or expired OTP" };
+  }
+};

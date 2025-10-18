@@ -121,6 +121,11 @@ const SignUpPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+     if (formData.email === formData.password) {
+    toast.error("Email and password cannot be the same!");
+    return;
+  }
+
     if (!otpSent) {
       // const phoneDigitsOnly = formData.phone.replace(/\D/g, "");
       // if (phoneDigitsOnly.length !== 10) {

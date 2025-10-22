@@ -274,8 +274,8 @@ export default function ProfilePage() {
 
   const profileStats: ProfileStat[] = [
     { label: "Orders", value: orderCount as number },
-    { label: "Points", value: 156 },
-    { label: "Saved", value: "₹12,480" as any },
+    { label: "Shopping", value: "Happy Shopping" as any },
+    { label: "Wishlist", value: wishListCount },
   ];
 
   const quickActions: QuickAction[] = [
@@ -400,14 +400,27 @@ export default function ProfilePage() {
           <h1 className="text-xl sm:text-2xl font-bold mt-3">
             {user.name || "Priya Sharma"}
           </h1>
-          <p className="text-sm sm:text-base opacity-90">Premium Member</p>
+          <p className="text-sm sm:text-base opacity-90">{user.role}</p>
 
           <div className="flex justify-between w-full max-w-md mt-6 gap-4 border-t border-white/30 pt-4">
-            {profileStats.map((item, i) => (
+            {/* {profileStats.map((item, i) => (
               <div className="text-center flex-1" key={i}>
                 <p className="text-xs sm:text-sm opacity-90">{item.label}</p>
                 <p className="text-lg sm:text-xl font-semibold mt-1">
                   {item.value}
+                </p>
+              </div>
+            ))} */}
+            {profileStats.map((item, i) => (
+              <div className="text-center flex-1" key={i}>
+                {/* Show label for all except "Shopping" */}
+                {
+                  <p className="text-xs sm:text-sm opacity-90"> {item.label === "Shopping" ? item.value : item.label}</p>
+                }
+
+                {/* Show value for normal items, but label text for "Shopping" */}
+                 <p className="text-lg sm:text-xl font-semibold mt-1">
+                 {item.label === "Shopping" ? "" : item.value}
                 </p>
               </div>
             ))}

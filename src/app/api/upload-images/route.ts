@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       const base64 = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64}`;
 
-      const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+      const uploadResponse = await cloudinary.uploader.unsigned_upload(dataUri,"unsigned_upload", {
         folder: uploadFolder,
       });
       uploadedUrls.push(uploadResponse.secure_url);

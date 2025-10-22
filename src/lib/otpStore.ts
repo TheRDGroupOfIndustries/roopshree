@@ -1,20 +1,17 @@
 // src/lib/otpStore.ts
-type OtpRecord = { otp: string; expiresAt: number };
+import NodeCache from 'node-cache';
 
-const otpStore = new Map<string, OtpRecord>();
+const otpCache = new NodeCache({ stdTTL: 600 }); // 10 minutes TTL
 
 export function saveOtp(email: string, otp: string) {
-  otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 }); // 10 minutes
+  otpCache.set(email, otp); // Automatically expires in 10 minutes
 }
 
 export function verifyOtp(email: string, otp: string): boolean {
-  const record = otpStore.get(email);
-  if (!record) return false;
-  if (Date.now() > record.expiresAt) {
-    otpStore.delete(email);
-    return false;
-  }
-  const isValid = record.otp === otp;
-  if (isValid) otpStore.delete(email); // consume OTP after use
+  const storedOtp = otpCache.get<string>(email);
+  if (!storedOtp) return false;
+
+  const isValid = storedOtp === otp;
+  if (isValid) otpCache.del(email); // Consume OTP after use
   return isValid;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface UserSelectModalProps {
@@ -7,7 +8,7 @@ interface UserSelectModalProps {
   onClose: () => void;
   users: any[];
   selectedRole: "user" | "admin" | "delivery_boy" | "EXCLUSIVE_USER";
-  refetchUsers: () => void; // Function to refresh the users list
+  refetchUsers: () => void;
 }
 
 const UserSelectModal: React.FC<UserSelectModalProps> = ({
@@ -17,6 +18,8 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
   selectedRole,
   refetchUsers,
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   if (!show) return null;
 
   const handleRoleChange = async (
@@ -24,7 +27,7 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
     role: "user" | "admin" | "delivery_boy" | "EXCLUSIVE_USER"
   ) => {
     try {
-      const roleToSend = role.toUpperCase(); // Convert to uppercase for backend
+      const roleToSend = role.toUpperCase();
 
       const res = await fetch(`/api/auth/${userId}`, {
         method: "PUT",
@@ -40,14 +43,19 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
         toast.error("Failed to update role. Please try again.");
       } else {
         toast.success("Role updated successfully!");
-        await refetchUsers(); // REFRESH THE USER LIST
-        onClose(); // Close the modal after success
+        await refetchUsers();
+        onClose();
       }
     } catch (err) {
       console.error("Error:", err);
       toast.error("An error occurred. Please try again.");
     }
   };
+
+  const filteredUsers = users.filter((user) =>
+    user.email.toLowerCase().includes(searchTerm.trim().toLowerCase())
+  
+  );
 
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50 p-3 sm:p-4 animate-fadeIn">
@@ -70,11 +78,22 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
           </button>
         </div>
 
+        {/* Search Input */}
+        <div className="px-4 sm:px-6 pt-4">
+          <input
+            type="text"
+            placeholder="Search by email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+
         {/* Body */}
         <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-60px)] sm:max-h-[calc(80vh-80px)]">
-          {users.length > 0 ? (
+          {filteredUsers.length > 0 ? (
             <div className="space-y-3">
-              {users.map((user: any, index: number) => (
+              {filteredUsers.map((user: any, index: number) => (
                 <div
                   key={index}
                   className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-150 gap-3"
@@ -87,10 +106,9 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
                       <span className="font-medium">{user.role}</span>
                     </p>
                   </div>
-                  
-                  {/* Buttons Container */}
+
+                  {/* Buttons */}
                   <div className="flex gap-2 w-full sm:w-auto">
-                    {/* Add Role Button */}
                     <button
                       onClick={() =>
                         handleRoleChange(
@@ -106,7 +124,6 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({
                       <span>Add</span>
                     </button>
 
-                    {/* Reset to USER Button */}
                     <button
                       onClick={() => handleRoleChange(user.id, "user")}
                       className="flex-1 sm:flex-initial bg-[#ee3832] text-white px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg hover:bg-[#d82b2b] transition-all duration-150 flex items-center justify-center gap-1 sm:gap-2 font-medium"

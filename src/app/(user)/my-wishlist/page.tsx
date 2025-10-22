@@ -21,7 +21,7 @@ interface WishlistItem {
     category: string;
     description: string;
     // Assuming 'reviews' is a possible property on product for ProductCard
-    reviews?: number;
+    reviews?: { rating: number; comment: string }[];
   };
 }
 
@@ -33,6 +33,8 @@ const WishlistPage: React.FC = () => {
     try {
       setLoading(true);
       const data = await getWishlist();
+      console.log("data: ",data);
+      
       setWishlist(data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
@@ -104,6 +106,7 @@ const WishlistPage: React.FC = () => {
                 oldPrice={product.oldPrice}
                 image={product.images?.[0]}
                 refreshWishlist={fetchWishlist}
+                reviews={product?.reviews}
               />
             ))}
           </div>

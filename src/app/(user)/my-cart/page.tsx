@@ -464,7 +464,7 @@ const Cart: React.FC = () => {
               )}
 
               {/* Checkout Button Bar (Fixed Bottom) */}
-              <div className="fixed bottom-0 left-0 w-full bg-white shadow-2xl border-t border-gray-200 p-3 z-30">
+              <div className="fixed bottom-0 left-0 w-full bg-white shadow-2xl border-t border-gray-200 p-3 z-30 mb-15">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
                   {/* Total Amount & Delivery Time */}
                   <div className="flex w-full md:w-auto justify-between items-center gap-4 md:gap-6">
@@ -508,7 +508,7 @@ const Cart: React.FC = () => {
         </div>
       </div>
     </div>
-  ); // ✅ FIX: Added closing return bracket
+  ); 
 };
 
-export default Cart; // ✅ FIX: Correctly placed export
+export default Cart; 

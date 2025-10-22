@@ -11,8 +11,8 @@ const Users = () => {
 
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Move fetchUsers OUTSIDE useEffect so it can be reused
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -32,17 +32,19 @@ const Users = () => {
     }
   };
 
-  // Call it on component mount
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(
-    (u) =>
+  const filteredUsers = users
+    .filter((u) =>
       selectedRole === "EXCLUSIVE_USER"
         ? u.role === "EXCLUSIVE_USER"
         : u.role?.toLowerCase() === selectedRole
-  );
+    )
+    .filter((u) =>
+      u.email.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    );
 
   const handlePromoteUser = (user: any) => {
     console.log(`Promoting ${user.name} to ${selectedRole}`);
@@ -51,7 +53,7 @@ const Users = () => {
 
   return (
     <div className="space-y-6 p-4 md:p-0">
-      {/* Header - FIXED FOR MOBILE */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
           User Management
@@ -73,8 +75,8 @@ const Users = () => {
         )}
       </div>
 
-      {/* Tabs - IMPROVED FOR MOBILE */}
-      <div className="flex gap-2 md:gap-4 mb-6 overflow-x-auto pb-2">
+      {/* Tabs */}
+      <div className="flex gap-2 md:gap-4 mb-4 overflow-x-auto pb-2">
         {["user", "admin", "delivery_boy", "EXCLUSIVE_USER"].map((role) => (
           <button
             key={role}
@@ -94,6 +96,17 @@ const Users = () => {
               : role.charAt(0).toUpperCase() + role.slice(1).replace("_", " ")}
           </button>
         ))}
+      </div>
+
+      {/* Search input */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+        />
       </div>
 
       {/* Content */}

@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Package,
+  Clipboard,
 } from "lucide-react";
 import {
   getDeliveryBoys,
@@ -157,13 +158,17 @@ const StatusEditModal = ({ order, onClose, onSave }: any) => {
             }}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-lg border"
           >
-            {["CONFIRMED", "DISPATCH", "OUTOFDELIVERY", "CANCELLED"].map(
-              (status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              )
-            )}
+            {[
+              "CONFIRMED",
+              "DISPATCH",
+              "OUTOFDELIVERY",
+              "CANCELLED",
+              "DELIVERED",
+            ].map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
           {error && error.kay === "status" && (
             <p className="text-sm text-red-600">{error.message}</p>
@@ -227,6 +232,8 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
@@ -300,6 +307,13 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
     }
   };
 
+  const handleCopyOrderId = (orderId: string) => {
+    navigator.clipboard.writeText(orderId).then(() => {
+      setCopiedOrderId(orderId);
+      setTimeout(() => setCopiedOrderId(null), 1500);
+    });
+  };
+
   return (
     <div className="">
       <header className="flex items-center justify-between mb-6">
@@ -309,6 +323,17 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
           Create New Order (Mock)
         </button> */}
       </header>
+
+      {/* ✅ Search Input */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by Order ID or Status..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+        />
+      </div>
 
       {loadingOrders ? (
         <div className="h-64 text-gray-500 bg-white rounded-lg border border-dashed border-gray-200 text-center flex items-center justify-center">
@@ -359,13 +384,32 @@ const OrderManagement = ({ totalOrders }: { totalOrders: number }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {orders.map((order: any) => (
+                {orders.filter((order: any) => {
+                    const query = searchQuery.toLowerCase(); // ✅ ADDED
+                    return (
+                      order.id.toLowerCase().includes(query) ||
+                      order.status.toLowerCase().includes(query)
+                    );
+                  }).map((order: any) => (
                   <tr
                     key={order.id}
                     className="hover:bg-gray-50 transition duration-150"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-amber-600">
-                      #{order.id.slice(0, 6)}...
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-amber-600 flex items-center space-x-2">
+                      {/* #{order.id.slice(0, 6)}... */}
+
+                      <span title={order.id}>#{order.id.slice(0, 6)}...</span>
+                      <button
+                        onClick={() => handleCopyOrderId(order.id)}
+                        className="text-gray-500 hover:text-amber-600 transition"
+                      >
+                        <Clipboard className="w-4 h-4" />
+                      </button>
+                      {copiedOrderId === order.id && (
+                        <span className="text-xs text-green-600 ml-1">
+                          Copied!
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
                       {order.user.name}

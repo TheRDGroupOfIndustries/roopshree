@@ -31,17 +31,40 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [categoryLoading, setCategoryLoading] = useState(false);
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
 
   // Hardcoded Popular Searches (Good for SEO/User Experience)
-  const popularSearches = [
-    "Lipstick",
-    "Moisturizer",
-    "Foundation",
-    "Perfume",
-    "Serum",
-    "Sunscreen",
-    "Bella Vita Perfumes",
-  ];
+  // const popularSearches = [
+  //   "Lipstick",
+  //   "Moisturizer",
+  //   "Foundation",
+  //   "Perfume",
+  //   "Serum",
+  //   "Sunscreen",
+  //   "Bella Vita Perfumes",
+  // ];
+
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const data = await getAllProducts();
+      setProducts(data);
+
+      // ✅ Add this block right here to create 5 random popular searches
+      const titles = [...new Set(data.map((p) => p.title).filter(Boolean))]; // Get unique, non-empty titles
+      const shuffled = titles.sort(() => 0.5 - Math.random()); // Shuffle
+      const selected = shuffled.slice(0, 5); // Pick first 5
+      setPopularSearches(selected); // Update state
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
+
 
   // 🔹 Fetch Categories on Mount
   useEffect(() => {
@@ -128,16 +151,16 @@ export default function SearchPage() {
         <h3 className="text-base font-semibold   mb-2">Popular Searches</h3>
         <div className="flex flex-wrap gap-2">
           {/* Using the hardcoded popularSearches array */}
-          {popularSearches.map((term, index) => (
-            <button
-              key={index}
-              onClick={() => setSearchTerm(term)}
-              // Added border and hover for better styling contrast
-              className="px-3 py-1.5 border border-amber-300 text-amber-600 text-xs font-medium rounded-full hover:bg-amber-50 transition whitespace-nowrap"
-            >
-              {term}
-            </button>
-          ))}
+          {popularSearches.slice(0, 5).map((term, index) => (
+  <button
+    key={index}
+    onClick={() => setSearchTerm(term)}
+    className="px-3 py-1.5 border border-amber-300 text-amber-600 text-xs font-medium rounded-full hover:bg-amber-50 transition whitespace-nowrap"
+  >
+    {term}
+  </button>
+))}
+
         </div>
       </div>
 

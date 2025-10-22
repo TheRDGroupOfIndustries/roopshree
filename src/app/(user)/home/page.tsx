@@ -452,12 +452,6 @@ export default function HomePage() {
               <h3 className="font-semibold text-lg text-gray-900">
                 Featured Products
               </h3>
-              <button
-                className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)] transition"
-                onClick={() => setShowAllProducts(!showAllProducts)}
-              >
-                {showAllProducts ? "Show Less" : "View All"}
-              </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {productLoading
@@ -480,6 +474,15 @@ export default function HomePage() {
                       />
                     )
                   )}
+            </div>
+
+            <div className="flex justify-center mt-4">
+              <button
+                className="text-[var(--color-brand)] text-sm font-medium hover:text-[var(--color-brand-hover)] transition"
+                onClick={() => setShowAllProducts(!showAllProducts)}
+              >
+                {showAllProducts ? "Show Less" : "View All"}
+              </button>
             </div>
           </div>
 

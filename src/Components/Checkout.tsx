@@ -105,6 +105,12 @@ export default function Checkout({ productId }: { productId: string }) {
   const [selectedMethod, setSelectedMethod] = useState("COD");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Calculate subtotal
+  const subtotal = product?.price * quantity;
+  // Only show delivery fee if it applies
+  const deliveryFee = 99; // If free, otherwise 99
+  const total = subtotal + deliveryFee;
+
   // Simulates the payment process
   const handlePlaceOrder = async () => {
     if (isProcessing) return;
@@ -116,7 +122,7 @@ export default function Checkout({ productId }: { productId: string }) {
     setIsProcessing(true);
 
     const order = {
-      totalAmount: product.price,
+      totalAmount: total,
       address: selectedAddress,
       paymentMode: selectedMethod,
       products: [
@@ -140,7 +146,7 @@ export default function Checkout({ productId }: { productId: string }) {
         return;
       }
       const data = await res.json();
-      console.log(data);
+      // console.log("handlePlaceOrder",data);
       sessionStorage.setItem(
         "orderData",
         JSON.stringify({
@@ -163,7 +169,7 @@ export default function Checkout({ productId }: { productId: string }) {
     try {
       const res = await fetch(`/api/products/${productId}`);
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       setProduct(data);
     } catch (error) {
       console.log(error);
@@ -291,7 +297,7 @@ export default function Checkout({ productId }: { productId: string }) {
                               )
                             }
                             className={`w-6 h-6 flex items-center justify-center border rounded-full transition-colors ${
-                              product.quantity === 1
+                              quantity === 1
                                 ? "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-100"
                                 : "border-gray-300 hover:bg-gray-200 text-gray-700"
                             }`}
@@ -376,26 +382,29 @@ export default function Checkout({ productId }: { productId: string }) {
                 </h3>
 
                 <div className="flex justify-between text-gray-500 text-sm font-medium">
-                  <span>Subtotal (1 items)</span>
+                  <span>Subtotal ({quantity} items)</span>
                   <span className="font-semibold text-black">
-                    ₹{product.price.toLocaleString()}
+                    ₹{subtotal.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex justify-between text-gray-500 text-sm font-medium">
-                  <span>Delivery Fee</span>
-                  <span className="font-semibold">₹{99}</span>
-                </div>
-
-                <div className="flex justify-between text-green-600 text-sm font-medium">
-                  <span>Free Delivery</span>
-                  <span className="font-semibold">-₹{99}</span>
-                </div>
+                {deliveryFee > 0 && (
+                  <div className="flex justify-between text-gray-500 text-sm font-medium">
+                    <span>Delivery Fee</span>
+                    <span className="font-semibold">₹{deliveryFee}</span>
+                  </div>
+                )}
+                {deliveryFee === 0 && (
+                  <div className="flex justify-between text-green-600 text-sm font-medium">
+                    <span>Free Delivery</span>
+                    <span className="font-semibold">-₹99</span>
+                  </div>
+                )}
 
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                   <span className="text-gray-800 font-bold">Total Amount</span>
                   <span className="text-amber-600 text-lg font-bold">
-                    ₹{product.price.toLocaleString()}
+                    ₹{total.toLocaleString()}
                   </span>
                 </div>
 
@@ -430,9 +439,7 @@ export default function Checkout({ productId }: { productId: string }) {
               >
                 {isProcessing
                   ? "Processing..."
-                  : `PLACE ORDER (Pay ₹999 with ${selectedMethod
-                      .replace("CARD", "Card")
-                      .replace("COD", "COD")})`}
+                  : `PLACE ORDER (Pay ₹${total.toLocaleString()} with ${selectedMethod})`}
               </button>
             </div>
           </div>

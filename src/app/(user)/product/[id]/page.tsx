@@ -8,7 +8,6 @@ import { GoShareAndroid } from "react-icons/go";
 import { useParams, useRouter } from "next/navigation";
 import { getProductById } from "@/services/productService";
 import ProductImageCarousel from "@/Components/ProductImageCarousel";
-import LoadingSpinner from "@/Components/LoadingSpinner";
 import { addToCart } from "@/services/cartService";
 import toast from "react-hot-toast";
 import {
@@ -109,7 +108,7 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const data = await getProductById(id as string);
-        console.log("data:", data);
+        // console.log("data:", data);
 
         setProduct(data);
       } catch (error) {

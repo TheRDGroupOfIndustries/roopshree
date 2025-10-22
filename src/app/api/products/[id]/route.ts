@@ -75,8 +75,8 @@ export async function PUT(
       );
 
     const userId = payload.userId.toString();
-    if (product.userId !== userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // if (product.userId !== userId)
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = (await req.json()) as updateProductBody;
     const {

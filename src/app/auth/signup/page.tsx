@@ -169,8 +169,8 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-white text-black flex flex-col justify-end relative">
-      <div className="w-screen absolute top-0 left-0 h-[400px]  ">
+    <div className="  bg-white text-black -translate-y-60 h-0">
+      <div className="relative w-screen h-[70vh] ">
         <Image
           src="/Vector 2.svg"
           alt="wave"
@@ -183,7 +183,7 @@ const SignUpPage: React.FC = () => {
       <h1 className="text-4xl font-bold pl-[5vw]">Sign Up</h1>
       <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
 
-      <div className="p-4 ">
+      <div className="">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-md   backdrop-blur-md p-8 rounded-2xl shadow-2xl space-y-6 transition-all duration-300"

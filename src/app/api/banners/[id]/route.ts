@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/jwt";
+import { v2 as cloudinary } from "cloudinary";
 
 // Helper to get user from request
 async function getUserFromRequest(req: NextRequest) {
@@ -11,6 +12,14 @@ async function getUserFromRequest(req: NextRequest) {
   const payload = await verifyJwt(token);
   return payload;
 }
+
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
 
 // DELETE Banner
 export async function DELETE(
@@ -28,6 +37,19 @@ export async function DELETE(
     if (!banner)
       return NextResponse.json({ message: "Banner not found" }, { status: 404 });
 
+    // 🔥 Delete image from Cloudinary if exists
+    if (banner.image) {
+      const publicId = extractPublicId(banner.image);
+      if (publicId) {
+        try {
+          await cloudinary.uploader.destroy(publicId, { invalidate: true });
+          console.log("🧩 Banner image deleted:", publicId);
+        } catch (cloudErr) {
+          console.error("Cloudinary delete error:", cloudErr);
+        }
+      }
+    }
+
     await prisma.banners.delete({ where: { id } });
     return NextResponse.json({ message: "Banner deleted" }, { status: 200 });
   } catch (error: any) {
@@ -36,6 +58,19 @@ export async function DELETE(
       { error: error.message || "Something went wrong" },
       { status: 500 }
     );
+  }
+}
+
+function extractPublicId(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const parts = urlObj.pathname.split("/");
+    const uploadIndex = parts.indexOf("upload");
+    if (uploadIndex === -1) return "";
+    const publicPath = parts.slice(uploadIndex + 2).join("/"); // skip version
+    return publicPath.replace(/\.[^/.]+$/, ""); // remove extension
+  } catch {
+    return "";
   }
 }
 

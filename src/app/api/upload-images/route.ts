@@ -1,22 +1,25 @@
-export const runtime = "nodejs";
+// export const runtime = "nodejs"; // Keep this if needed, but try removing it first
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyJwt } from "@/lib/jwt";
-import sharp from "sharp";
 
+// ... your config ...
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true, // ✅ Add this
 });
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const BANNER_DIMENSIONS = { width: 1280, height: 1280 };
-
 export async function POST(req: NextRequest) {
+  const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE || "5242880"); // 5MB default
+const ALLOWED_TYPES = process.env.ALLOWED_IMAGE_TYPES?.split(",") || ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const BANNER_DIMENSIONS = { 
+  width: parseInt(process.env.BANNER_WIDTH || "1280"), 
+  height: parseInt(process.env.BANNER_HEIGHT || "1280") 
+};
   try {
     const token = req.cookies.get("token")?.value;
     if (!token)
@@ -45,8 +48,6 @@ export async function POST(req: NextRequest) {
       uploadFolder = "RoopShree/ProductImages";
     } else if (type === "banner") {
       uploadFolder = "RoopShree/BannerImages";
-    } else {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
     const uploadedUrls: string[] = [];
@@ -68,28 +69,53 @@ export async function POST(req: NextRequest) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // --- Banner dimension validation ---
+      // ✅ NEW: Validate banner dimensions using Image API (browser-compatible)
       if (type === "banner") {
-        const metadata = await sharp(buffer).metadata(); // ✅ use imported sharp
+        // Let Cloudinary handle dimension validation using transformation
+        const base64 = buffer.toString("base64");
+        const dataUri = `data:${file.type};base64,${base64}`;
+
+        // First, check dimensions by uploading and checking metadata
+        const uploadResponse = await cloudinary.uploader.unsigned_upload(
+          dataUri,
+          "unsigned_upload",
+          {
+            folder: uploadFolder,
+            secure: true,
+          }
+        );
+
+        // Check dimensions from Cloudinary response
         if (
-          metadata.width !== BANNER_DIMENSIONS.width ||
-          metadata.height !== BANNER_DIMENSIONS.height
+          uploadResponse.width !== BANNER_DIMENSIONS.width ||
+          uploadResponse.height !== BANNER_DIMENSIONS.height
         ) {
+          // Delete the uploaded image since dimensions are wrong
+          await cloudinary.uploader.destroy(uploadResponse.public_id);
+          
           return NextResponse.json(
             {
-              error: `Banner image must be exactly ${BANNER_DIMENSIONS.width}x${BANNER_DIMENSIONS.height}px`,
+              error: `Banner image must be exactly ${BANNER_DIMENSIONS.width}x${BANNER_DIMENSIONS.height}px. Uploaded image is ${uploadResponse.width}x${uploadResponse.height}px`,
             },
             { status: 400 }
           );
         }
+
+        uploadedUrls.push(uploadResponse.secure_url);
+        continue; // Skip the normal upload below since we already uploaded
       }
 
+      // Normal upload for non-banner images
       const base64 = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64}`;
 
-      const uploadResponse = await cloudinary.uploader.unsigned_upload(dataUri,"unsigned_upload", {
-        folder: uploadFolder,
-      });
+      const uploadResponse = await cloudinary.uploader.unsigned_upload(
+        dataUri,
+        "unsigned_upload",
+        {
+          folder: uploadFolder,
+        }
+      );
       uploadedUrls.push(uploadResponse.secure_url);
     }
 
@@ -127,13 +153,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, urls: uploadedUrls });
   } catch (err) {
-    console.error("Upload Error:", err);
-    return NextResponse.json(
-      {
-        error: "Upload failed",
-        details: err instanceof Error ? err.message : "Unknown",
-      },
-      { status: 500 }
-    );
-  }
+  console.error("Upload Error:", err);
+  console.error("Error stack:", err instanceof Error ? err.stack : "No stack");
+  return NextResponse.json(
+    {
+      error: "Upload failed",
+      details: err instanceof Error ? err.message : "Unknown",
+      stack: err instanceof Error ? err.stack : undefined,
+    },
+    { status: 500 }
+  );
+}
 }

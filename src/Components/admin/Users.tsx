@@ -122,7 +122,7 @@ const Users = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    {["Name", "Email", "Role", "Status"].map((header) => (
+                    {["Name", "Email", "Role"].map((header) => (
                       <th
                         key={header}
                         scope="col"
@@ -147,17 +147,6 @@ const Users = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                         {user.role}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.status === "Active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {user.status}
-                        </span>
                       </td>
                     </tr>
                   ))}
@@ -190,28 +179,12 @@ const Users = () => {
                     <p className="text-gray-700 break-all">{user.email}</p>
                   </div>
 
-                  {/* Role & Status */}
-                  <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                        Role
-                      </p>
-                      <p className="text-gray-700 font-medium">{user.role}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                        Status
-                      </p>
-                      <span
-                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {user.status}
-                      </span>
-                    </div>
+                  {/* Role */}
+                  <div className="pt-2 border-t border-gray-100">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                      Role
+                    </p>
+                    <p className="text-gray-700 font-medium">{user.role}</p>
                   </div>
                 </div>
               </div>

@@ -12,25 +12,28 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onSelect,
 }) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-      {categories.map((cat) => (
-        <Link key={cat.id }
-         href={`/search?category=${encodeURIComponent(cat.name)}`}>
-         
-          <div
+    <div className="px-3 sm:px-6 lg:px-10">
+      <div className="flex gap-4 overflow-x-auto no-scrollbar py-3">
+        {categories.map((cat) => (
+          <Link
             key={cat.id}
-            onClick={() => onSelect?.(cat)}
-            className="flex flex-col items-center cursor-pointer"
+            href={`/search?category=${encodeURIComponent(cat.name)}`}
+            className="flex flex-col items-center cursor-pointer shrink-0 w-20 sm:w-24"
           >
-            <div className="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-lg font-semibold text-[var(--color-brand)]">
-              {cat.name?.charAt(0).toUpperCase()}
+            <div
+              onClick={() => onSelect?.(cat)}
+              className="flex flex-col items-center"
+            >
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-md flex items-center justify-center text-base sm:text-lg font-semibold text-[var(--color-brand)] transition-all hover:scale-105">
+                {cat.name?.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs font-medium mt-2 text-center truncate max-w-[5rem] text-gray-400">
+                {cat.name}
+              </span>
             </div>
-            <span className="text-xs font-medium mt-2 text-center truncate max-w-[6rem]">
-              {cat.name}
-            </span>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

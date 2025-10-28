@@ -104,11 +104,11 @@ export default function Checkout({ productId }: { productId: string }) {
 
   const [selectedMethod, setSelectedMethod] = useState("COD");
   const [isProcessing, setIsProcessing] = useState(false);
-const checkoutQtyKey = (id: string) => `checkoutQty_${id}`;
+  const checkoutQtyKey = (id: string) => `checkoutQty_${id}`;
   // Calculate subtotal
   const subtotal = product?.price * quantity;
   // Only show delivery fee if it applies
-  const deliveryFee = 99; // If free, otherwise 99
+  const deliveryFee = 0; // If free, otherwise 99
   const total = subtotal + deliveryFee;
 
   // Simulates the payment process
@@ -165,8 +165,7 @@ const checkoutQtyKey = (id: string) => `checkoutQty_${id}`;
     }
   };
 
-
-    const updateQuantity = (updater: (prev: number) => number) => {
+  const updateQuantity = (updater: (prev: number) => number) => {
     setQuantity((prev) => {
       const next = updater(prev);
       try {
@@ -176,9 +175,7 @@ const checkoutQtyKey = (id: string) => `checkoutQty_${id}`;
     });
   };
 
-
-
-useEffect(() => {
+  useEffect(() => {
     try {
       const saved = sessionStorage.getItem(checkoutQtyKey(productId));
       if (saved) {
@@ -200,6 +197,17 @@ useEffect(() => {
       console.log(error);
     }
   };
+  function handshare(): void {
+    if (navigator.share) {
+      navigator.share({
+        title: "Checkout my orders",
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Product link copied to clipboard!");
+    }
+  }
   const fetchAddresses = async () => {
     try {
       const res = await getAllAddresses();
@@ -217,7 +225,7 @@ useEffect(() => {
   }, []);
 
   return (
-    <div>
+    <div className="bg-white text-black">
       <header
         className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-10"
         style={{ boxShadow: "0 2px 4px -1px rgba(0,0,0,0.1)" }}
@@ -232,7 +240,9 @@ useEffect(() => {
         </button>
 
         {/* Title */}
-        <h2 className="font-semibold text-lg text-center flex-1">Checkout</h2>
+        <h2 className="font-semibold text-black text-lg text-center flex-1">
+          Checkout
+        </h2>
 
         {/* Right Icons */}
         <div className="flex items-center space-x-4 flex-shrink-0">
@@ -240,6 +250,7 @@ useEffect(() => {
           <button
             aria-label="Share"
             className="text-gray-600 text-xl hover:text-orange-500"
+            onClick={handshare}
           >
             <GoShareAndroid />
           </button>
@@ -316,7 +327,9 @@ useEffect(() => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button
-                             onClick={() => updateQuantity(q => Math.max(1, q - 1))}
+                            onClick={() =>
+                              updateQuantity((q) => Math.max(1, q - 1))
+                            }
                             className={`w-6 h-6 flex items-center justify-center border rounded-full transition-colors ${
                               quantity === 1
                                 ? "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-100"
@@ -330,7 +343,7 @@ useEffect(() => {
                             {quantity}
                           </span>
                           <button
-                             onClick={() => updateQuantity(q => q + 1)}
+                            onClick={() => updateQuantity((q) => q + 1)}
                             className="w-6 h-6 flex items-center justify-center border border-gray-300 hover:bg-gray-200 rounded-full transition-colors"
                             aria-label="Increase quantity"
                           >
@@ -428,7 +441,7 @@ useEffect(() => {
                 </div>
 
                 <p className="text-green-600 text-xs mt-1 font-medium">
-                  You saved ₹{99}!
+                  You saved ₹0!
                 </p>
               </div>
 

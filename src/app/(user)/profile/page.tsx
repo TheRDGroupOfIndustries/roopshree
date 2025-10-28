@@ -256,6 +256,18 @@ export default function ProfilePage() {
   const { logout, user } = useAuth();
   const router = useRouter();
 
+function handaleShare():void {
+if (navigator.share) {
+  navigator.share({
+    title: "Check out my profile",
+    url:window.location.href
+  })
+} else {
+       navigator.clipboard.writeText(window.location.href)
+  alert("Profile link copied to clipboard")
+  
+} 
+}
   if (!user) {
     return <LoadingSpinner message="Loading Profile..." />;
   }
@@ -360,7 +372,7 @@ export default function ProfilePage() {
           Profile
         </h2>
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <button className=" p-1">
+          <button className=" p-1" onClick={handaleShare}>
             <Share2 size={22} />
           </button>
           <Link href="/my-cart" className="relative   p-1">

@@ -357,12 +357,12 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          {/* <div className="p-3 bg-orange-200/50 border-2 border-orange-200  rounded-lg flex items-center gap-2 text-orange-800 ">
+          <div className="p-3 bg-orange-200/50 border-2 border-orange-200  rounded-lg flex items-center gap-2 text-orange-800 ">
             <RiTruckLine className="text-xl font-bold" />
             <p className="text-sm font-semibold">
               Free Delivery in 24 Hours across Varanasi
             </p>
-          </div> */}
+          </div>
         </div>
       </div>
 

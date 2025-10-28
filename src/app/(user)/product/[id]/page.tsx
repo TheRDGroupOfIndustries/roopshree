@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getProductById } from "@/services/productService";
 import ProductImageCarousel from "@/Components/ProductImageCarousel";
 import { addToCart } from "@/services/cartService";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   MdOutlineAddShoppingCart,
@@ -62,6 +63,7 @@ export default function ProductDetails() {
 
   const [isInCart, setIsInCart] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
+
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -70,14 +72,16 @@ export default function ProductDetails() {
 
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedShade, setSelectedShade] = useState<number | null>(null);
-  const [isDescriptionExpanded, setIsDescriptionExpanded] =
-    useState<boolean>(false);
-
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false);
+  // State for controlling the full-screen image view
+  const [isOpen, setIsOpen] = useState<boolean>(false); 
+  
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
   const handleShadeSelect = (shadeId: number) => setSelectedShade(shadeId);
   const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  
   // Calculate average rating
   const averageRating =
     reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length ||
@@ -138,56 +142,75 @@ export default function ProductDetails() {
     if (id) fetchReviews();
   }, [id]);
 
- const handleAddToCart = async () => {
-  if (!product) return;
+  const checkoutQtyKey = (productId: string) => `checkoutQty_${productId}`;
 
-  // Ensure color is selected if required
-  if (product.colour && product.colour.length > 0 && selectedShade === null) {
-    toast.error("Please select a color before adding to cart");
-    return;
-  }
+  const handleBuyNow = () => {
+    if (!product) return; // Add product check
+    sessionStorage.setItem(checkoutQtyKey(product.id), String(quantity));
+    router.push(`/checkout/${product.id}`);
+  };
 
-  // Guard against null when indexing
-  const selectedColor =
-    product.colour && selectedShade !== null
-      ? product.colour[selectedShade]
-      : null;
+  const handleAddToCart = async () => {
+    if (!product) return;
 
-  try {
-    await addToCart(product.id, quantity, selectedColor);
-    await refreshUser();
-    toast.success("Added to cart");
-  } catch (error: any) {
-    toast.error(error.response?.data?.error || "Failed to add to cart");
-  }
-};
-
-
-  const handleWishlistToggle = async () => {
-  if (!user || !product) return;
-
-  try {
-    setLoadingWishlist(true);
-
-    if (isInWishlist) {
-      setIsInWishlist(false);
-      await removeFromWishlist(product?.id);
-      toast.success("Removed from wishlist");
-    } else {
-      setIsInWishlist(true);
-      await addToWishlist(product?.id);
-      toast.success("Added to wishlist");
+    // Ensure color is selected if required
+    if (product.colour && product.colour.length > 0 && selectedShade === null) {
+      toast.error("Please select a color before adding to cart");
+      return;
     }
 
-    refreshUser();
-  } catch (err) {
-    console.error(err);
-    setIsInWishlist((prev) => !prev);
-    toast.error("Something went wrong");
-  } finally {
-    setLoadingWishlist(false);
+    // Guard against null when indexing
+    const selectedColor =
+      product.colour && selectedShade !== null
+        ? product.colour[selectedShade]
+        : null;
+
+    try {
+      await addToCart(product.id, quantity, selectedColor);
+      await refreshUser();
+      toast.success("Added to cart");
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to add to cart");
+    }
+  };
+
+  function handelShare(): void {
+    if (navigator.share) {
+      navigator.share({
+        title: "Check out this product!",
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Product link copied to clipboard!");
+    }
   }
-};
+
+  const handleWishlistToggle = async () => {
+    if (!user || !product) return;
+
+    try {
+      setLoadingWishlist(true);
+
+      if (isInWishlist) {
+        setIsInWishlist(false);
+        await removeFromWishlist(product?.id);
+        toast.success("Removed from wishlist");
+      } else {
+        setIsInWishlist(true);
+        await addToWishlist(product?.id);
+        toast.success("Added to wishlist");
+      }
+
+      refreshUser();
+    } catch (err) {
+      console.error(err);
+      setIsInWishlist((prev) => !prev);
+      toast.error("Something went wrong");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
 
   const handleSubmitReview = async () => {
     if (!newReview.comment || newReview.rating === 0) {
@@ -249,6 +272,7 @@ export default function ProductDetails() {
           {/* Share Button */}
           <button
             aria-label="Share"
+            onClick={handelShare}
             className="text-gray-600 text-xl hover:text-orange-500"
           >
             <GoShareAndroid />
@@ -256,12 +280,14 @@ export default function ProductDetails() {
 
           {/* Cart Button */}
           <div className="relative">
-            <button
-              aria-label="View cart"
-              className="text-gray-600 text-xl hover:text-[var(--color-brand-hover)]"
-            >
-              <FiShoppingCart />
-            </button>
+            <Link href={"/my-cart"}>
+              <button
+                aria-label="View cart"
+                className="text-gray-600 text-xl hover:text-[var(--color-brand-hover)]"
+              >
+                <FiShoppingCart />
+              </button>
+            </Link>
 
             {product.cartQuantity > 0 && (
               <span
@@ -276,31 +302,19 @@ export default function ProductDetails() {
         </div>
       </header>
 
-      {/* Product Image */}
-      {/* <div className="relative w-full h-56 bg-white mt-1">
-        <Image
-          src={product.imageUrl}
-          alt={product.title}
-          fill
-          className="object-cover"
-        />
-        <button
-          aria-label="Add to wishlist"
-          className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
-        >
-          <AiOutlineHeart className="text-xl text-gray-600" />
-        </button>
-      </div> */}
+      {/* Product Image - Pass isOpen and setIsOpen */}
       <ProductImageCarousel
         images={product.images}
         id={product.id}
         isWishlisted={isInWishlist}
         onWishlistToggle={handleWishlistToggle}
         loadingWishlist={loadingWishlist}
+        isOpen={isOpen} 
+        setIsOpen={setIsOpen} 
       />
 
       {/* Product Info */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         {product.category && (
           <span className="bg-orange-100 text-[var(--color-brand)] px-3 py-1 rounded text-xs font-medium">
             {product.category}
@@ -343,12 +357,12 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          <div className="p-3 bg-orange-200/50 border-2 border-orange-200  rounded-lg flex items-center gap-2 text-orange-800 ">
+          {/* <div className="p-3 bg-orange-200/50 border-2 border-orange-200  rounded-lg flex items-center gap-2 text-orange-800 ">
             <RiTruckLine className="text-xl font-bold" />
             <p className="text-sm font-semibold">
               Free Delivery in 24 Hours across Varanasi
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -374,7 +388,7 @@ export default function ProductDetails() {
       )}
 
       {/* Shades & Quantity */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         {/* <h2 className="text-lg font-semibold mb-2">Select Shade</h2>
         <div className="flex space-x-2 mb-4" role="radiogroup">
           {shades.map((shade) => (
@@ -412,7 +426,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Description */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         <h2 className="text-lg font-semibold mb-2">Description</h2>
         <p className="text-gray-700 text-sm line-clamp-3">
           {isDescriptionExpanded
@@ -429,7 +443,7 @@ export default function ProductDetails() {
       </div>
 
       {/* Key Ingredients */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6  my-1">
         <h2 className="text-lg font-semibold mb-3 text-gray-800">Inside Box</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-gray-700 text-sm mb-6">
           {(product.insideBox || []).map((item, idx) => (
@@ -452,7 +466,7 @@ export default function ProductDetails() {
             <IoStarSharp
               key={index}
               className={`text-2xl cursor-pointer transition-colors duration-200
-          ${index < newReview.rating ? "text-yellow-400" : "text-gray-200"}`}
+            ${index < newReview.rating ? "text-yellow-400" : "text-gray-200"}`}
               onClick={() => setNewReview({ ...newReview, rating: index + 1 })}
             />
           ))}
@@ -576,7 +590,7 @@ export default function ProductDetails() {
         {isInCart ? (
           <button
             onClick={() => router.push("/my-cart")}
-            className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium  min-w-0"
+            className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium  min-w-0"
           >
             <MdShoppingCartCheckout className="text-lg flex-shrink-0" />
             <span className="truncate">Go to Cart</span>
@@ -592,7 +606,7 @@ export default function ProductDetails() {
         )}
 
         <button
-          onClick={() => router.push(`/checkout/${product.id}`)}
+          onClick={handleBuyNow}
           className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
         >
           <LuShoppingBag className="text-lg flex-shrink-0" />

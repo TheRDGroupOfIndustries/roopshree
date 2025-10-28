@@ -98,13 +98,13 @@ const PaymentOption = ({
 export default function Checkout({ productId }: { productId: string }) {
   const router = useRouter();
   const [product, setProduct] = useState<any>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(useState<number>(1));
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
 
   const [selectedMethod, setSelectedMethod] = useState("COD");
   const [isProcessing, setIsProcessing] = useState(false);
-
+const checkoutQtyKey = (id: string) => `checkoutQty_${id}`;
   // Calculate subtotal
   const subtotal = product?.price * quantity;
   // Only show delivery fee if it applies
@@ -165,6 +165,31 @@ export default function Checkout({ productId }: { productId: string }) {
     }
   };
 
+
+    const updateQuantity = (updater: (prev: number) => number) => {
+    setQuantity((prev) => {
+      const next = updater(prev);
+      try {
+        sessionStorage.setItem(checkoutQtyKey(productId), String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+
+
+useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(checkoutQtyKey(productId));
+      if (saved) {
+        const n = Number(saved);
+        if (!Number.isNaN(n) && n > 0) setQuantity(n);
+      }
+    } catch (err) {
+      // ignore (sessionStorage might be unavailable in some envs)
+      console.warn("sessionStorage read failed", err);
+    }
+  }, [productId]);
   const fetchProduct = async () => {
     try {
       const res = await fetch(`/api/products/${productId}`);
@@ -291,11 +316,7 @@ export default function Checkout({ productId }: { productId: string }) {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() =>
-                              setQuantity((quantity) =>
-                                Math.max(1, quantity - 1)
-                              )
-                            }
+                             onClick={() => updateQuantity(q => Math.max(1, q - 1))}
                             className={`w-6 h-6 flex items-center justify-center border rounded-full transition-colors ${
                               quantity === 1
                                 ? "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-100"
@@ -309,9 +330,7 @@ export default function Checkout({ productId }: { productId: string }) {
                             {quantity}
                           </span>
                           <button
-                            onClick={() =>
-                              setQuantity((quantity) => quantity + 1)
-                            }
+                             onClick={() => updateQuantity(q => q + 1)}
                             className="w-6 h-6 flex items-center justify-center border border-gray-300 hover:bg-gray-200 rounded-full transition-colors"
                             aria-label="Increase quantity"
                           >

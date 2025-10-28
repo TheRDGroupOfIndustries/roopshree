@@ -48,8 +48,8 @@ const AddressForm: React.FC<AddressFormProps> = ({
     name: initialAddress?.name || "",
     phone: initialAddress?.phone || "",
     address: initialAddress?.address || "",
-    city: "Varanasi",
-    state: "Uttar Pradesh",
+    city: initialAddress?.city || "",
+    state: initialAddress?.city || "",
     country: "IN",
     zipCode: initialAddress?.zipCode || "",
   });
@@ -111,8 +111,8 @@ const AddressForm: React.FC<AddressFormProps> = ({
               label: "Street Address",
               placeholder: "e.g., 123, Green Park Road",
             },
-            // { id: "city", label: "City", placeholder: "e.g., Indore" },
-            // { id: "state", label: "State", placeholder: "e.g., Madhya Pradesh" },
+            { id: "city", label: "City", placeholder: "e.g., Indore" },
+            { id: "state", label: "State", placeholder: "e.g., Madhya Pradesh" },
             // { id: "country", label: "Country", placeholder: "e.g., India" },
             { id: "zipCode", label: "Pincode", placeholder: "e.g., 452001" },
           ].map((input) => (

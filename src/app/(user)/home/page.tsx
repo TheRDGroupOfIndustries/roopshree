@@ -2,6 +2,7 @@
 import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiHeart } from "react-icons/bi";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -85,6 +86,18 @@ export default function HomePage() {
     };
     fetchCategories();
   }, []);
+
+  const handlePrev = () => {
+    setCurrentBannerIndex((prev) =>
+      prev === 0 ? banners.length - 1 : prev - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentBannerIndex((prev) =>
+      prev === banners.length - 1 ? 0 : prev + 1
+    );
+  };
 
   // auto rotate offers every 5 seconds (only if multiple offers)
   useEffect(() => {
@@ -296,62 +309,78 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          {/* ---------- BANNER CAROUSEL ---------- */}
-          <div className="relative mx-4 mt-3 h-40 overflow-hidden rounded-xl">
+          {/* ---------- BANNER CAROUSEL ---------- */}(
+          <div className="relative mx-4 mt-3 h-40 overflow-hidden rounded-xl select-none">
             {bannerLoading ? (
               <div className="h-40 bg-gray-200 animate-pulse rounded-xl"></div>
             ) : banners.length > 0 ? (
               <>
-                {/* Carousel Container */}
+                {/* Arrows */}
+                <button
+                  onClick={handlePrev}
+                  className="absolute left-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
+                >
+                  <AiOutlineLeft size={20} />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
+                >
+                  <AiOutlineRight size={20} />
+                </button>
+
+                {/* Carousel */}
                 <div
                   className="flex w-full transition-transform duration-700 ease-in-out"
                   style={{
                     transform: `translateX(-${currentBannerIndex * 100}%)`,
                   }}
+                   
                 >
-                  {banners.map((banner, i) => (
-                    <div key={i} className="min-w-full flex-shrink-0">
-                      <div className="relative h-40">
-                        <Image
-                          width={500}
-                          height={300}
-                          src={banner.image}
-                          alt={banner.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-[var(--color-brand)]/20"></div>
-                        <div className="relative z-10 p-6 flex flex-col items-start h-full justify-center">
-                          <h2 className="text-xl font-bold mb-2 text-white drop-shadow">
-                            {banner.title}
-                          </h2>
-                          {banner.subtitle && (
-                            <p className="text-sm mb-4 text-white drop-shadow">
-                              {banner.subtitle}
-                            </p>
-                          )}
-                          <Link href="/search" className="inline-block">
-                            <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-gray-900 transition-colors shadow-md">
-                              Shop Now
-                            </button>
-                          </Link>
-                        </div>
+                  {banners.map((banner: any, i: number) => (
+                    <div
+                      key={i}
+                      className="min-w-full flex-shrink-0 relative h-40"
+                    >
+                      <Image
+                        width={500}
+                        height={300}
+                        src={banner.image}
+                        alt={banner.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-[var(--color-brand)]/30"></div>
+                      <div className="relative z-10 p-10 flex flex-col items-start h-full justify-center">
+                        <h2 className="text-xl font-bold mb-2 text-white drop-shadow">
+                          {banner.title}
+                        </h2>
+                        {banner.subtitle && (
+                          <p className="text-sm mb-4 text-white drop-shadow">
+                            {banner.subtitle}
+                          </p>
+                        )}
+                        <Link href="/search" className="inline-block">
+                          <button className="px-4 py-2 bg-white text-[var(--color-brand)] rounded-lg text-sm font-semibold hover:bg-gray-200 hover:text-gray-900 transition-colors shadow-md">
+                            Shop Now
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Indicator Dots */}
+                {/* Dots */}
                 {banners.length > 1 && (
-                  <div className="absolute bottom-3 left-0 right-0 flex justify-center space-x-2">
-                    {banners.map((_, i) => (
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center space-x-2 z-20">
+                    {banners.map((_: any, i: number) => (
                       <div
                         key={i}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        onClick={() => setCurrentBannerIndex(i)}
+                        className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${
                           currentBannerIndex === i
                             ? "bg-white scale-110"
                             : "bg-gray-300/70"
                         }`}
-                        onClick={() => setCurrentBannerIndex(i)}
                       ></div>
                     ))}
                   </div>
@@ -363,7 +392,6 @@ export default function HomePage() {
               </div>
             )}
           </div>
-
           {/* ---------- CATEGORIES ---------- */}
           <div className="mt-6 px-4">
             <h3 className="font-semibold text-lg text-gray-900 mb-3">
@@ -377,7 +405,6 @@ export default function HomePage() {
               )}
             </div>
           </div>
-
           {/* ---------- FLASH SALE ---------- */}
           {!offerExpired && offers.length > 0 && (
             <div className="relative mt-6 overflow-hidden">
@@ -445,7 +472,6 @@ export default function HomePage() {
               )}
             </div>
           )}
-
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">
@@ -485,7 +511,6 @@ export default function HomePage() {
               </button>
             </div>
           </div>
-
           {/* Trending Now */}
           <div className="mt-6 relative px-4">
             {/* Header */}

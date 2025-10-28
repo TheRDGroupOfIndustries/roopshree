@@ -181,7 +181,7 @@ const App = () => {
             View Order History
           </button>
           <button
-            className="w-full py-3 text-amber-600 font-semibold rounded-xl bg-white border border-amber-600 hover:bg-amber-50 transition-colors active:scale-[0.98]"
+            className="w-full mb-16 py-3 text-amber-600 font-semibold rounded-xl bg-white border border-amber-600 hover:bg-amber-50 transition-colors active:scale-[0.98]"
             onClick={() => router.push("/home")}
           >
             Continue Shopping

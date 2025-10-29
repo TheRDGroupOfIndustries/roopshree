@@ -225,30 +225,30 @@ const SignInPage: React.FC = () => {
   };
 
   // 🔹 Reset Password
-const handleResetPassword = async (e: FormEvent) => {
-  e.preventDefault();
-  if (!newPassword) return toast.error("Please enter your new password");
+  const handleResetPassword = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newPassword) return toast.error("Please enter your new password");
 
-  setLoading(true);
-  try {
-    const res = await fetch("/api/auth/update-password", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: loginData.email, newPassword }),
-    });
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/update-password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginData.email, newPassword }),
+      });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Failed to reset password");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to reset password");
 
-    toast.success("Password reset successfully!");
-    setStep("signin"); // Go back to sign-in step
-    setNewPassword("");
-  } catch (err: any) {
-    toast.error(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success("Password reset successfully!");
+      setStep("signin"); // Go back to sign-in step
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 🔹 Normal Login
   const handleLogin = async (e: FormEvent) => {
@@ -266,9 +266,9 @@ const handleResetPassword = async (e: FormEvent) => {
   };
 
   return (
-    <div className="h-screen flex bg-white text-black flex-col justify-end relative">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-white text-black px-6 py-10 relative">
       {/* Background Image */}
-      <div className="w-screen absolute top-0 left-0 h-[400px]">
+      {/* <div className="w-screen absolute top-0 left-0 h-[400px]">
         <Image
           src="/Vector 2.svg"
           alt="wave"
@@ -276,15 +276,16 @@ const handleResetPassword = async (e: FormEvent) => {
           className="object-cover object-bottom"
           priority
         />
+      </div> */}
+
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900">Sign In</h1>
+        <div className="border-b-4 border-[#F49F00] w-20 mx-auto mt-2"></div>
       </div>
-
-      <h1 className="text-4xl font-bold pl-[5vw]">Sign In</h1>
-      <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]" />
-
-      <div className="p-4">
+      <div className="p-4 w-full flex justify-center items-center">
         <form
           onSubmit={handleLogin}
-          className="w-full max-w-md p-8 rounded-xl shadow-lg space-y-6 mx-auto mt-8 bg-white relative"
+          className="w-full max-w-md bg-white backdrop-blur-md border border-gray-100 p-8 rounded-2xl shadow-xl space-y-6 transition-all duration-300"
         >
           {/* Email */}
           <div className="relative">
@@ -398,7 +399,10 @@ const handleResetPassword = async (e: FormEvent) => {
 
             {/* Step 2: OTP */}
             {step === "otp" && (
-              <form onSubmit={handleVerifyOtp} className="space-y-4 text-center">
+              <form
+                onSubmit={handleVerifyOtp}
+                className="space-y-4 text-center"
+              >
                 <h2 className="text-lg font-semibold text-gray-700">
                   Enter 6-digit OTP
                 </h2>
@@ -428,9 +432,7 @@ const handleResetPassword = async (e: FormEvent) => {
             {/* Step 3: Reset Password */}
             {step === "reset" && (
               <form onSubmit={handleResetPassword} className="space-y-4">
-                <label className="block font-semibold mb-2">
-                  New Password
-                </label>
+                <label className="block font-semibold mb-2">New Password</label>
                 <input
                   type="password"
                   placeholder="Enter new password"

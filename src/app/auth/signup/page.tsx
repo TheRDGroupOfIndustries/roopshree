@@ -169,209 +169,187 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex bg-white text-black flex-col justify-end relative">
-      <div className="w-screen absolute top-0 left-0 h-[400px]  ">
-        <Image
-          src="/Vector 2.svg"
-          alt="wave"
-          fill
-          className="object-cover object-bottom  "
-          priority
-        />
-      </div>
+<div className="min-h-screen flex flex-col justify-center items-center bg-white text-black px-6 py-10 relative">
+  {/* Heading */}
+  <div className="text-center mb-8">
+    <h1 className="text-4xl font-bold text-gray-900">Sign Up</h1>
+    <div className="border-b-4 border-[#F49F00] w-20 mx-auto mt-2"></div>
+  </div>
 
-      <h1 className="text-4xl font-bold pl-[5vw]">Sign Up</h1>
-      <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
-
-      <div className="">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-md   backdrop-blur-md p-8 rounded-2xl shadow-2xl space-y-6 transition-all duration-300"
-        >
-          {!otpSent ? (
-            <>
-              <div>
-                <label className="block   font-semibold mb-2">Full Name</label>
-                <div className="flex items-center     rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                  <User className="  w-5 h-5 mr-2" />
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block  font-semibold mb-2">Email</label>
-                <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                  <Mail className="text-gray-500 w-5 h-5 mr-2" />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="demo@gmail.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* <div>
-              <label className="block   font-semibold mb-2">
-                Phone
-              </label>
-              <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                <Phone className="text-gray-500 w-5 h-5 mr-2" />
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="+91 98765-43210"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full outline-none bg-transparent"
-                />
-              </div>
-            </div> */}
-
-              <div>
-                <label className="block   font-semibold mb-2">Password</label>
-                <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Create password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full outline-none bg-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-500 ml-2"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block   font-semibold mb-2">
-                  Confirm Password
-                </label>
-                <div className="flex items-center  rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="Confirm password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    className="w-full outline-none bg-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(!showConfirm)}
-                    className="text-gray-500 ml-2"
-                  >
-                    {showConfirm ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] transition-all disabled:opacity-60"
-              >
-                {loading ? "Sending OTP..." : "Send OTP"}
-              </button>
-            </>
-          ) : (
-            <div className="animate-fadeIn space-y-6 text-center">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Enter 6-digit OTP
-              </h2>
-              <p className="text-gray-500 text-sm">
-                We've sent a verification code to your email.
-              </p>
-
-              <div className="flex justify-center gap-2">
-                {[0, 1, 2, 3, 4, 5].map((index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    maxLength={1}
-                    value={formData.otp[index] || ""}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (!/^\d*$/.test(value)) return;
-                      const newOtp = formData.otp.split("");
-                      newOtp[index] = value;
-                      setFormData((prev) => ({
-                        ...prev,
-                        otp: newOtp.join(""),
-                      }));
-                      if (value && index < 5) {
-                        const nextInput = e.target
-                          .nextElementSibling as HTMLInputElement;
-                        nextInput?.focus();
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (
-                        e.key === "Backspace" &&
-                        !formData.otp[index] &&
-                        index > 0
-                      ) {
-                        const prevInput = e.currentTarget
-                          .previousElementSibling as HTMLInputElement;
-                        prevInput?.focus();
-                      }
-                    }}
-                    className="w-12 h-12 text-center text-xl font-bold  rounded-lg focus:border-[#F49F00] focus:outline-none transition bg-white"
-                  />
-                ))}
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] hover:scale-[1.02] transition-all"
-              >
-                {loading ? "Verifying..." : "Verify Email"}
-              </button>
-            </div>
-          )}
-          <div className="text-center mt-4">
-            <p className="text-gray-400 text-sm">
-              Already have an account?{" "}
-              <Link
-                href="/auth/signin"
-                className="text-[#F49F00] font-semibold hover:underline"
-              >
-                Login here
-              </Link>
-            </p>
+  {/* Form */}
+  <form
+    onSubmit={handleSubmit}
+    className="w-full max-w-md bg-white backdrop-blur-md border border-gray-100 p-8 rounded-2xl shadow-xl space-y-6 transition-all duration-300"
+  >
+    {!otpSent ? (
+      <>
+        {/* Full Name */}
+        <div>
+          <label className="block font-semibold mb-2 text-gray-700">
+            Full Name
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+            <User className="text-gray-500 w-5 h-5 mr-2" />
+            <input
+              type="text"
+              name="name"
+              placeholder="John Doe"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full outline-none bg-transparent"
+            />
           </div>
-        </form>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block font-semibold mb-2 text-gray-700">Email</label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+            <Mail className="text-gray-500 w-5 h-5 mr-2" />
+            <input
+              type="email"
+              name="email"
+              placeholder="demo@gmail.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full outline-none bg-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="block font-semibold mb-2 text-gray-700">
+            Password
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Create password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full outline-none bg-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-500 ml-2"
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="block font-semibold mb-2 text-gray-700">
+            Confirm Password
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:border-[#F49F00]">
+            <input
+              type={showConfirm ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              className="w-full outline-none bg-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="text-gray-500 ml-2"
+            >
+              {showConfirm ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Send OTP Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] active:scale-95 transition-all disabled:opacity-60"
+        >
+          {loading ? "Sending OTP..." : "Send OTP"}
+        </button>
+      </>
+    ) : (
+      /* OTP Screen */
+      <div className="animate-fadeIn space-y-6 text-center">
+        <h2 className="text-xl font-semibold text-gray-800">Enter 6-digit OTP</h2>
+        <p className="text-gray-500 text-sm">
+          We’ve sent a verification code to your email.
+        </p>
+
+        {/* OTP Inputs */}
+        <div className="flex justify-center gap-3">
+          {[0, 1, 2, 3, 4, 5].map((index) => (
+            <input
+              key={index}
+              type="text"
+              maxLength={1}
+              value={formData.otp[index] || ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!/^\d*$/.test(value)) return;
+                const newOtp = formData.otp.split("");
+                newOtp[index] = value;
+                setFormData((prev) => ({
+                  ...prev,
+                  otp: newOtp.join(""),
+                }));
+                if (value && index < 5) {
+                  const nextInput = e.target.nextElementSibling as HTMLInputElement;
+                  nextInput?.focus();
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace" && !formData.otp[index] && index > 0) {
+                  const prevInput = e.currentTarget.previousElementSibling as HTMLInputElement;
+                  prevInput?.focus();
+                }
+              }}
+              className="w-12 h-12 text-center text-xl font-semibold text-gray-800 border border-gray-300 rounded-lg focus:border-[#F49F00] focus:outline-none transition"
+            />
+          ))}
+        </div>
+
+        {/* Verify Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] active:scale-95 transition-all"
+        >
+          {loading ? "Verifying..." : "Verify Email"}
+        </button>
       </div>
+    )}
+
+    {/* Footer */}
+    <div className="text-center pt-4">
+      <p className="text-gray-600 text-sm">
+        Already have an account?{" "}
+        <Link href="/auth/signin" className="text-[#F49F00] font-semibold hover:underline">
+          Login here
+        </Link>
+      </p>
     </div>
+  </form>
+</div>
+
   );
 };
 

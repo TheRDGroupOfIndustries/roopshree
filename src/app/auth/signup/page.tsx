@@ -111,6 +111,7 @@ const SignUpPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+      
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

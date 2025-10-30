@@ -25,9 +25,9 @@ const WelcomePage: React.FC = () => {
 
       <div className="pl-[5vw] pb-16">
         <p className="  text-base sm:text-lg md:text-xl text-black leading-relaxed max-w-2xl">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nihil quis
-          recusandae enim accusantium sed atque labore rerum pariatur soluta
-          quia!
+          Welcome to Roop Shree Pro — where beauty meets elegance. Discover
+          premium makeup products crafted to enhance your natural glow. Step
+          into a world of luxury, confidence, and timeless beauty.
         </p>
       </div>
 

@@ -95,7 +95,7 @@ export default function HomePage() {
   };
   const handlePrevoffer = () => {
     setCurrentOfferIndex((prev) =>
-      prev === 0 ? banners.length - 1 : prev - 1
+      prev === 0 ? offers.length - 1 : prev - 1
     );
   };
 
@@ -106,7 +106,7 @@ export default function HomePage() {
   };
   const handleNextOffer = () => {
     setCurrentOfferIndex((prev) =>
-      prev === banners.length - 1 ? 0 : prev + 1
+      prev === offers.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -291,7 +291,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ---------- SEARCH RESULTS ---------- */}
+      {/* ---------- SEARCH RESULTS ---------- */} 
       {isSearching ? (
         <div className="px-4 mt-4">
           <h3 className="font-semibold text-lg text-gray-900 mb-3">
@@ -320,7 +320,7 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          {/* ---------- BANNER CAROUSEL ---------- */}(
+          {/* ---------- BANNER CAROUSEL ---------- */}
           <div className="relative mx-4 mt-3 h-40 overflow-hidden rounded-xl select-none">
             {bannerLoading ? (
               <div className="h-40 bg-gray-200 animate-pulse rounded-xl"></div>
@@ -329,13 +329,13 @@ export default function HomePage() {
                 {/* Arrows */}
                 <button
                   onClick={handlePrev}
-                  className="absolute left-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md transition-all"
                 >
                   <AiOutlineLeft size={20} />
                 </button>
                 <button
                   onClick={handleNext}
-                  className="absolute right-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md transition-all"
                 >
                   <AiOutlineRight size={20} />
                 </button>
@@ -346,7 +346,6 @@ export default function HomePage() {
                   style={{
                     transform: `translateX(-${currentBannerIndex * 100}%)`,
                   }}
-                   
                 >
                   {banners.map((banner: any, i: number) => (
                     <div
@@ -418,88 +417,91 @@ export default function HomePage() {
           </div>
           {/* ---------- FLASH SALE ---------- */}
           {!offerExpired && offers.length > 0 && (
-  <div className="relative mt-6 overflow-hidden">
-    {/* Carousel Container */}
-    <div
-      className="flex w-full transition-transform duration-700 ease-in-out"
-      style={{
-        transform: `translateX(-${currentOfferIndex * 100}%)`,
-      }}
-    >
-      {offers.map((offer, i) => (
-        <div key={i} className="min-w-full flex-shrink-0 px-4">
-          <div className="bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] p-4 rounded-xl flex justify-between items-center shadow-lg">
-            {offerLoading ? (
-              <div className="w-full flex justify-between animate-pulse">
-                <div className="space-y-2">
-                  <div className="h-4 bg-white/40 w-24 rounded"></div>
-                  <div className="h-3 bg-white/30 w-32 rounded"></div>
+            <div className="relative mt-6 px-4">
+              {/* Carousel Container */}
+              <div className="relative overflow-hidden rounded-xl">
+                <div
+                  className="flex w-full transition-transform duration-700 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentOfferIndex * 100}%)`,
+                  }}
+                >
+                  {offers.map((offer, i) => (
+                    <div key={i} className="min-w-full flex-shrink-0">
+                      <div className="bg-gradient-to-r pl-11 pr-11 from-[var(--color-brand-hover)] to-[var(--color-brand)] p-4 px-6 rounded-xl flex justify-between items-center shadow-lg">
+                        {offerLoading ? (
+                          <div className="w-full flex justify-between animate-pulse">
+                            <div className="space-y-2">
+                              <div className="h-4 bg-white/40 w-24 rounded"></div>
+                              <div className="h-3 bg-white/30 w-32 rounded"></div>
+                            </div>
+                            <div className="h-5 bg-white/40 w-20 rounded"></div>
+                          </div>
+                        ) : (
+                          <>
+                            <div>
+                              <h4 className="font-semibold text-base text-white sm:text-lg">
+                                {offer.title}
+                              </h4>
+                              {offer.subtitle && (
+                                <p className="text-sm w-[11rem] opacity-90 text-white">
+                                  {offer.subtitle}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col text-end">
+                              <span className="text-xs sm:text-sm opacity-90 text-white">
+                                Ends in
+                              </span>
+                              <span className="font-bold text-base sm:text-lg whitespace-nowrap text-white">
+                                {formatTime(timeLeft)}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="h-5 bg-white/40 w-20 rounded"></div>
+
+                {/* Arrows - Only show if multiple offers */}
+                {offers.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePrevoffer}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md transition-all"
+                    >
+                      <AiOutlineLeft size={20} />
+                    </button>
+                    <button
+                      onClick={handleNextOffer}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md transition-all"
+                    >
+                      <AiOutlineRight size={20} />
+                    </button>
+                  </>
+                )}
               </div>
-            ) : (
-              <>
-                <div>
-                  <h4 className="font-semibold text-base text-white sm:text-lg">
-                    {offer.title}
-                  </h4>
-                  {offer.subtitle && (
-                    <p className="text-sm w-[11rem] opacity-90 text-white">
-                      {offer.subtitle}
-                    </p>
-                  )}
+
+              {/* Dots - Only show if multiple offers */}
+              {offers.length > 1 && (
+                <div className="flex justify-center mt-3 space-x-2">
+                  {offers.map((_, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setCurrentOfferIndex(i)}
+                      className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${
+                        currentOfferIndex === i
+                          ? "bg-[var(--color-brand)] scale-110"
+                          : "bg-gray-300"
+                      }`}
+                    ></div>
+                  ))}
                 </div>
-
-                <div className="flex flex-col text-end">
-                  <span className="text-xs sm:text-sm opacity-90 text-white">
-                    Ends in
-                  </span>
-                  <span className="font-bold text-base sm:text-lg whitespace-nowrap text-white">
-                    {formatTime(timeLeft)}
-                  </span>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {/* Previous Button */}
-    <button
-      onClick={handlePrevoffer}
-      className="absolute left-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
-    >
-      <AiOutlineLeft size={20} />
-    </button>
-
-    {/* Next Button */}
-    <button
-      onClick={handleNextOffer}
-      className="absolute right-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
-    >
-      <AiOutlineRight size={20} />
-    </button>
-
-    {/* Indicator Dots */}
-    {offers.length > 1 && (
-      <div className="flex justify-center mt-3 space-x-2">
-        {offers.map((_, i) => (
-          <div
-            key={i}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              currentOfferIndex === i
-                ? "bg-[var(--color-brand)] scale-110"
-                : "bg-gray-300"
-            }`}
-            onClick={() => setCurrentOfferIndex(i)}
-          ></div>
-        ))}
-      </div>
-    )}
-  </div>
-)}
-
+              )}
+            </div>
+          )}
           {/* ---------- FEATURED PRODUCTS ---------- */}
           <div className="mt-6 px-4">
             <div className="flex justify-between items-center mb-4">

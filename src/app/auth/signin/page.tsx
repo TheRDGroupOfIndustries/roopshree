@@ -197,6 +197,31 @@ const SignInPage: React.FC = () => {
     }
   };
 
+  // sendotp forgot
+const handleSendOtpforgot = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!loginData.email) return toast.error("Enter your email first");
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginData.email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send OTP");
+
+      toast.success(data.success || "OTP sent to your email!");
+      setStep("otp");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 🔹 Verify OTP
   const handleVerifyOtp = async (e: FormEvent) => {
     e.preventDefault();
@@ -376,7 +401,7 @@ const SignInPage: React.FC = () => {
 
             {/* Step 1: Email */}
             {step === "email" && (
-              <form onSubmit={handleSendOtp} className="space-y-4">
+              <form onSubmit={handleSendOtpforgot} className="space-y-4">
                 <label className="block font-semibold mb-2">Email</label>
                 <input
                   type="email"

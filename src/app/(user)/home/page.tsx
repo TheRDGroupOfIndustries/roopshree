@@ -41,6 +41,7 @@ export default function HomePage() {
   const [banners, setBanners] = useState<any[]>([]);
   const [bannerLoading, setBannerLoading] = useState(true);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  // const [currentOfferrIndex, setCurrentOfferrIndex] = useState(0);
 
   // ------------------- OFFERS ------------------- //
   const [offers, setOffers] = useState<any[]>([]);
@@ -92,9 +93,19 @@ export default function HomePage() {
       prev === 0 ? banners.length - 1 : prev - 1
     );
   };
+  const handlePrevoffer = () => {
+    setCurrentOfferIndex((prev) =>
+      prev === 0 ? banners.length - 1 : prev - 1
+    );
+  };
 
   const handleNext = () => {
     setCurrentBannerIndex((prev) =>
+      prev === banners.length - 1 ? 0 : prev + 1
+    );
+  };
+  const handleNextOffer = () => {
+    setCurrentOfferIndex((prev) =>
       prev === banners.length - 1 ? 0 : prev + 1
     );
   };
@@ -456,7 +467,7 @@ export default function HomePage() {
 
     {/* Previous Button */}
     <button
-      onClick={handlePrev}
+      onClick={handlePrevoffer}
       className="absolute left-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
     >
       <AiOutlineLeft size={20} />
@@ -464,7 +475,7 @@ export default function HomePage() {
 
     {/* Next Button */}
     <button
-      onClick={handleNext}
+      onClick={handleNextOffer}
       className="absolute right-0.5 top-1/2 -translate-y-1/2 z-20 bg-white/60 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md"
     >
       <AiOutlineRight size={20} />

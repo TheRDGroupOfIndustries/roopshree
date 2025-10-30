@@ -65,3 +65,25 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params; // ✅ await here
+    const requestCookies = cookies();
+    const token = (await requestCookies).get("token")?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const payload = verifyJwt(token);
+    if (!payload || !payload.role.includes("ADMIN")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await prisma.offer.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Offer deleted successfully" });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}

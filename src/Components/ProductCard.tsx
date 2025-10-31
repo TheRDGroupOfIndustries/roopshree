@@ -224,6 +224,10 @@ export default function ProductCard({
                 <BiPlus className="w-4 h-4" />
               )}
             </button>
+             {/* <button
+              className="p-2 rounded-lg shadow-md transition-colors   flex items-center justify-center h-8 w-8"  >
+               <BiPlus className="w-4 h-4" />
+            </button> */}
           </div>
         </div>
       </div>

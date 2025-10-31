@@ -193,7 +193,9 @@ export default function TrendingCard({
 
         {/* Product Info */}
         <div className="p-2">
-          <h4 className="font-medium text-sm text-black mb-1 truncate">{name}</h4>
+          <h4 className="font-medium text-sm text-black mb-1 truncate">
+            {name}
+          </h4>
 
           <div className="flex items-center justify-between">
             <div className="flex gap-1 items-baseline">
@@ -225,6 +227,10 @@ export default function TrendingCard({
                 <BiPlus className="w-4 h-4" />
               )}
             </button>
+            {/* <button
+              className="p-2 rounded-lg shadow-md transition-colors   flex items-center justify-center h-8 w-8"  >
+               <BiPlus className="w-4 h-4" />
+            </button>           */}
           </div>
         </div>
       </div>

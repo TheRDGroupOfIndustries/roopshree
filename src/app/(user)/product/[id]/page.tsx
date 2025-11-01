@@ -70,14 +70,15 @@ export default function ProductDetails() {
   const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
 
+  // const [quantity, setQuantity] = useState<number>(1);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedShade, setSelectedShade] = useState<number | null>(null);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false);
   // State for controlling the full-screen image view
   const [isOpen, setIsOpen] = useState<boolean>(false); 
   
-  const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+  // const handleIncrement = () => setQuantity((prev) => prev + 1);
+  // const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
   const handleShadeSelect = (shadeId: number) => setSelectedShade(shadeId);
   const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
   const [showAllReviews, setShowAllReviews] = useState(false);
@@ -150,6 +151,16 @@ export default function ProductDetails() {
     router.push(`/checkout/${product.id}`);
   };
 
+ 
+const updateQuantity = (updateFn: (prev: number) => number) => {
+  if (!product) return;
+
+  setQuantity((prev) => {
+    const next = updateFn(prev);
+    sessionStorage.setItem(checkoutQtyKey(product.id), String(next));
+    return next;
+  });
+};
   const handleAddToCart = async () => {
     if (!product) return;
 
@@ -410,15 +421,14 @@ export default function ProductDetails() {
         <div className="flex items-center space-x-6 mb-4">
           <button
             className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
-            onClick={handleDecrement}
-            disabled={quantity === 1}
-          >
-            <AiOutlineMinus className="text-sm" />
+onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
+>
+             <AiOutlineMinus className="text-sm" />
           </button>
           <span className="text-lg">{quantity}</span>
           <button
             className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
-            onClick={handleIncrement}
+            onClick={() => updateQuantity((q) => q + 1)}
           >
             <AiOutlinePlus className="text-sm" />
           </button>

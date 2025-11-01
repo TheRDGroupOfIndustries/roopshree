@@ -75,6 +75,7 @@ import { addToCart, removeCartItem } from "@/services/cartService";
 import toast from "react-hot-toast";
 import SmallLoadingSpinner from "./SmallLoadingSpinner";
 import Link from "next/link";
+import { BsCartFill, BsCartCheckFill } from "react-icons/bs";
 
 interface TrendingCardProps {
   id: string;
@@ -93,9 +94,14 @@ export default function TrendingCard({
 }: TrendingCardProps) {
   const { user, refreshUser } = useAuth();
   const [isInWishlist, setIsInWishlist] = useState(false);
-  const [isInCart, setIsInCart] = useState(false);
+  // const [isInCart, setIsInCart] = useState(false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
-  const [loadingCart, setLoadingCart] = useState(false);
+  // const [loadingCart, setLoadingCart] = useState(false);
+
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrease = () => setQuantity((prev) => prev + 1);
+  const handleDecrease = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   // Sync state with user once
   useEffect(() => {
@@ -103,11 +109,11 @@ export default function TrendingCard({
     const wishlistExists = user.wishlist?.some(
       (item: any) => String(item.productId) === String(id)
     );
-    const cartExists = user.cart?.items?.some(
-      (item: any) => String(item.productId) === String(id)
-    );
+    // const cartExists = user.cart?.items?.some(
+    //   (item: any) => String(item.productId) === String(id)
+    // );
     setIsInWishlist(!!wishlistExists);
-    setIsInCart(!!cartExists);
+    // setIsInCart(!!cartExists);
   }, [user, id]);
 
   // Toggle wishlist
@@ -117,17 +123,19 @@ export default function TrendingCard({
     try {
       setLoadingWishlist(true);
       if (isInWishlist) {
-        await removeFromWishlist(id);
         setIsInWishlist(false);
+        await removeFromWishlist(id);
         toast.success("Removed from wishlist");
       } else {
-        await addToWishlist(id);
         setIsInWishlist(true);
+        await addToWishlist(id);
         toast.success("Added to wishlist");
       }
       refreshUser(); // update user state
     } catch (err) {
       console.error(err);
+      // rollback UI state if API fails
+      setIsInWishlist((prev) => !prev);
       toast.error("Something went wrong");
     } finally {
       setLoadingWishlist(false);
@@ -135,41 +143,51 @@ export default function TrendingCard({
   };
 
   // Toggle cart
-  const handleCartToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!user) return toast.error("Please login to manage cart");
-    try {
-      setLoadingCart(true);
-      if (isInCart) {
-        const cartItem = user.cart?.items?.find(
-          (item: any) => String(item.productId) === String(id)
-        );
-        if (!cartItem) return toast.error("Product not found in cart");
-        await removeCartItem(cartItem.id);
-        setIsInCart(false);
-        toast.success("Removed from cart");
-      } else {
-        await addToCart(id, 1);
-        setIsInCart(true);
-        toast.success("Added to cart");
-      }
-      refreshUser();
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    } finally {
-      setLoadingCart(false);
-    }
-  };
+  // const handleCartToggle = async (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   if (!user) return toast.error("Please login to manage cart");
+  //   try {
+  //     setLoadingCart(true);
+  //     if (isInCart) {
+  //       const cartItem = user.cart?.items?.find(
+  //         (item: any) => String(item.productId) === String(id)
+  //       );
+  //       if (!cartItem) return toast.error("Product not found in cart");
+        
+  //       // Instant UI feedback, rollback if API fails
+  //       setIsInCart(false); 
+  //       // await removeCartItem(cartItem.id); 
+        
+  //       toast.success("Removed from cart");
+  //     } else {
+  //       // await addToCart(id, quantity); // Use quantity state here
+  //       setIsInCart(true);
+  //       toast.success(`Added ${quantity} item(s) to cart`);
+  //     }
+  //     refreshUser();
+  //   } catch (err) {
+  //     console.error(err);
+  //     // rollback UI state if API fails
+  //     setIsInCart((prev) => !prev);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setLoadingCart(false);
+  //   }
+  // };
 
   return (
     <Link href={`/product/${id}`}>
-      <div className="flex-shrink-0 w-[140px]   rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+      {/* ⚠️ NOTE: Card width is fixed at w-[140px], so the design must be compact. */}
+      <div className="flex-shrink-0 w-[140px] rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
         {/* Image + Wishlist */}
         <div className="relative w-full h-28">
           <button
-            className={`absolute top-2 right-2 rounded-full p-1 shadow-sm z-10 transition
-            ${isInWishlist ? "bg-red-500 " : " hover:bg-gray-100"}`}
+            className={`absolute top-2 right-2 rounded-full p-1 shadow-sm z-10 transition flex items-center justify-center
+            ${
+              isInWishlist
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-white text-gray-600 hover:bg-gray-100"
+            }`}
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
           >
@@ -185,7 +203,7 @@ export default function TrendingCard({
             alt={name}
             fill
             sizes="140px"
-            className="object-cover"
+            className="object-cover p-2" // Added p-2 for padding within the small container
             priority
             unoptimized
           />
@@ -197,40 +215,74 @@ export default function TrendingCard({
             {name}
           </h4>
 
-          <div className="flex items-center justify-between">
+          {/* Price and Controls Row (FIXED ALIGNMENT) */}
+          <div className="flex flex-col gap-1 mt-1">
             <div className="flex gap-1 items-baseline">
               <span className="text-base font-bold text-[var(--color-brand)]">
                 ₹{price}
               </span>
               {oldPrice && oldPrice > price && (
-                <span className="text-xs  line-through font-medium">
+                <span className="text-xs line-through font-medium text-gray-500">
                   ₹{oldPrice}
                 </span>
               )}
             </div>
 
-            <button
-              className={`rounded-lg p-1.5 shadow-sm transition-colors flex items-center justify-center
-              ${
-                isInCart
-                  ? "bg-red-500 text-white hover:bg-red-600"
-                  : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white"
-              }`}
-              onClick={handleCartToggle}
-              disabled={loadingCart}
+            {/* Quantity and Cart Buttons - Aligned to the right/bottom */}
+            <div
+              className="flex items-center justify-between gap-1 w-full" // **ADDED w-full for best use of space**
+              onClick={(e) => e.preventDefault()}
             >
-              {loadingCart ? (
-                <SmallLoadingSpinner />
-              ) : isInCart ? (
-                <BiMinus className="w-4 h-4" />
-              ) : (
-                <BiPlus className="w-4 h-4" />
-              )}
-            </button>
-            {/* <button
-              className="p-2 rounded-lg shadow-md transition-colors   flex items-center justify-center h-8 w-8"  >
-               <BiPlus className="w-4 h-4" />
-            </button>           */}
+              {/* Quantity controls (Made more compact) */}
+              <div className="flex items-center gap-0.5"> {/* **Reduced gap to 0.5** */}
+                <button
+                  className="h-6 w-6 rounded-md shadow-sm flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition" // **SIZE REDUCED (h-6 w-6) for compactness**
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDecrease();
+                  }}
+                  aria-label="Decrease quantity"
+                >
+                  <BiMinus className="text-xs" /> {/* **ICON SIZE REDUCED** */}
+                </button>
+
+                <span className="font-semibold text-xs w-4 text-center"> {/* **TEXT SIZE REDUCED** */}
+                  {quantity}
+                </span>
+
+                <button
+                  className="h-6 w-6 rounded-md shadow-sm flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition" // **SIZE REDUCED (h-6 w-6) for compactness**
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleIncrease();
+                  }}
+                  aria-label="Increase quantity"
+                >
+                  <BiPlus className="text-xs" /> {/* **ICON SIZE REDUCED** */}
+                </button>
+              </div>
+
+              {/* Add/Remove to Cart Button (UNCOMMENTED & STYLED) */}
+              {/* <button
+                className={`rounded-lg p-1.5 shadow-sm transition-colors flex items-center justify-center ml-auto h-8 w-8 flex-shrink-0
+                ${
+                  isInCart
+                    ? "bg-red-500 text-white hover:bg-red-600"
+                    : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white"
+                }`}
+                onClick={handleCartToggle}
+                disabled={loadingCart}
+                aria-label={isInCart ? "Remove from cart" : "Add to cart"}
+              >
+                {loadingCart ? (
+                  <SmallLoadingSpinner />
+                ) : isInCart ? (
+                  <BsCartCheckFill className="w-4 h-4" />
+                ) : (
+                  <BsCartFill className="w-4 h-4" />
+                )}
+              </button> */}
+            </div>
           </div>
         </div>
       </div>

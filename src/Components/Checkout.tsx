@@ -325,6 +325,7 @@ export default function Checkout({ productId }: { productId: string }) {
 
                       {/* Quantity & Wishlist */}
                       <div className="flex items-center justify-between">
+                        
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() =>

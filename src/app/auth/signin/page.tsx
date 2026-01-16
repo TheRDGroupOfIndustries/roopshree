@@ -1,149 +1,20 @@
-// "use client";
-
-// import React, { useState, ChangeEvent, FormEvent } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// import { Eye, EyeOff } from "lucide-react"; // ✅ added missing imports
-
-// const SignInPage: React.FC = () => {
-//   const [showPassword, setShowPassword] = useState<boolean>(false);
-
-//   // State for login form
-//   const [loginData, setLoginData] = useState({
-//     email: "",
-//     password: "",
-//   });
-
-//   // Handle input change
-//   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = e.target;
-//     setLoginData((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   // Handle form submit
-//   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-
-//     console.log("Login Data:", loginData);
-//     alert(`Logged in with email: ${loginData.email}`);
-
-//     // Reset form (optional)
-//     setLoginData({ email: "", password: "" });
-//   };
-
-//   return (
-//     <div className="-translate-y-40 absolute">
-//       {/* SVG Wave */}
-//       <div className="relative w-screen h-[70vh]">
-//         <Image
-//           src="/Vector 2.svg"
-//           alt="wave"
-//           fill
-//           className="object-cover absolute h-full w-full"
-//           priority
-//         />
-//       </div>
-
-//       <h1 className="text-4xl text-black font-bold pl-[5vw]">Sign In</h1>
-//       <div className="border-b-2 border-[#F49F00] w-24 ml-[5vw]"></div>
-
-//       <form
-//         onSubmit={handleSubmit}
-//         className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg space-y-6 mx-auto mt-8"
-//       >
-//         {/* Email */}
-//         <div className="relative">
-//           <label
-//             htmlFor="email"
-//             className="block text-gray-700 font-semibold mb-1"
-//           >
-//             Email
-//           </label>
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email Address"
-//             value={loginData.email}
-//             onChange={handleChange}
-//             className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
-//             required
-//           />
-//         </div>
-
-//         {/* Password */}
-//         <div className="relative">
-//           <label className="block text-gray-700 font-semibold mb-1">Password</label>
-//           <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#F49F00] transition">
-//             <input
-//               type={showPassword ? "text" : "password"}
-//               name="password"
-//               placeholder="Enter password"
-//               value={loginData.password}
-//               onChange={handleChange}
-//               className="w-full py-2 outline-none placeholder-gray-400"
-//             />
-//             <button
-//               type="button"
-//               onClick={() => setShowPassword(!showPassword)}
-//               className="text-gray-600 ml-2"
-//             >
-//               {showPassword ? <EyeOff /> : <Eye />}
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Remember Me / Forgot Password */}
-//         <div className="flex items-center justify-between mt-2">
-//           <label className="flex items-center gap-2 text-gray-700">
-//             <input type="checkbox" className="w-4 h-4 accent-[#F49F00]" />
-//             Remember me
-//           </label>
-//           <Link
-//             href="/ForgotPassword"
-//             className="text-[#F49F00] font-semibold hover:underline text-sm"
-//           >
-//             Forgot password?
-//           </Link>
-//         </div>
-
-//         {/* Submit Button */}
-//         <button
-//           type="submit"
-//           className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300"
-//         >
-//           Login
-//         </button>
-
-//         {/* Signup Link */}
-//         <div className="mt-6 text-center">
-//           <p className="text-gray-600 text-sm">
-//             Don&apos;t have an account?{" "}
-//             <Link
-//               href="/auth/signup"
-//               className="text-[#F49F00] font-semibold hover:underline transition-colors"
-//             >
-//               Sign up here
-//             </Link>
-//           </p>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default SignInPage;
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent, useRef } from "react";
+import { Mail, Lock, Eye, EyeOff, X } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import { Eye, EyeOff, X } from "lucide-react";
+import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
+const fadeScale = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+};
 
 const SignInPage: React.FC = () => {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -156,49 +27,34 @@ const SignInPage: React.FC = () => {
   const otpRefs = useRef<HTMLInputElement[]>([]);
   const [newPassword, setNewPassword] = useState("");
 
-  // 🔹 Input Handlers
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 OTP Input Change
   const handleOtpChange = (index: number, value: string) => {
-    if (/[^0-9]/.test(value)) return; // only numbers
+    if (/[^0-9]/.test(value)) return;
     const newOtp = [...otpValues];
     newOtp[index] = value;
     setOtpValues(newOtp);
-
     if (value && index < 5) otpRefs.current[index + 1]?.focus();
   };
 
-  // 🔹 Send OTP
-  const handleSendOtp = async (e: FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    if (!loginData.email) return toast.error("Enter your email first");
-
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/send-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginData.email }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send OTP");
-
-      toast.success(data.success || "OTP sent to your email!");
-      setStep("otp");
-    } catch (err: any) {
-      toast.error(err.message);
+      const loggedInUser = await login(loginData.email, loginData.password);
+      toast.success("Logged in successfully!");
+      router.push(loggedInUser?.role === "ADMIN" ? "/manage" : "/home");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || error?.message || "Login failed!");
     } finally {
       setLoading(false);
     }
   };
 
-  // sendotp forgot
-const handleSendOtpforgot = async (e: FormEvent) => {
+  const handleSendOtpforgot = async (e: FormEvent) => {
     e.preventDefault();
     if (!loginData.email) return toast.error("Enter your email first");
 
@@ -209,7 +65,6 @@ const handleSendOtpforgot = async (e: FormEvent) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginData.email }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send OTP");
 
@@ -222,11 +77,9 @@ const handleSendOtpforgot = async (e: FormEvent) => {
     }
   };
 
-  // 🔹 Verify OTP
   const handleVerifyOtp = async (e: FormEvent) => {
     e.preventDefault();
     const otp = otpValues.join("");
-
     if (otp.length !== 6) return toast.error("Enter 6-digit OTP");
 
     setLoading(true);
@@ -236,7 +89,6 @@ const handleSendOtpforgot = async (e: FormEvent) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginData.email, otp }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Invalid OTP");
 
@@ -249,10 +101,9 @@ const handleSendOtpforgot = async (e: FormEvent) => {
     }
   };
 
-  // 🔹 Reset Password
   const handleResetPassword = async (e: FormEvent) => {
     e.preventDefault();
-    if (!newPassword) return toast.error("Please enter your new password");
+    if (!newPassword) return toast.error("Please enter new password");
 
     setLoading(true);
     try {
@@ -261,13 +112,13 @@ const handleSendOtpforgot = async (e: FormEvent) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginData.email, newPassword }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to reset password");
 
       toast.success("Password reset successfully!");
-      setStep("signin"); // Go back to sign-in step
+      setStep("email");
       setNewPassword("");
+      setForgotOpen(false);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -275,116 +126,142 @@ const handleSendOtpforgot = async (e: FormEvent) => {
     }
   };
 
-  // 🔹 Normal Login
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await login(loginData.email, loginData.password);
-      toast.success("Logged in successfully!");
-      router.push(user?.role === "ADMIN" ? "/manage" : "/home");
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Login failed!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-white text-black px-6 py-10 relative">
-      {/* Background Image */}
-      {/* <div className="w-screen absolute top-0 left-0 h-[400px]">
-        <Image
-          src="/Vector 2.svg"
-          alt="wave"
-          fill
-          className="object-cover object-bottom"
-          priority
-        />
-      </div> */}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFF4E6] px-4 pt-12">
+      {/* Logo + Heading */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeScale}
+        className="flex flex-col items-center mb-8 relative"
+      >
+        <div className="absolute -top-4 w-36 h-36 rounded-full bg-yellow-200/30 blur-3xl z-0" />
+        <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl shadow-2xl flex items-center justify-center hover:scale-105 transition-transform mb-4">
+          <span className="text-white text-4xl font-bold">C</span>
+        </div>
+        <h2 className="relative z-10 text-2xl font-bold text-gray-800">Welcome Back</h2>
+        <p className="relative z-10 text-xs text-gray-500 mt-1 text-center">
+          Sign in to continue your journey
+        </p>
+        <div className="relative z-10 w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-orange-400 to-orange-600" />
+      </motion.div>
 
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900">Sign In</h1>
-        <div className="border-b-4 border-[#F49F00] w-20 mx-auto mt-2"></div>
-      </div>
-      <div className="p-4 w-full flex justify-center items-center">
-        <form
-          onSubmit={handleLogin}
-          className="w-full max-w-md bg-white backdrop-blur-md border border-gray-100 p-8 rounded-2xl shadow-xl space-y-6 transition-all duration-300"
-        >
-          {/* Email */}
+      {/* Sign In Card */}
+      <div className="w-full max-w-[380px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div className="relative">
-            <label className="block font-semibold mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={loginData.email}
-              onChange={handleChange}
-              className="w-full border-b-2 border-gray-300 focus:border-[#F49F00] outline-none py-2 placeholder-gray-400 transition"
-              required
-            />
+            <label className="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                value={loginData.email}
+                onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2.5
+                           bg-slate-200/80 border border-gray-200
+                           rounded-lg text-sm
+                           focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white
+                           transition"
+                required
+              />
+            </div>
           </div>
 
-          {/* Password */}
-          <div className="relative">
-            <label className="block font-semibold mb-1">Password</label>
-            <div className="flex items-center border-b-2 border-gray-300 focus-within:border-[#F49F00] transition">
+          <div className="relative mb-6">
+            <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 value={loginData.password}
                 onChange={handleChange}
-                className="w-full py-2 outline-none placeholder-gray-400"
+                className="w-full pl-10 pr-10 py-2.5
+                           bg-slate-200/80 border border-gray-200
+                           rounded-lg text-sm
+                           focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white
+                           transition"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-600 ml-2"
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff /> : <Eye />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          {/* Forgot Password */}
-          <div className="text-right">
+          <div className="flex justify-between items-center text-sm">
+            <label className="flex items-center gap-2 text-gray-600">
+              <input type="checkbox" className="accent-orange-500" />
+              Remember me
+            </label>
             <button
               type="button"
               onClick={() => setForgotOpen(true)}
-              className="text-sm text-[#F49F00] font-medium hover:underline"
+              className="text-orange-500 hover:underline"
             >
               Forgot Password?
             </button>
           </div>
 
-          {/* Login Button */}
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59400] transition-all duration-300 disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
+  type="submit"
+  disabled={loading}
+  className={`
+    w-full py-3 mt-2 rounded-lg text-white font-inter
+    bg-gradient-to-r from-yellow-400 to-orange-500
+    transition flex items-center justify-center gap-2
+    ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-95"}
+  `}
+>
+  {loading ? (
+    <>
+      <svg
+        className="w-5 h-5 animate-spin"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        />
+      </svg>
+      Signing In...
+    </>
+  ) : (
+    <>Sign In →</>
+  )}
+</button>
 
-          {/* Signup Link */}
-          <div className="mt-6 text-center">
-            <p className="text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/auth/signup"
-                className="text-[#F49F00] font-semibold hover:underline"
-              >
-                Sign up here
-              </Link>
-            </p>
-          </div>
         </form>
+
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/auth/signup"
+            className="text-orange-500 font-medium hover:underline"
+          >
+            Create one now
+          </Link>
+        </p>
       </div>
 
-      {/* 🔒 Forgot Password Modal */}
       {forgotOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
           <div className="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-xl relative">
@@ -399,10 +276,8 @@ const handleSendOtpforgot = async (e: FormEvent) => {
               Forgot Password
             </h2>
 
-            {/* Step 1: Email */}
             {step === "email" && (
               <form onSubmit={handleSendOtpforgot} className="space-y-4">
-                <label className="block font-semibold mb-2">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -422,12 +297,8 @@ const handleSendOtpforgot = async (e: FormEvent) => {
               </form>
             )}
 
-            {/* Step 2: OTP */}
             {step === "otp" && (
-              <form
-                onSubmit={handleVerifyOtp}
-                className="space-y-4 text-center"
-              >
+              <form onSubmit={handleVerifyOtp} className="space-y-4 text-center">
                 <h2 className="text-lg font-semibold text-gray-700">
                   Enter 6-digit OTP
                 </h2>
@@ -454,10 +325,8 @@ const handleSendOtpforgot = async (e: FormEvent) => {
               </form>
             )}
 
-            {/* Step 3: Reset Password */}
             {step === "reset" && (
               <form onSubmit={handleResetPassword} className="space-y-4">
-                <label className="block font-semibold mb-2">New Password</label>
                 <input
                   type="password"
                   placeholder="Enter new password"
@@ -476,6 +345,9 @@ const handleSendOtpforgot = async (e: FormEvent) => {
           </div>
         </div>
       )}
+
+      {/* 🔹 Bottom breathing space */}
+      <div className="h-13" />
     </div>
   );
 };

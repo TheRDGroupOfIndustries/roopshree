@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 /* Parent container for staggered animation */
 const container = {
@@ -51,7 +52,6 @@ export default function WelcomePage() {
 
       {/* Floating dots */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Existing bubbles */}
         <div className="absolute top-10 left-10 w-3 h-3 bg-pink-300 rounded-full opacity-40 animate-float" />
         <div className="absolute top-24 right-20 w-5 h-5 bg-rose-300 rounded-full opacity-30 animate-float-fast" />
         <div className="absolute top-40 left-32 w-2 h-2 bg-amber-300 rounded-full opacity-50 animate-float-ultra" />
@@ -63,14 +63,6 @@ export default function WelcomePage() {
         <div className="absolute bottom-20 left-16 w-5 h-5 bg-pink-300 rounded-full opacity-40 animate-float-ultra" />
         <div className="absolute bottom-32 right-32 w-4 h-4 bg-rose-300 rounded-full opacity-30 animate-float-fast" />
         <div className="absolute bottom-48 right-12 w-6 h-6 bg-amber-300 rounded-full opacity-35 animate-float" />
-
-        {/* NEW bubbles */}
-        <div className="absolute top-16 left-1/4 w-2 h-2 bg-pink-100 rounded-full opacity-30 animate-float" />
-        <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-rose-100 rounded-full opacity-25 animate-float-fast" />
-        <div className="absolute top-2/3 left-1/5 w-4 h-4 bg-amber-100 rounded-full opacity-35 animate-float-ultra" />
-        <div className="absolute bottom-10 right-1/3 w-2 h-2 bg-pink-100 rounded-full opacity-20 animate-float" />
-        <div className="absolute bottom-1/4 left-2/3 w-3 h-3 bg-rose-100 rounded-full opacity-30 animate-float-fast" />
-        <div className="absolute top-1/4 left-3/4 w-2 h-2 bg-amber-100 rounded-full opacity-25 animate-float-ultra" />
       </div>
 
       {/* Main content */}
@@ -80,25 +72,36 @@ export default function WelcomePage() {
         animate="visible"
         className="max-w-md w-full flex flex-col items-center z-10"
       >
+        {/* Heading */}
         <motion.div variants={slideDown} className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
             Welcome to
           </h1>
-          <h2 className="text-5xl md:text-6xl font-semibold font-inter bg-pink-600 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-semibold bg-pink-600 bg-clip-text text-transparent">
             ROOP SHREE
           </h2>
         </motion.div>
 
+        {/* LOGO WITH SAME EFFECT */}
         <motion.div variants={fadeScale} className="mb-12">
           <div className="w-44 h-44 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl shadow-[0_0_25px_8px_rgba(252,211,77,0.25),0_0_25px_8px_rgba(249,115,22,0.25)] flex items-center justify-center hover:scale-105 transition-transform">
-            <div className="w-32 h-32">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="8" fill="#7C3AED" />
-              </svg>
+            
+            {/* Logo Image */}
+            <div className="w-32 h-32 flex items-center justify-center">
+              <Image
+                src="/images/logo.jpeg"
+                alt="Roop Shree Logo"
+                width={128}
+                height={128}
+                priority
+                className="object-contain rounded-2xl drop-shadow-[0_0_12px_rgba(255,255,255,0.45)]"
+              />
             </div>
+
           </div>
         </motion.div>
 
+        {/* Text + Button */}
         <motion.div variants={slideUp} className="flex flex-col items-center">
           <p className="text-center text-gray-700 text-lg mb-12 px-4">
             Discover premium beauty crafted to enhance your natural glow.
@@ -133,6 +136,7 @@ export default function WelcomePage() {
         </div>
       </motion.div>
 
+      {/* Animations */}
       <style jsx>{`
         @keyframes float {
           50% {
@@ -140,7 +144,6 @@ export default function WelcomePage() {
           }
         }
 
-        /* UPDATED INDICATOR ANIMATION */
         @keyframes bounce-dot {
           0%, 100% {
             transform: translateY(0);
@@ -168,10 +171,10 @@ export default function WelcomePage() {
           animation: bounce-dot 1.2s ease-in-out infinite;
         }
 
-        /* Staggered delays for wave effect */
         .delay-200 {
           animation-delay: 0.2s;
         }
+
         .delay-400 {
           animation-delay: 0.4s;
         }

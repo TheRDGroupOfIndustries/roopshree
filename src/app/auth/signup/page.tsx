@@ -8,11 +8,10 @@ import {
   FaLock,
   FaEyeSlash,
   FaEye,
-  FaGoogle,
-  FaFacebookF,
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import {
   registerUser,
@@ -113,11 +112,6 @@ export default function CreateAccountPage() {
       return;
     }
 
-    if (formData.email === formData.password) {
-      toast.error("Email and password cannot be same");
-      return;
-    }
-
     if (!otpSent) {
       await sendOtp();
     } else {
@@ -128,16 +122,27 @@ export default function CreateAccountPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#fff3e3] via-[#fff8ef] to-[#fffdf9] px-4">
 
-      {/* Logo */}
+      {/* LOGO */}
       <div className="mb-6 mt-10">
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-md">
-          <span className="text-white font-bold text-xl">C</span>
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.35)] hover:scale-105 transition-transform">
+          <Image
+            src="/images/logo.jpeg"
+            alt="Roop Shree Logo"
+            width={48}
+            height={48}
+            priority
+            className="object-contain rounded-xl drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]"
+          />
         </div>
       </div>
 
       {/* Heading */}
-      <h1 className="text-2xl font-semibold text-gray-800">Create Account</h1>
-      <p className="text-sm text-gray-500 mt-1">Join us and start your journey today</p>
+      <h1 className="text-2xl font-semibold text-gray-800">
+        Create Account
+      </h1>
+      <p className="text-sm text-gray-500 mt-1">
+        Join us and start your journey today
+      </p>
 
       <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mt-3 mb-6" />
 
@@ -227,7 +232,7 @@ export default function CreateAccountPage() {
             </div>
           </div>
 
-          {/* OTP (if sent) */}
+          {/* OTP */}
           {otpSent && (
             <div>
               <label className="text-xs text-gray-900">OTP</label>
@@ -241,32 +246,19 @@ export default function CreateAccountPage() {
             </div>
           )}
 
-          {/* Terms */}
-          <div className="flex items-start gap-2 text-xs text-gray-900">
-            <input type="checkbox" className="mt-1" />
-            <p>
-              I agree to the{" "}
-              <span className="text-orange-500 cursor-pointer">
-                Terms & Conditions
-              </span>{" "}
-              and{" "}
-              <span className="text-orange-500 cursor-pointer">
-                Privacy Policy
-              </span>
-            </p>
-          </div>
-
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition"
+            className="w-full mt-2 py-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold shadow-md hover:opacity-90 transition"
           >
-            {loading ? "Please wait..." : otpSent ? "Verify OTP & Signup" : "Create Account"}
+            {loading
+              ? "Please wait..."
+              : otpSent
+              ? "Verify OTP & Signup"
+              : "Create Account"}
           </button>
         </form>
-
-        
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-500 mt-5">
@@ -280,8 +272,7 @@ export default function CreateAccountPage() {
         </p>
       </motion.div>
 
-      {/* Breathing space at bottom */}
-      <div className="h-13" />
+      <div className="h-12" />
     </div>
   );
 }

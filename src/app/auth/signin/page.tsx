@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const fadeScale = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -48,79 +49,11 @@ const SignInPage: React.FC = () => {
       toast.success("Logged in successfully!");
       router.push(loggedInUser?.role === "ADMIN" ? "/manage" : "/home");
     } catch (error: any) {
-      toast.error(error?.response?.data?.error || error?.message || "Login failed!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSendOtpforgot = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!loginData.email) return toast.error("Enter your email first");
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/forgot-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginData.email }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send OTP");
-
-      toast.success(data.success || "OTP sent to your email!");
-      setStep("otp");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: FormEvent) => {
-    e.preventDefault();
-    const otp = otpValues.join("");
-    if (otp.length !== 6) return toast.error("Enter 6-digit OTP");
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginData.email, otp }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Invalid OTP");
-
-      toast.success("OTP verified!");
-      setStep("reset");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResetPassword = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!newPassword) return toast.error("Please enter new password");
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/update-password", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginData.email, newPassword }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to reset password");
-
-      toast.success("Password reset successfully!");
-      setStep("email");
-      setNewPassword("");
-      setForgotOpen(false);
-    } catch (err: any) {
-      toast.error(err.message);
+      toast.error(
+        error?.response?.data?.error ||
+          error?.message ||
+          "Login failed!"
+      );
     } finally {
       setLoading(false);
     }
@@ -128,7 +61,8 @@ const SignInPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFF4E6] px-4 pt-12">
-      {/* Logo + Heading */}
+
+      {/* LOGO + HEADING */}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -136,120 +70,85 @@ const SignInPage: React.FC = () => {
         className="flex flex-col items-center mb-8 relative"
       >
         <div className="absolute -top-4 w-36 h-36 rounded-full bg-yellow-200/30 blur-3xl z-0" />
-        <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl shadow-2xl flex items-center justify-center hover:scale-105 transition-transform mb-4">
-          <span className="text-white text-4xl font-bold">C</span>
+
+        {/* LOGO IMAGE */}
+        <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl shadow-[0_0_20px_rgba(249,115,22,0.4)] flex items-center justify-center hover:scale-105 transition-transform mb-4">
+          <Image
+            src="/images/logo.jpeg"
+            alt="Roop Shree Logo"
+            width={48}
+            height={48}
+            priority
+            className="object-contain rounded-xl drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]"
+          />
         </div>
-        <h2 className="relative z-10 text-2xl font-bold text-gray-800">Welcome Back</h2>
+
+        <h2 className="relative z-10 text-2xl font-bold text-gray-800">
+          Welcome Back
+        </h2>
         <p className="relative z-10 text-xs text-gray-500 mt-1 text-center">
           Sign in to continue your journey
         </p>
         <div className="relative z-10 w-20 h-1 mt-3 rounded-full bg-gradient-to-r from-orange-400 to-orange-600" />
       </motion.div>
 
-      {/* Sign In Card */}
+      {/* SIGN IN CARD */}
       <div className="w-full max-w-[380px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8">
         <form onSubmit={handleLogin} className="space-y-4">
-          <div className="relative">
-            <label className="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
+
+          {/* Email */}
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">
+              Email Address
+            </label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input
                 type="email"
                 name="email"
-                placeholder="you@example.com"
                 value={loginData.email}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-2.5
-                           bg-slate-200/80 border border-gray-200
-                           rounded-lg text-sm
-                           focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white
-                           transition"
+                placeholder="you@example.com"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-200/80 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white transition"
                 required
               />
             </div>
           </div>
 
-          <div className="relative mb-6">
-            <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
+          {/* Password */}
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">
+              Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Enter your password"
                 value={loginData.password}
                 onChange={handleChange}
-                className="w-full pl-10 pr-10 py-2.5
-                           bg-slate-200/80 border border-gray-200
-                           rounded-lg text-sm
-                           focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white
-                           transition"
+                placeholder="Enter your password"
+                className="w-full pl-10 pr-10 py-2.5 bg-slate-200/80 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white transition"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-2.5 text-gray-400"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-sm">
-            <label className="flex items-center gap-2 text-gray-600">
-              <input type="checkbox" className="accent-orange-500" />
-              Remember me
-            </label>
-            <button
-              type="button"
-              onClick={() => setForgotOpen(true)}
-              className="text-orange-500 hover:underline"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
           <button
-  type="submit"
-  disabled={loading}
-  className={`
-    w-full py-3 mt-2 rounded-lg text-white font-inter
-    bg-gradient-to-r from-yellow-400 to-orange-500
-    transition flex items-center justify-center gap-2
-    ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-95"}
-  `}
->
-  {loading ? (
-    <>
-      <svg
-        className="w-5 h-5 animate-spin"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-        />
-      </svg>
-      Signing In...
-    </>
-  ) : (
-    <>Sign In →</>
-  )}
-</button>
-
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 mt-2 rounded-lg text-white font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 transition hover:opacity-95 disabled:opacity-70"
+          >
+            {loading ? "Signing In..." : "Sign In →"}
+          </button>
         </form>
-
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don&apos;t have an account?{" "}
@@ -262,92 +161,7 @@ const SignInPage: React.FC = () => {
         </p>
       </div>
 
-      {forgotOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-          <div className="bg-white p-6 rounded-2xl w-[90%] max-w-md shadow-xl relative">
-            <button
-              onClick={() => setForgotOpen(false)}
-              className="absolute right-4 top-4 text-gray-600"
-            >
-              <X size={20} />
-            </button>
-
-            <h2 className="text-2xl font-semibold mb-4 text-center">
-              Forgot Password
-            </h2>
-
-            {step === "email" && (
-              <form onSubmit={handleSendOtpforgot} className="space-y-4">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="demo@gmail.com"
-                  value={loginData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#F49F00] outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] transition-all disabled:opacity-60"
-                >
-                  {loading ? "Sending OTP..." : "Send OTP"}
-                </button>
-              </form>
-            )}
-
-            {step === "otp" && (
-              <form onSubmit={handleVerifyOtp} className="space-y-4 text-center">
-                <h2 className="text-lg font-semibold text-gray-700">
-                  Enter 6-digit OTP
-                </h2>
-                <div className="flex justify-center gap-2">
-                  {otpValues.map((value, i) => (
-                    <input
-                      key={i}
-                      ref={(el) => (otpRefs.current[i] = el!)}
-                      type="text"
-                      maxLength={1}
-                      value={value}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      className="w-10 h-12 text-center border rounded-md text-lg font-semibold focus:ring-2 focus:ring-[#F49F00] outline-none"
-                    />
-                  ))}
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="mt-4 w-full bg-[#F49F00] text-white font-bold py-3 rounded-full shadow-lg hover:bg-[#e59000] transition-all"
-                >
-                  {loading ? "Verifying..." : "Verify OTP"}
-                </button>
-              </form>
-            )}
-
-            {step === "reset" && (
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <input
-                  type="password"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#F49F00]"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-[#F49F00] text-white py-2 rounded-lg hover:bg-[#e59400] transition"
-                >
-                  Set New Password
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 🔹 Bottom breathing space */}
-      <div className="h-13" />
+      <div className="h-12" />
     </div>
   );
 };

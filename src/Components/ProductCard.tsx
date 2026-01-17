@@ -1,15 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { BiHeart, BiPlus, BiMinus } from "react-icons/bi";
+import { BiHeart } from "react-icons/bi";
 import { IoStarSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
-// import { addToCart, removeCartItem } from "@/services/cartService";
 import toast from "react-hot-toast";
 import SmallLoadingSpinner from "./SmallLoadingSpinner";
-import { BsCartFill, BsCartCheckFill } from "react-icons/bs";
 
 interface ProductCardProps {
   id: string;
@@ -20,7 +19,6 @@ interface ProductCardProps {
   image: string;
   reviews?: { rating: number; comment: string }[];
   refreshWishlist?: () => void;
-  category?: string;
 }
 
 export default function ProductCard({
@@ -34,17 +32,10 @@ export default function ProductCard({
   refreshWishlist,
 }: ProductCardProps) {
   const { user, refreshUser } = useAuth();
+
   const [isInWishlist, setIsInWishlist] = useState(false);
-  // const [isInCart, setIsInCart] = useState(false); // **UNCOMMENTED**
-  // const [loadingCart, setLoadingCart] = useState(false); // **UNCOMMENTED**
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
-  const [quantity, setQuantity] = useState(1);
-
-  const handleIncrease = () => setQuantity((prev) => prev + 1);
-  const handleDecrease = () => setQuantity((prev) => Math.max(1, prev - 1));
-
-  // Initialize wishlist and cart state
   useEffect(() => {
     if (!user) return;
 
@@ -52,16 +43,11 @@ export default function ProductCard({
       (item: any) => item.productId === id
     );
     setIsInWishlist(!!wishlistExists);
-
-    // const cartExists = user.cart?.items?.some( // **UNCOMMENTED**
-    //   (item: any) => item.productId === id
-    // );
-    // setIsInCart(!!cartExists); // **UNCOMMENTED**
   }, [user, id]);
 
-  // Toggle wishlist
   const handleWishlistToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
+
     if (!user) return toast.error("Please login to manage wishlist");
 
     try {
@@ -71,69 +57,22 @@ export default function ProductCard({
         setIsInWishlist(false);
         await removeFromWishlist(id);
         toast.success("Removed from wishlist");
-        if (refreshWishlist) refreshWishlist();
+        refreshWishlist?.();
       } else {
         setIsInWishlist(true);
         await addToWishlist(id);
         toast.success("Added to wishlist");
       }
 
-      refreshUser(); // background refresh (no await)
+      refreshUser(); // background refresh
     } catch (err) {
       console.error(err);
-      // rollback UI state if API fails
       setIsInWishlist((prev) => !prev);
       toast.error("Something went wrong");
     } finally {
       setLoadingWishlist(false);
     }
   };
-
-  // Add to cart - logic kept commented out, but state handlers are used
-  // const handleAddToCart = async (e: React.MouseEvent) => {
-  //   e.preventDefault();
-  //   if (!user) return toast.error("Please login to add to cart");
-
-  //   try {
-  //     setLoadingCart(true);
-  //     setIsInCart(true); // update UI immediately
-  //     // await addToCart(id, quantity); // **Using 'quantity' instead of 1**
-  //     toast.success(`Added ${quantity} item(s) to cart`);
-  //     refreshUser(); // don't await — background refresh
-  //   } catch (err) {
-  //     console.error(err);
-  //     setIsInCart(false); // rollback if failed
-  //     toast.error("Failed to add to cart");
-  //   } finally {
-  //     setLoadingCart(false);
-  //   }
-  // };
-
-  // Remove from cart - logic kept commented out
-  // const handleRemoveFromCart = async (e: React.MouseEvent) => {
-  //   e.preventDefault();
-  //   if (!user) return toast.error("Please login to remove from cart");
-
-  //   try {
-  //     // const cartItem = user.cart?.items?.find(
-  //     //   (item: any) => item.productId === id
-  //     // );
-  //     // if (!cartItem) return toast.error("Product not found in cart");
-
-  //     setLoadingCart(true);
-  //     setIsInCart(false); // instant UI feedback
-  //     // await removeCartItem(cartItem.id);
-  //     toast.success("Removed from cart");
-
-  //     refreshUser(); // background refresh
-  //   } catch (err) {
-  //     console.error(err);
-  //     setIsInCart(true); // rollback if failed
-  //     toast.error("Failed to remove from cart");
-  //   } finally {
-  //     setLoadingCart(false);
-  //   }
-  // };
 
   const avgRating =
     reviews && reviews.length > 0
@@ -146,7 +85,7 @@ export default function ProductCard({
         {/* Image + Wishlist */}
         <div className="relative">
           <button
-            className={`absolute top-2 right-2 rounded-full p-1.5 shadow-md transition-colors flex items-center justify-center z-10
+            className={`absolute top-2 right-2 rounded-full p-1.5 shadow-md z-10
               ${
                 isInWishlist
                   ? "bg-red-500 text-white hover:bg-red-600"
@@ -162,15 +101,12 @@ export default function ProductCard({
             )}
           </button>
 
-          <div className="w-full flex items-center justify-center h-48 sm:h-56">
-            {" "}
-            {/* Added fixed height for better layout */}
+          <div className="w-full h-48 sm:h-56 flex items-center justify-center">
             <Image
               src={image}
               alt={name}
-              width={300} // Set explicit width/height for Next/Image optimization
+              width={300}
               height={300}
-              sizes="(max-width: 640px) 100vw, 50vw"
               className="w-full h-full object-contain p-4"
             />
           </div>
@@ -178,13 +114,11 @@ export default function ProductCard({
 
         {/* Product Info */}
         <div className="p-3 flex flex-col flex-grow">
-          <h4 className="font-semibold text-base text-black mb-1 line-clamp-1">
-            {name}
-          </h4>
-          <p className="text-xs text-black mb-3 line-clamp-2 flex-grow">
-            {description}
-          </p>
-          <div className="flex items-center gap-0.5">
+          <h4 className="font-semibold text-base mb-1 line-clamp-1">{name}</h4>
+          <p className="text-xs mb-3 line-clamp-2 flex-grow">{description}</p>
+
+          {/* Rating */}
+          <div className="flex items-center gap-0.5 mb-2">
             {[...Array(5)].map((_, i) => (
               <IoStarSharp
                 key={i}
@@ -200,75 +134,17 @@ export default function ProductCard({
             </span>
           </div>
 
-          {/* Price + Cart & Quantity Controls (Revised Section) */}
-          {/* **REVISED: Added better flex alignment for a responsive row layout** */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto pt-2 border-t border-gray-100 gap-2">
-            {/* Price */}
+          {/* Price */}
+          <div className="mt-auto pt-2 border-t border-gray-100">
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-[var(--color-brand)]">
-                ₹{price.toLocaleString()}{" "}
+                ₹{price.toLocaleString()}
               </span>
               {oldPrice && (
                 <span className="text-xs text-gray-500 line-through">
                   ₹{oldPrice.toLocaleString()}
                 </span>
               )}
-            </div>
-
-            {/* Quantity and Cart Buttons */}
-            <div
-              className="flex items-center justify-between gap-1 w-full sm:w-auto" // **ADDED w-full for small screens**
-              onClick={(e) => e.preventDefault()}
-            >
-              {/* Quantity controls */}
-              <div className="flex items-center gap-1">
-                <button
-                  className="h-7 w-7 rounded-md shadow-sm flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition" // **SIZE REDUCED FOR BETTER FIT**
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDecrease();
-                  }}
-                  aria-label="Decrease quantity"
-                >
-                  <BiMinus className="text-sm" />
-                </button>
-
-                <span className="font-semibold text-sm w-5 text-center">
-                  {quantity}
-                </span>  
-
-                <button
-                  className="h-7 w-7 rounded-md shadow-sm flex items-center justify-center bg-gray-200 hover:bg-gray-300 transition" // **SIZE REDUCED FOR BETTER FIT**
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleIncrease();
-                  }}
-                  aria-label="Increase quantity"
-                >
-                  <BiPlus className="text-sm" />
-                </button>
-              </div>
-
-              {/* Add to Cart Button (using the commented-out logic's styles) */}
-              {/* <button
-                className={`p-1.5 rounded-lg shadow-md transition-colors flex items-center justify-center h-8 w-8 ml-auto 
-                  ${
-                    isInCart
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] text-white"
-                  }`}
-                onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
-                disabled={loadingCart}
-                aria-label={isInCart ? "Remove from cart" : "Add to cart"}
-              >
-                {loadingCart ? (
-                  <SmallLoadingSpinner />
-                ) : isInCart ? (
-                  <BsCartCheckFill className="w-4 h-4" />
-                ) : (
-                  <BsCartFill className="w-4 h-4" />
-                )}
-              </button> */}
             </div>
           </div>
         </div>

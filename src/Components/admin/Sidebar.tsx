@@ -28,6 +28,7 @@ const navItems = [
   { name: "Offer", path: "/manage/sale", icon: TicketPercent },
   { name: "Banner", path: "/manage/banner", icon: Tags },
   { name: "Expenses", path: "/manage/expenses", icon: CreditCard },
+  { name: "Spotlight", path: "/manage/spotlight", icon: CreditCard },
 ];
 
 export default function Sidebar() {

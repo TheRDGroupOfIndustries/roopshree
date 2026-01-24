@@ -36,34 +36,71 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { productId, initialStock } = await req.json();
-    const existing = await prisma.stock.findUnique({ where: { productId } });
-    if (existing)
+    const {
+      title,
+      description,
+      images,
+      details,
+      insideBox,
+      initialStock, // ✅ Can be 0
+      price,
+      oldPrice,
+      exclusive,
+      category,
+      colour,
+      video,
+      isSpotlight,
+    } = await req.json();
+
+    // ✅ FIXED VALIDATION - Allow stock to be 0
+    if (
+      !title ||
+      !description ||
+      !category ||
+      initialStock === undefined || // ✅ This allows 0
+      initialStock === null ||
+      initialStock < 0 // ✅ But reject negative
+    ) {
       return NextResponse.json(
-        { error: "Stock already exists" },
+        { error: "Missing required fields or invalid stock value" },
         { status: 400 }
       );
+    }
 
-    const stock = await prisma.stock.create({
+    // Only check price for non-spotlight products
+    if (!isSpotlight) {
+      if (!price || !oldPrice) {
+        return NextResponse.json(
+          { error: "Price and old price are required for non-spotlight products" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Create product
+    const product = await prisma.product.create({
       data: {
-        productId,
-        currentStock: initialStock,
-        history: {
-          create: {
-            fromQuantity: 0,
-            toQuantity: initialStock,
-            updatedBy: user.userId,
-          },
-        },
+        title,
+        description,
+        images: images || [],
+        details,
+        insideBox: insideBox || [],
+        price: isSpotlight ? 0 : price,
+        oldPrice: isSpotlight ? 0 : oldPrice,
+        exclusive,
+        category,
+        colour: colour || [],
+        video,
+        isSpotlight: isSpotlight || false,
+        stock: initialStock, // ✅ This can be 0 now
       },
-      include: { history: true },
     });
 
-    return NextResponse.json(stock);
+    return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
-    console.error(error);
+    console.error("❌ Product creation error:", error);
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      { error: error.message || "Failed to create product" },
       { status: 500 }
     );
   }

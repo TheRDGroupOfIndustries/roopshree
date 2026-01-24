@@ -18,9 +18,10 @@ interface ProductCardProps {
   oldPrice?: number;
   image: string;
   video?: string | null;
-  stock?: number; // optional
+  stock?: number;
   reviews?: { rating: number; comment: string }[];
   refreshWishlist?: () => void;
+  isSpotlight?: boolean; // ✅ Added this
 }
 
 export default function ProductCard({
@@ -31,9 +32,10 @@ export default function ProductCard({
   price,
   oldPrice,
   image,
-  stock, // ✅ remove default 0
+  stock,
   reviews,
   refreshWishlist,
+  isSpotlight = false, // ✅ Default false
 }: ProductCardProps) {
   const { user, refreshUser } = useAuth();
 
@@ -77,20 +79,11 @@ export default function ProductCard({
     }
   };
 
-  {/* Video Badge */}
-{video && (
-  <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-md z-10 flex items-center gap-1">
-    <FaPlay className="w-2.5 h-2.5" />
-    <span>Video</span>
-  </div>
-)}
-
   const avgRating =
     reviews && reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
-  // ✅ stock check fix
   const isOutOfStock = stock !== undefined && stock === 0;
   const isLowStock = stock !== undefined && stock > 0 && stock <= 5;
 
@@ -117,15 +110,23 @@ export default function ProductCard({
             )}
           </button>
 
+          {/* Video Badge */}
+          {video && (
+            <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-md z-10 flex items-center gap-1">
+              <FaPlay className="w-2.5 h-2.5" />
+              <span>Video</span>
+            </div>
+          )}
+
           {/* Out of Stock Badge */}
-          {isOutOfStock && (
+          {!video && isOutOfStock && (
             <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
               Out of Stock
             </div>
           )}
 
           {/* Low Stock Badge */}
-          {isLowStock && (
+          {!video && isLowStock && (
             <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
               Only {stock} left
             </div>
@@ -170,22 +171,32 @@ export default function ProductCard({
             </span>
           </div>
 
-          {/* Price */}
+          {/* Price - Only show if NOT spotlight */}
           <div className="mt-auto pt-2 border-t border-gray-100">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-[var(--color-brand)]">
-                ₹{price.toLocaleString()}
-              </span>
-              {oldPrice && (
-                <span className="text-xs text-gray-500 line-through">
-                  ₹{oldPrice.toLocaleString()}
-                </span>
-              )}
-            </div>
-            {isOutOfStock && (
-              <p className="text-xs text-red-500 font-semibold mt-1">
-                Currently Unavailable
-              </p>
+            {isSpotlight ? (
+              <div className="text-center py-1">
+                <p className="text-sm font-semibold text-purple-600">
+                  Grab from our store
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-[var(--color-brand)]">
+                    ₹{price.toLocaleString()}
+                  </span>
+                  {oldPrice && (
+                    <span className="text-xs text-gray-500 line-through">
+                      ₹{oldPrice.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                {isOutOfStock && (
+                  <p className="text-xs text-red-500 font-semibold mt-1">
+                    Currently Unavailable
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>

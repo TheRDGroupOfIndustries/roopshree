@@ -45,12 +45,12 @@ interface Product {
   insideBox: string[];
   cartQuantity: number;
   images: string[];
-  video?: string | null; // ✅ YEH LINE ADD HUI
   deliveryInfo: string;
   ingredients: string[];
   reviews: Review[];
   colour?: string[];
   size?: string[];
+  isSpotlight?: boolean;
 }
 
 export default function ProductDetails() {
@@ -139,13 +139,13 @@ export default function ProductDetails() {
   const checkoutQtyKey = (productId: string) => `checkoutQty_${productId}`;
 
   const handleBuyNow = () => {
-    if (!product || isOutOfStock) return;
+    if (!product || isOutOfStock || product.isSpotlight) return;
     sessionStorage.setItem(checkoutQtyKey(product.id), String(quantity));
     router.push(`/checkout/${product.id}`);
   };
 
   const updateQuantity = (updateFn: (prev: number) => number) => {
-    if (!product || isOutOfStock) return;
+    if (!product || isOutOfStock || product.isSpotlight) return;
 
     setQuantity((prev) => {
       const next = updateFn(prev);
@@ -155,7 +155,7 @@ export default function ProductDetails() {
   };
 
   const handleAddToCart = async () => {
-    if (!product || isOutOfStock) return;
+    if (!product || isOutOfStock || product.isSpotlight) return;
 
     if (product.colour && product.colour.length > 0 && selectedShade === null) {
       toast.error("Please select a color before adding to cart");
@@ -276,30 +276,31 @@ export default function ProductDetails() {
             <GoShareAndroid />
           </button>
 
-          <div className="relative">
-            <Link href={"/my-cart"}>
-              <button
-                aria-label="View cart"
-                className="text-gray-600 text-xl hover:text-[var(--color-brand-hover)]"
-              >
-                <FiShoppingCart />
-              </button>
-            </Link>
+          {!product.isSpotlight && (
+            <div className="relative">
+              <Link href={"/my-cart"}>
+                <button
+                  aria-label="View cart"
+                  className="text-gray-600 text-xl hover:text-[var(--color-brand-hover)]"
+                >
+                  <FiShoppingCart />
+                </button>
+              </Link>
 
-            {product.cartQuantity > 0 && (
-              <span
-                className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
-          text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full 
-          w-[16px] h-[16px]"
-              >
-                {product.cartQuantity}
-              </span>
-            )}
-          </div>
+              {product.cartQuantity > 0 && (
+                <span
+                  className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center 
+            text-[10px] font-bold text-white bg-[var(--color-brand)] rounded-full 
+            w-[16px] h-[16px]"
+                >
+                  {product.cartQuantity}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
-      {/* ✅ YEH LINE ADD HUI - video prop pass kiya */}
       <ProductImageCarousel
         images={product.images}
         video={product.video}
@@ -319,6 +320,12 @@ export default function ProductDetails() {
           </span>
         )}
 
+        {product.isSpotlight && (
+          <span className="ml-2 bg-purple-100 text-purple-600 px-3 py-1 rounded text-xs font-medium">
+            Spotlight
+          </span>
+        )}
+
         <h1 className="text-2xl font-bold mt-3">{product.title}</h1>
         <p className="text-gray-500 mt-2">{product.description}</p>
 
@@ -329,7 +336,7 @@ export default function ProductDetails() {
           </div>
         )}
 
-        {!isOutOfStock && product.stock <= 10 && (
+        {!isOutOfStock && product.stock <= 10 && !product.isSpotlight && (
           <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
             <p className="text-yellow-700 font-semibold text-sm">
               Only {product.stock} left in stock!
@@ -358,31 +365,46 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          <div className="flex gap-3 items-center">
-            <h2 className="text-2xl font-bold text-[var(--color-brand)]">
-              ₹{product.price}
-            </h2>
-            <span className="line-through text-gray-500 font-semibold">
-              ₹{product.oldPrice}
-            </span>
-            <span className="bg-green-300 rounded px-2 py-1 text-xs font-medium">
-              {discountPercent}% OFF
-            </span>
-          </div>
+          {!product.isSpotlight && (
+            <>
+              <div className="flex gap-3 items-center">
+                <h2 className="text-2xl font-bold text-[var(--color-brand)]">
+                  ₹{product.price}
+                </h2>
+                <span className="line-through text-gray-500 font-semibold">
+                  ₹{product.oldPrice}
+                </span>
+                <span className="bg-green-300 rounded px-2 py-1 text-xs font-medium">
+                  {discountPercent}% OFF
+                </span>
+              </div>
 
-          {!isOutOfStock && (
-            <div className="p-3 bg-orange-200/50 border-2 border-orange-200 rounded-lg flex items-center gap-2 text-orange-800">
-              <RiTruckLine className="text-xl font-bold" />
-              <p className="text-sm font-semibold">
-                Free Delivery in 24 Hours across Varanasi
+              {!isOutOfStock && (
+                <div className="p-3 bg-orange-200/50 border-2 border-orange-200 rounded-lg flex items-center gap-2 text-orange-800">
+                  <RiTruckLine className="text-xl font-bold" />
+                  <p className="text-sm font-semibold">
+                    Free Delivery in 24 Hours across Varanasi
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {product.isSpotlight && (
+            <div className="mt-2 p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+              <p className="text-purple-700 font-bold text-center text-lg">
+                🎯 Grab from our store
+              </p>
+              <p className="text-purple-600 text-center text-sm mt-1">
+                This is a spotlight product - Visit our store to purchase
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Colors Section */}
-      {product.colour && product.colour.length > 0 && (
+      {/* Colors Section - Hide for spotlight */}
+      {!product.isSpotlight && product.colour && product.colour.length > 0 && (
         <div className="flex-1 bg-white px-3 py-6 my-1">
           <h2 className="text-lg font-semibold mb-2">Select Color</h2>
           <div className="flex flex-wrap gap-3">
@@ -403,31 +425,33 @@ export default function ProductDetails() {
         </div>
       )}
 
-      {/* Quantity */}
-      <div className="flex-1 bg-white px-3 py-6 my-1">
-        <h2 className="text-lg font-semibold mb-2">Quantity</h2>
-        <div className="flex items-center space-x-6 mb-4">
-          <button
-            className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
-              isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
-            disabled={isOutOfStock}
-          >
-            <AiOutlineMinus className="text-sm" />
-          </button>
-          <span className="text-lg">{quantity}</span>
-          <button
-            className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
-              isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => updateQuantity((q) => q + 1)}
-            disabled={isOutOfStock}
-          >
-            <AiOutlinePlus className="text-sm" />
-          </button>
+      {/* Quantity - Hide for spotlight */}
+      {!product.isSpotlight && (
+        <div className="flex-1 bg-white px-3 py-6 my-1">
+          <h2 className="text-lg font-semibold mb-2">Quantity</h2>
+          <div className="flex items-center space-x-6 mb-4">
+            <button
+              className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
+                isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
+              disabled={isOutOfStock}
+            >
+              <AiOutlineMinus className="text-sm" />
+            </button>
+            <span className="text-lg">{quantity}</span>
+            <button
+              className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
+                isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => updateQuantity((q) => q + 1)}
+              disabled={isOutOfStock}
+            >
+              <AiOutlinePlus className="text-sm" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Description */}
       <div className="flex-1 bg-white px-3 py-6 my-1">
@@ -580,51 +604,73 @@ export default function ProductDetails() {
         )}
       </div>
 
-      {/* Fixed Bottom Buttons */}
-      <div
-        className="fixed bottom-[60px] left-0 right-0 bg-white flex justify-between items-center p-4 z-50"
-        style={{
-          paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
-          boxShadow: "0 -4px 6px -4px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {isOutOfStock ? (
-          <button
-            disabled
-            className="w-full py-3 bg-gray-400 text-white rounded-xl font-medium cursor-not-allowed"
-          >
-            Out of Stock
-          </button>
-        ) : (
-          <>
-            {isInCart ? (
-              <button
-                onClick={() => router.push("/my-cart")}
-                className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium min-w-0"
-              >
-                <MdShoppingCartCheckout className="text-lg flex-shrink-0" />
-                <span className="truncate">Go to Cart</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleAddToCart}
-                className="flex items-center justify-center gap-2 w-[48%] py-3 bg-gray-200 rounded-xl font-medium hover:bg-gray-300 min-w-0"
-              >
-                <MdOutlineAddShoppingCart className="text-lg flex-shrink-0" />
-                <span className="truncate">Add to Cart</span>
-              </button>
-            )}
-
+      {/* Fixed Bottom Buttons - Hide for spotlight */}
+      {!product.isSpotlight && (
+        <div
+          className="fixed bottom-[60px] left-0 right-0 bg-white flex justify-between items-center p-4 z-50"
+          style={{
+            paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+            boxShadow: "0 -4px 6px -4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {isOutOfStock ? (
             <button
-              onClick={handleBuyNow}
-              className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
+              disabled
+              className="w-full py-3 bg-gray-400 text-white rounded-xl font-medium cursor-not-allowed"
             >
-              <LuShoppingBag className="text-lg flex-shrink-0" />
-              <span className="truncate">Buy Now</span>
+              Out of Stock
             </button>
-          </>
-        )}
-      </div>
+          ) : (
+            <>
+              {isInCart ? (
+                <button
+                  onClick={() => router.push("/my-cart")}
+                  className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium min-w-0"
+                >
+                  <MdShoppingCartCheckout className="text-lg flex-shrink-0" />
+                  <span className="truncate">Go to Cart</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleAddToCart}
+                  className="flex items-center justify-center gap-2 w-[48%] py-3 bg-gray-200 rounded-xl font-medium hover:bg-gray-300 min-w-0"
+                >
+                  <MdOutlineAddShoppingCart className="text-lg flex-shrink-0" />
+                  <span className="truncate">Add to Cart</span>
+                </button>
+              )}
+
+              <button
+                onClick={handleBuyNow}
+                className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
+              >
+                <LuShoppingBag className="text-lg flex-shrink-0" />
+                <span className="truncate">Buy Now</span>
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Spotlight Message - Show only for spotlight products */}
+      {product.isSpotlight && (
+        <div
+          className="fixed bottom-[60px] left-0 right-0 bg-purple-600 p-4 z-50"
+          style={{
+            paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+            boxShadow: "0 -4px 6px -4px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <div className="text-center">
+            <p className="text-white font-bold text-lg mb-1">
+              🎯 Grab from our store
+            </p>
+            <p className="text-purple-100 text-sm">
+              Visit us to get this exclusive spotlight product
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

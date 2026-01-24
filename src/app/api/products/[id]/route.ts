@@ -54,6 +54,7 @@ interface updateProductBody {
   exclusive?: number;
   category: string;
   colour?: string[];
+  isSpotlight?: boolean;
 }
 
 export async function PUT(
@@ -88,7 +89,7 @@ export async function PUT(
       title,
       description,
       images,
-      video, // ✅ YEH ADD HUA
+      video,
       details,
       insideBox,
       stock,
@@ -96,15 +97,17 @@ export async function PUT(
       oldPrice,
       exclusive,
       colour,
+      isSpotlight,
     } = body;
 
+    // ✅ FIX: Add isSpotlight to update query
     const updated = await prisma.products.update({
       where: { id },
       data: {
         title,
         description,
         images,
-        video: video || null, // ✅ YEH ADD HUA
+        video: video || null,
         details,
         insideBox,
         price,
@@ -112,6 +115,8 @@ export async function PUT(
         exclusive,
         category: body.category,
         colour,
+        isSpotlight: isSpotlight !== undefined ? isSpotlight : product.isSpotlight,  // ✅ NEW
+        spotlightAt: isSpotlight && !product.isSpotlight ? new Date() : product.spotlightAt,  // ✅ NEW
       },
     });
 

@@ -41,7 +41,6 @@ export default function HomePage() {
   const [banners, setBanners] = useState<any[]>([]);
   const [bannerLoading, setBannerLoading] = useState(true);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  // const [currentOfferrIndex, setCurrentOfferrIndex] = useState(0);
 
   // ------------------- OFFERS ------------------- //
   const [offers, setOffers] = useState<any[]>([]);
@@ -53,6 +52,7 @@ export default function HomePage() {
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
 
   // ------------------- FETCH DATA ------------------- //
+
   useEffect(() => {
     refreshUser();
   }, []);
@@ -62,8 +62,12 @@ export default function HomePage() {
       try {
         setProductLoading(true);
         const res = await getAllProducts();
-        setProducts(res);
-        setShuffledProducts([...res].sort(() => Math.random() - 0.5));
+        
+        // Filter out spotlight products (agar spotlight property hai products mein)
+        const filteredProducts = res.filter((product: any) => !product.spotlight);
+        
+        setProducts(filteredProducts);
+        setShuffledProducts([...filteredProducts].sort(() => Math.random() - 0.5));
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

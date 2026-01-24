@@ -45,6 +45,7 @@ interface Product {
   insideBox: string[];
   cartQuantity: number;
   images: string[];
+  video?: string | null; // ✅ YEH LINE ADD HUI
   deliveryInfo: string;
   ingredients: string[];
   reviews: Review[];
@@ -298,8 +299,10 @@ export default function ProductDetails() {
         </div>
       </header>
 
+      {/* ✅ YEH LINE ADD HUI - video prop pass kiya */}
       <ProductImageCarousel
         images={product.images}
+        video={product.video}
         id={product.id}
         isWishlisted={isInWishlist}
         onWishlistToggle={handleWishlistToggle}

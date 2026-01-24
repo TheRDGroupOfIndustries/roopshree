@@ -12,7 +12,6 @@ export async function GET() {
     },
   });
 
-  // ✅ Transform products to include stock value
   const productsWithStock = products.map(product => ({
     ...product,
     stock: product.stock?.currentStock || 0,
@@ -26,7 +25,7 @@ interface CreateProductBody {
   title: string;
   description: string;
   images: string[];
-  video?: string;
+  video?: string | null; // ✅ YEH ADD HUA
   details: string;
   insideBox: string[];
   userId: string;
@@ -59,8 +58,17 @@ export async function POST(req: Request) {
     }
 
     const userId = payload.userId.toString();
-    const { title, description, images, details, insideBox, initialStock, colour } =
-      body;
+    const { 
+      title, 
+      description, 
+      images, 
+      video, // ✅ YEH ADD HUA
+      details, 
+      insideBox, 
+      initialStock, 
+      colour 
+    } = body;
+    
     if (
       !title ||
       !description ||
@@ -80,7 +88,7 @@ export async function POST(req: Request) {
         title,
         description,
         images,
-        
+        video: video || null, // ✅ YEH ADD HUA
         details,
         userId,
         insideBox,

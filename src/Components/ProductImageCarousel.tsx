@@ -1,24 +1,25 @@
-'use client';
+"use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { useState, useRef } from "react";
-import { FaChevronLeft, FaChevronRight, FaPlay } from "react-icons/fa";
+import { BiHeart } from "react-icons/bi";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import SmallLoadingSpinner from "./SmallLoadingSpinner";
 
 interface ProductImageCarouselProps {
   images: string[];
-  video?: string | null;
+  video?: string | null; // ✅ YEH ADD HUA
   id: string;
   isWishlisted: boolean;
-  onWishlistToggle: () => void;
-  loadingWishlist?: boolean;
+  onWishlistToggle: (e: React.MouseEvent) => void;
+  loadingWishlist: boolean;
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (open: boolean) => void;
 }
 
 export default function ProductImageCarousel({
   images,
-  video,
+  video, // ✅ YEH ADD HUA
   id,
   isWishlisted,
   onWishlistToggle,
@@ -26,202 +27,192 @@ export default function ProductImageCarousel({
   isOpen,
   setIsOpen,
 }: ProductImageCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // ✅ Images aur video ko combine kiya
   const mediaItems = [
-    ...images.map((url) => ({ type: "image" as const, url })),
-    ...(video ? [{ type: "video" as const, url: video! }] : []),
+    ...images.map((img) => ({ type: "image" as const, url: img })),
+    ...(video ? [{ type: "video" as const, url: video }] : []),
   ];
 
-  const [current, setCurrent] = useState(0);
-  const startX = useRef<number | null>(null);
+  const totalItems = mediaItems.length;
 
-  const currentMedia = mediaItems[current];
-
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % mediaItems.length);
-  const prevSlide = () =>
-    setCurrent((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
-
-  const handleTouchStart = (e: React.TouchEvent | React.PointerEvent) => {
-    if ("touches" in e) startX.current = e.touches[0].clientX;
-    else startX.current = e.clientX;
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? totalItems - 1 : prev - 1));
   };
 
-  const handleTouchEnd = (e: React.TouchEvent | React.PointerEvent) => {
-    if (startX.current == null) return;
-    const endX =
-      "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX;
-    const delta = endX - startX.current;
-    if (delta > 50) prevSlide();
-    else if (delta < -50) nextSlide();
-    startX.current = null;
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === totalItems - 1 ? 0 : prev + 1));
   };
+
+  const currentMedia = mediaItems[currentIndex];
 
   return (
     <>
       {/* Main Carousel */}
-      <div
-        className="relative w-full h-56 mt-1 overflow-hidden rounded-md"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onPointerDown={handleTouchStart}
-        onPointerUp={handleTouchEnd}
-      >
-        <div
-          className="flex transition-transform duration-500 ease-in-out cursor-pointer"
-          style={{ transform: `translateX(-${current * 100}%)` }}
-          onClick={() => setIsOpen(true)}
-        >
-          {mediaItems.map((item, index) => (
-            <div key={index} className="relative w-full h-56 flex-shrink-0">
-              {item.type === "image" ? (
-                <Image
-                  src={item.url}
-                  alt={`Product image ${index + 1}`}
-                  fill
-                  className="object-contain"
-                />
-              ) : (
-                <div className="relative w-full h-full bg-black flex items-center justify-center">
-                  <video
-                    src={item.url}
-                    className="w-full h-full object-contain"
-                    controls
-                    playsInline
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
+      <div className="relative w-full h-96 bg-gray-50 flex items-center justify-center">
         {/* Wishlist Button */}
         <button
-          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute top-4 right-4 p-2 rounded-full shadow-md bg-white"
-          onClick={(e) => {
-            e.stopPropagation();
-            onWishlistToggle();
-          }}
+          className={`absolute top-4 right-4 z-20 rounded-full p-2 shadow-md ${
+            isWishlisted
+              ? "bg-red-500 text-white hover:bg-red-600"
+              : "bg-white text-gray-600 hover:bg-gray-100"
+          }`}
+          onClick={onWishlistToggle}
           disabled={loadingWishlist}
         >
           {loadingWishlist ? (
-            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
-          ) : isWishlisted ? (
-            <AiFillHeart className="text-red-500 w-5 h-5" />
+            <SmallLoadingSpinner />
           ) : (
-            <AiOutlineHeart className="text-gray-600 w-5 h-5" />
+            <BiHeart className="w-5 h-5" />
           )}
         </button>
 
+        {/* Media Display - Image ya Video */}
+        {currentMedia?.type === "image" ? (
+          <div
+            className="relative w-full h-full cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <Image
+              src={currentMedia.url}
+              alt={`Product ${currentIndex + 1}`}
+              fill
+              className="object-contain p-4"
+              priority={currentIndex === 0}
+            />
+          </div>
+        ) : currentMedia?.type === "video" ? (
+          <div className="relative w-full h-full p-4">
+            <video
+              src={currentMedia.url}
+              controls
+              className="w-full h-full object-contain bg-black rounded-lg"
+              poster={images[0]}
+            />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="bg-white/80 rounded-full p-4">
+                <Play className="w-8 h-8 text-gray-800" />
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {/* Navigation Arrows */}
-        {mediaItems.length > 1 && (
+        {totalItems > 1 && (
           <>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                prevSlide();
-              }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100"
+              onClick={goToPrevious}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center shadow-md hover:bg-white transition z-10"
+              aria-label="Previous image"
             >
-              <FaChevronLeft />
+              <ChevronLeft className="w-5 h-5 text-gray-800" />
             </button>
+
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                nextSlide();
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100"
+              onClick={goToNext}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center shadow-md hover:bg-white transition z-10"
+              aria-label="Next image"
             >
-              <FaChevronRight />
+              <ChevronRight className="w-5 h-5 text-gray-800" />
             </button>
           </>
         )}
 
-        {/* Dots */}
-        {mediaItems.length > 1 && (
-          <div className="absolute bottom-2 w-full flex justify-center space-x-1">
+        {/* Pagination Dots */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+          {mediaItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                index === currentIndex
+                  ? "bg-[var(--color-brand)] w-6"
+                  : "bg-gray-300"
+              }`}
+              aria-label={`Go to ${item.type} ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Thumbnail Strip */}
+      {totalItems > 1 && (
+        <div className="bg-white px-3 py-3 overflow-x-auto">
+          <div className="flex gap-2">
             {mediaItems.map((item, index) => (
               <button
                 key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrent(index);
-                }}
-                className={`transition-all rounded-full ${
-                  current === index
-                    ? "bg-[var(--color-brand)] w-3 h-2"
-                    : "bg-gray-300 w-2 h-2"
+                onClick={() => setCurrentIndex(index)}
+                className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition ${
+                  index === currentIndex
+                    ? "border-[var(--color-brand)]"
+                    : "border-gray-200"
                 }`}
               >
-                {item.type === "video" && current === index && (
-                  <FaPlay className="w-2 h-2 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                {item.type === "image" ? (
+                  <Image
+                    src={item.url}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-black flex items-center justify-center">
+                    <Play className="w-6 h-6 text-white" />
+                  </div>
                 )}
               </button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Fullscreen Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[100]">
+      {isOpen && currentMedia?.type === "image" && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={() => setIsOpen(false)}
+        >
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 text-white text-4xl p-2 z-[101] hover:bg-white/10 rounded-full"
-            aria-label="Close"
+            className="absolute top-4 right-4 text-white text-3xl z-50"
           >
-            &times;
+            ×
           </button>
 
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            {currentMedia.type === "image" ? (
-              <Image
-                src={currentMedia.url}
-                alt={`Full screen ${current + 1}`}
-                fill
-                className="object-contain"
-              />
-            ) : (
-              <video
-                src={currentMedia.url}
-                controls
-                autoPlay
-                className="max-w-full max-h-full"
-              />
-            )}
-
-            {/* Fullscreen Arrows */}
-            {mediaItems.length > 1 && (
-              <>
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl p-3 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
-                >
-                  <FaChevronLeft />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl p-3 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
-                >
-                  <FaChevronRight />
-                </button>
-              </>
-            )}
-
-            {/* Fullscreen Dots */}
-            {mediaItems.length > 1 && (
-              <div className="absolute bottom-4 w-full flex justify-center space-x-2 z-[101]">
-                {mediaItems.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrent(index)}
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      current === index ? "bg-[var(--color-brand)]" : "bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
+          <div className="relative w-full h-full p-8">
+            <Image
+              src={currentMedia.url}
+              alt={`Product ${currentIndex + 1}`}
+              fill
+              className="object-contain"
+            />
           </div>
+
+          {totalItems > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPrevious();
+                }}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNext();
+                }}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            </>
+          )}
         </div>
       )}
     </>

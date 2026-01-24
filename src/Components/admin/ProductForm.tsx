@@ -94,7 +94,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setTitle(product.title || "");
     setDetails(product.details || "");
     setDescription(product.description || "");
-    setStock(product.stock?.currentStock || 0);
+    setStock(product.stock?.currentStock || product.stock || 0);
     setPrice(product.price || 0);
     setOldPrice(product.oldPrice || 0);
     setExclusive(product.exclusive || undefined);
@@ -146,19 +146,16 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     });
   };
 
-  // Handle video upload
   const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate video file
     const validTypes = ["video/mp4", "video/webm", "video/ogg"];
     if (!validTypes.includes(file.type)) {
       toast.error("Please upload a valid video file (MP4, WebM, or OGG)");
       return;
     }
 
-    // Check file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
       toast.error("Video file size should be less than 50MB");
       return;
@@ -229,6 +226,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     }
   };
 
+  // ✅ FIXED handleCreate - YEH PURA FUNCTION REPLACE HO GAYA
   const handleCreate = async () => {
     if (
       !title ||
@@ -248,6 +246,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
     setLoading(true);
     try {
+      // ✅ STEP 1: Create product first (without images and video)
       const res = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -264,7 +263,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           exclusive: exclusive || undefined,
           category,
           colour: finalHexColours,
-          video: null, // Will be updated after upload
+          video: null,
         }),
       });
 
@@ -282,7 +281,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      // Upload images
+      console.log("✅ Product created with ID:", productId);
+
+      // ✅ STEP 2: Upload images
       const uploadedImageUrls = await uploadImages(productId);
       if (!uploadedImageUrls.length) {
         showMessage("Image upload failed. Please try again.", true);
@@ -290,15 +291,50 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      // Upload video if present
+      console.log("✅ Images uploaded:", uploadedImageUrls);
+
+      // ✅ STEP 3: Upload video (if present)
+      let videoUrl = null;
       if (video?.file) {
-        await uploadVideo(productId);
+        videoUrl = await uploadVideo(productId);
+        console.log("✅ Video uploaded:", videoUrl);
       }
+
+      // ✅ STEP 4: UPDATE product with images AND video - YEH STEP MISSING THA!
+      const updateRes = await fetch(`/api/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title,
+          description,
+          images: uploadedImageUrls, // ✅ Images
+          video: videoUrl,           // ✅ Video URL (or null if no video)
+          details,
+          insideBox: items.filter((i) => i.trim() !== ""),
+          stock,
+          price,
+          oldPrice,
+          exclusive,
+          category,
+          colour: finalHexColours,
+        }),
+      });
+
+      const updateData = await updateRes.json();
+      if (!updateRes.ok) {
+        console.error("❌ Update failed:", updateData);
+        showMessage("Product created but update failed", true);
+        setLoading(false);
+        return;
+      }
+
+      console.log("✅ Product updated with images and video:", updateData);
 
       showMessage("Product created successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);
     } catch (err) {
-      console.error("Error:", err);
+      console.error("❌ Error:", err);
       showMessage("Something went wrong. Please try again.", true);
     } finally {
       setLoading(false);
@@ -326,6 +362,13 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         .map((i) => i.serverId!);
       const newImages = images.filter((i) => i.file);
 
+      // ✅ Upload new video if changed
+      let videoUrl = video?.serverId || null;
+      if (video?.file) {
+        const uploadedVideoUrl = await uploadVideo(id);
+        if (uploadedVideoUrl) videoUrl = uploadedVideoUrl;
+      }
+
       const payload = {
         title,
         description,
@@ -338,7 +381,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         details,
         colour: finalHexColours,
         insideBox: items.filter((i) => i.trim() !== ""),
-        video: video?.serverId || null,
+        video: videoUrl, // ✅ Include video in update
       };
 
       const res = await fetch(`/api/products/${id}`, {
@@ -362,12 +405,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
+      // Upload new images if any
       if (newImages.length > 0) await uploadImages(productId);
-      
-      // Upload new video if changed
-      if (video?.file) {
-        await uploadVideo(productId);
-      }
 
       showMessage("Product updated successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);

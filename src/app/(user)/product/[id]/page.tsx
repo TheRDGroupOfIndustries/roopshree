@@ -40,9 +40,7 @@ interface Product {
   description: string;
   price: number;
   oldPrice: number;
-  // discountPercent: number;
-  // rating: number;
-  // totalReviews: number;
+  stock: number;
   category?: string;
   insideBox: string[];
   cartQuantity: number;
@@ -70,17 +68,10 @@ export default function ProductDetails() {
   const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  // const [quantity, setQuantity] = useState<number>(1);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedShade, setSelectedShade] = useState<number | null>(null);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false);
-  // State for controlling the full-screen image view
   const [isOpen, setIsOpen] = useState<boolean>(false); 
-  
-  // const handleIncrement = () => setQuantity((prev) => prev + 1);
-  // const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
-  const handleShadeSelect = (shadeId: number) => setSelectedShade(shadeId);
-  const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
   const [showAllReviews, setShowAllReviews] = useState(false);
   
   // Calculate average rating
@@ -94,6 +85,9 @@ export default function ProductDetails() {
           ((product.oldPrice - product.price) / product.oldPrice) * 100
         )
       : 0;
+
+  // Check if product is out of stock
+  const isOutOfStock = product ? product.stock === 0 : false;
 
   useEffect(() => {
     if (!user || !product) return;
@@ -113,8 +107,6 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const data = await getProductById(id as string);
-        // console.log("data:", data);
-
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -146,31 +138,29 @@ export default function ProductDetails() {
   const checkoutQtyKey = (productId: string) => `checkoutQty_${productId}`;
 
   const handleBuyNow = () => {
-    if (!product) return; // Add product check
+    if (!product || isOutOfStock) return;
     sessionStorage.setItem(checkoutQtyKey(product.id), String(quantity));
     router.push(`/checkout/${product.id}`);
   };
 
- 
-const updateQuantity = (updateFn: (prev: number) => number) => {
-  if (!product) return;
+  const updateQuantity = (updateFn: (prev: number) => number) => {
+    if (!product || isOutOfStock) return;
 
-  setQuantity((prev) => {
-    const next = updateFn(prev);
-    sessionStorage.setItem(checkoutQtyKey(product.id), String(next));
-    return next;
-  });
-};
+    setQuantity((prev) => {
+      const next = updateFn(prev);
+      sessionStorage.setItem(checkoutQtyKey(product.id), String(next));
+      return next;
+    });
+  };
+
   const handleAddToCart = async () => {
-    if (!product) return;
+    if (!product || isOutOfStock) return;
 
-    // Ensure color is selected if required
     if (product.colour && product.colour.length > 0 && selectedShade === null) {
       toast.error("Please select a color before adding to cart");
       return;
     }
 
-    // Guard against null when indexing
     const selectedColor =
       product.colour && selectedShade !== null
         ? product.colour[selectedShade]
@@ -230,12 +220,10 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
     }
 
     try {
-      setSubmittingReview(true); // start loading
+      setSubmittingReview(true);
       const added = await addReview(id as string, newReview);
       toast.success("Review added successfully!");
       setNewReview({ rating: 0, comment: "" });
-
-      // Append new review
 
       const reviewWithUser = {
         ...added,
@@ -249,9 +237,11 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to add review");
     } finally {
-      setSubmittingReview(false); // stop loading
+      setSubmittingReview(false);
     }
   };
+
+  const toggleDescription = () => setIsDescriptionExpanded((prev) => !prev);
 
   if (loading) return <ProductDetailsSkeleton />;
 
@@ -264,7 +254,6 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
         className="sticky top-0 bg-white flex justify-between items-center px-4 py-3 shadow-sm z-10"
         style={{ boxShadow: "0 2px 4px -1px rgba(0,0,0,0.1)" }}
       >
-        {/* Back Button */}
         <button
           aria-label="Back"
           className="text-gray-600 text-xl flex-shrink-0"
@@ -273,14 +262,11 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
           <IoArrowBackOutline />
         </button>
 
-        {/* Title */}
         <h2 className="font-semibold text-lg text-center flex-1">
           Product Details
         </h2>
 
-        {/* Right Icons */}
         <div className="flex items-center space-x-4 flex-shrink-0">
-          {/* Share Button */}
           <button
             aria-label="Share"
             onClick={handelShare}
@@ -289,7 +275,6 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
             <GoShareAndroid />
           </button>
 
-          {/* Cart Button */}
           <div className="relative">
             <Link href={"/my-cart"}>
               <button
@@ -313,7 +298,6 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
         </div>
       </header>
 
-      {/* Product Image - Pass isOpen and setIsOpen */}
       <ProductImageCarousel
         images={product.images}
         id={product.id}
@@ -325,7 +309,7 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
       />
 
       {/* Product Info */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6 my-1">
         {product.category && (
           <span className="bg-orange-100 text-[var(--color-brand)] px-3 py-1 rounded text-xs font-medium">
             {product.category}
@@ -334,6 +318,21 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
 
         <h1 className="text-2xl font-bold mt-3">{product.title}</h1>
         <p className="text-gray-500 mt-2">{product.description}</p>
+
+        {/* Stock Status */}
+        {isOutOfStock && (
+          <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p className="text-red-600 font-semibold text-sm">Out of Stock</p>
+          </div>
+        )}
+
+        {!isOutOfStock && product.stock <= 10 && (
+          <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+            <p className="text-yellow-700 font-semibold text-sm">
+              Only {product.stock} left in stock!
+            </p>
+          </div>
+        )}
 
         {/* Rating and Price */}
         <div className="flex flex-col gap-3 mt-2">
@@ -368,12 +367,14 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
             </span>
           </div>
 
-          <div className="p-3 bg-orange-200/50 border-2 border-orange-200  rounded-lg flex items-center gap-2 text-orange-800 ">
-            <RiTruckLine className="text-xl font-bold" />
-            <p className="text-sm font-semibold">
-              Free Delivery in 24 Hours across Varanasi
-            </p>
-          </div>
+          {!isOutOfStock && (
+            <div className="p-3 bg-orange-200/50 border-2 border-orange-200 rounded-lg flex items-center gap-2 text-orange-800">
+              <RiTruckLine className="text-xl font-bold" />
+              <p className="text-sm font-semibold">
+                Free Delivery in 24 Hours across Varanasi
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -385,12 +386,13 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
             {product.colour.map((color, index) => (
               <button
                 key={index}
-                onClick={() => setSelectedShade(index)}
+                onClick={() => !isOutOfStock && setSelectedShade(index)}
+                disabled={isOutOfStock}
                 className={`w-10 h-10 rounded-full border-2 transition-all ${
                   selectedShade === index
                     ? "border-[var(--color-brand)] scale-110"
                     : "border-gray-300"
-                }`}
+                } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
                 style={{ backgroundColor: color }}
               />
             ))}
@@ -398,37 +400,26 @@ const updateQuantity = (updateFn: (prev: number) => number) => {
         </div>
       )}
 
-      {/* Shades & Quantity */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
-        {/* <h2 className="text-lg font-semibold mb-2">Select Shade</h2>
-        <div className="flex space-x-2 mb-4" role="radiogroup">
-          {shades.map((shade) => (
-            <button
-              key={shade.id}
-              className={`w-10 h-10 ${shade.color} rounded-full border-2 ${
-                selectedShade === shade.id
-                  ? "border-orange-500"
-                  : "border-gray-300"
-              }`}
-              onClick={() => handleShadeSelect(shade.id)}
-              role="radio"
-              aria-checked={selectedShade === shade.id}
-            />
-          ))}
-        </div> */}
-
+      {/* Quantity */}
+      <div className="flex-1 bg-white px-3 py-6 my-1">
         <h2 className="text-lg font-semibold mb-2">Quantity</h2>
         <div className="flex items-center space-x-6 mb-4">
           <button
-            className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
-onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
->
-             <AiOutlineMinus className="text-sm" />
+            className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
+              isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
+            disabled={isOutOfStock}
+          >
+            <AiOutlineMinus className="text-sm" />
           </button>
           <span className="text-lg">{quantity}</span>
           <button
-            className="w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center"
+            className={`w-8 h-8 border-2 border-gray-300 rounded-xl flex items-center justify-center ${
+              isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={() => updateQuantity((q) => q + 1)}
+            disabled={isOutOfStock}
           >
             <AiOutlinePlus className="text-sm" />
           </button>
@@ -436,7 +427,7 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
       </div>
 
       {/* Description */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      <div className="flex-1 bg-white px-3 py-6 my-1">
         <h2 className="text-lg font-semibold mb-2">Description</h2>
         <p className="text-gray-700 text-sm line-clamp-3">
           {isDescriptionExpanded
@@ -445,15 +436,15 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
               (product.description.length > 120 ? "..." : "")}
         </p>
         <button
-          className="text-[var(--color-brand)] text-sm font-semibold "
+          className="text-[var(--color-brand)] text-sm font-semibold"
           onClick={toggleDescription}
         >
           {isDescriptionExpanded ? "Read Less" : "Read More"}
         </button>
       </div>
 
-      {/* Key Ingredients */}
-      <div className="flex-1 bg-white px-3 py-6  my-1">
+      {/* Inside Box */}
+      <div className="flex-1 bg-white px-3 py-6 my-1">
         <h2 className="text-lg font-semibold mb-3 text-gray-800">Inside Box</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-gray-700 text-sm mb-6">
           {(product.insideBox || []).map((item, idx) => (
@@ -465,12 +456,12 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
         </div>
       </div>
 
+      {/* Write Review */}
       <div className="p-3 bg-white shadow-sm my-1">
         <h3 className="font-semibold text-gray-800 text-base mb-1">
           Write a Review
         </h3>
 
-        {/* Star Rating */}
         <div className="flex space-x-1 justify-start my-2">
           {Array.from({ length: 5 }, (_, index) => (
             <IoStarSharp
@@ -482,7 +473,6 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
           ))}
         </div>
 
-        {/* Comment Input */}
         <textarea
           value={newReview.comment}
           onChange={(e) =>
@@ -492,7 +482,6 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
           className="border p-1 rounded w-full text-sm h-20 resize-none"
         />
 
-        {/* Submit Button */}
         <button
           onClick={handleSubmitReview}
           className={`bg-[var(--color-brand)] text-white px-3 py-2 rounded-lg w-full mt-2 text-sm flex justify-center items-center gap-2 transition-all ${
@@ -555,7 +544,6 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
                         className="text-xs text-gray-500"
                         title={new Date(review.createdAt).toLocaleString()}
                       >
-                        {/* You can replace this with relative time if desired */}
                         {new Date(review.createdAt).toLocaleDateString()}
                       </time>
                     </div>
@@ -597,31 +585,42 @@ onClick={() => updateQuantity((q) => Math.max(1, q - 1))}
           boxShadow: "0 -4px 6px -4px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {isInCart ? (
+        {isOutOfStock ? (
           <button
-            onClick={() => router.push("/my-cart")}
-            className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium  min-w-0"
+            disabled
+            className="w-full py-3 bg-gray-400 text-white rounded-xl font-medium cursor-not-allowed"
           >
-            <MdShoppingCartCheckout className="text-lg flex-shrink-0" />
-            <span className="truncate">Go to Cart</span>
+            Out of Stock
           </button>
         ) : (
-          <button
-            onClick={handleAddToCart}
-            className="flex items-center justify-center gap-2 w-[48%] py-3 bg-gray-200 rounded-xl font-medium hover:bg-gray-300 min-w-0"
-          >
-            <MdOutlineAddShoppingCart className="text-lg flex-shrink-0" />
-            <span className="truncate">Add to Cart</span>
-          </button>
-        )}
+          <>
+            {isInCart ? (
+              <button
+                onClick={() => router.push("/my-cart")}
+                className="flex items-center justify-center gap-2 w-[48%] py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium min-w-0"
+              >
+                <MdShoppingCartCheckout className="text-lg flex-shrink-0" />
+                <span className="truncate">Go to Cart</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleAddToCart}
+                className="flex items-center justify-center gap-2 w-[48%] py-3 bg-gray-200 rounded-xl font-medium hover:bg-gray-300 min-w-0"
+              >
+                <MdOutlineAddShoppingCart className="text-lg flex-shrink-0" />
+                <span className="truncate">Add to Cart</span>
+              </button>
+            )}
 
-        <button
-          onClick={handleBuyNow}
-          className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
-        >
-          <LuShoppingBag className="text-lg flex-shrink-0" />
-          <span className="truncate">Buy Now</span>
-        </button>
+            <button
+              onClick={handleBuyNow}
+              className="flex items-center justify-center gap-2 w-[48%] py-3 bg-[var(--color-brand)] text-white rounded-xl font-medium hover:bg-[var(--color-brand-hover)] min-w-0"
+            >
+              <LuShoppingBag className="text-lg flex-shrink-0" />
+              <span className="truncate">Buy Now</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

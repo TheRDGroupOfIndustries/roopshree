@@ -18,26 +18,34 @@ export async function GET(
   _: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // Await params before accessing its properties
   const { id } = await params;
 
   const product = await prisma.products.findUnique({
     where: { id },
-    include: { reviews: true },
+    include: { 
+      reviews: true,
+      stock: true // ✅ Stock include kiya
+    },
   });
 
   if (!product)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  return NextResponse.json(product);
+  // ✅ Stock value ko product object mein add karo
+  const productWithStock = {
+    ...product,
+    stock: product.stock?.currentStock || 0, // Default 0 if no stock record
+  };
+
+  return NextResponse.json(productWithStock);
 }
 
 // UPDATE product
-
 interface updateProductBody {
   title: string;
   description: string;
   images: string[];
+  video?: string; 
   details: string;
   insideBox: string[];
   userId?: string;
@@ -75,8 +83,6 @@ export async function PUT(
       );
 
     const userId = payload.userId.toString();
-    // if (product.userId !== userId)
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = (await req.json()) as updateProductBody;
     const {
@@ -92,12 +98,14 @@ export async function PUT(
       colour,
     } = body;
 
+    // ✅ Update product details
     const updated = await prisma.products.update({
       where: { id },
       data: {
         title,
         description,
         images,
+        
         details,
         insideBox,
         price,
@@ -108,34 +116,68 @@ export async function PUT(
       },
     });
 
-    const curStock = await prisma.stock.findUnique({
-      where: { productId: id },
-    });
-    if (curStock && stock) {
-      await prisma.stock.update({
+    // ✅ Update stock if provided
+    if (stock !== undefined) {
+      const curStock = await prisma.stock.findUnique({
         where: { productId: id },
-        data: {
-          currentStock: stock,
-          history: {
-            create: {
-              fromQuantity: curStock.currentStock,
-              toQuantity: stock,
-              updatedBy: userId,
+      });
+
+      if (curStock) {
+        // Update existing stock
+        await prisma.stock.update({
+          where: { productId: id },
+          data: {
+            currentStock: stock,
+            history: {
+              create: {
+                fromQuantity: curStock.currentStock,
+                toQuantity: stock,
+                updatedBy: userId,
+              },
             },
           },
-        },
-      });
+        });
+      } else {
+        // Create new stock record if doesn't exist
+        await prisma.stock.create({
+          data: {
+            productId: id,
+            currentStock: stock,
+            history: {
+              create: {
+                fromQuantity: 0,
+                toQuantity: stock,
+                updatedBy: userId,
+              },
+            },
+          },
+        });
+      }
     }
 
+    // ✅ Fetch updated product with stock
+    const finalProduct = await prisma.products.findUnique({
+      where: { id },
+      include: {
+        reviews: true,
+        stock: true,
+      },
+    });
+
+    const productWithStock = {
+      ...finalProduct,
+      stock: finalProduct?.stock?.currentStock || 0,
+    };
+
     revalidatePath(req.url);
-    return NextResponse.json(updated);
+    return NextResponse.json(productWithStock);
   } catch (error: any) {
+    console.error("Update error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 // DELETE product
-
 export async function DELETE(
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -161,7 +203,6 @@ export async function DELETE(
 
     // ✅ Delete image from Cloudinary
     try {
-      // Handle both single and multiple image URLs
       const images = Array.isArray(product.images)
         ? product.images
         : product.images
@@ -182,6 +223,9 @@ export async function DELETE(
       console.error("Cloudinary delete error:", cloudErr);
     }
 
+    // ✅ Delete stock first (foreign key constraint)
+    await prisma.stock.deleteMany({ where: { productId: id } });
+
     // ✅ Delete product from DB
     await prisma.products.delete({ where: { id } });
 
@@ -197,14 +241,11 @@ function extractPublicId(url: string): string {
   try {
     const urlObj = new URL(url);
     const parts = urlObj.pathname.split("/");
-    // Find "upload" index in path
     const uploadIndex = parts.indexOf("upload");
     if (uploadIndex === -1) return "";
-    const publicPath = parts.slice(uploadIndex + 2).join("/"); // skip 'v1234'
-    return publicPath.replace(/\.[^/.]+$/, ""); // remove extension
+    const publicPath = parts.slice(uploadIndex + 2).join("/");
+    return publicPath.replace(/\.[^/.]+$/, "");
   } catch {
     return "";
   }
 }
-
-

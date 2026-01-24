@@ -6,17 +6,27 @@ import { verifyJwt } from "@/lib/jwt";
 // GET all products
 export async function GET() {
   const products = await prisma.products.findMany({
-    include: { reviews: true, stock: true},
+    include: { 
+      reviews: true, 
+      stock: true 
+    },
   });
-  return NextResponse.json(products);
+
+  // ✅ Transform products to include stock value
+  const productsWithStock = products.map(product => ({
+    ...product,
+    stock: product.stock?.currentStock || 0,
+  }));
+
+  return NextResponse.json(productsWithStock);
 }
 
 // CREATE product
-
 interface CreateProductBody {
   title: string;
   description: string;
   images: string[];
+  video?: string;
   details: string;
   insideBox: string[];
   userId: string;
@@ -70,13 +80,14 @@ export async function POST(req: Request) {
         title,
         description,
         images,
+        
         details,
         userId,
         insideBox,
         price: body.price,
         oldPrice: body.oldPrice,
         exclusive: body.exclusive,
-        category: body.category ,
+        category: body.category,
         colour
       },
     });

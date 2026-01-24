@@ -65,6 +65,7 @@ model Products {
   orders      Order[]
   user        User       @relation("UserProducts", fields: [userId], references: [id])
   reviews     Review[]
+  video       String?    
   stock       Stock?
   wishlist    Wishlist[]
 }

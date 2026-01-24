@@ -24,12 +24,6 @@ export default function Navbar() {
       icon: <RiHomeFill size={22} />,
       href: "/home",
     },
-    // {
-    // 	name: "categories",
-    // 	label: "Categories",
-    // 	icon: <BiCategory size={22} />,
-    // 	href: "/categories",
-    // },
     {
       name: "search",
       label: "Search",
@@ -43,41 +37,77 @@ export default function Navbar() {
       href: "/my-cart",
     },
     {
+      name: "spotlight",
+      label: "spotlight",
+      icon: <GoPerson size={22} />,
+      href: "/spotlight",
+    },
+    {
       name: "profile",
       label: "Profile",
       icon: <GoPerson size={22} />,
       href: "/profile",
     },
+    
   ];
 
   return (
-    <>
-      {/* Bottom Navbar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] shadow-lg flex justify-around items-center h-16 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 z-50">
+      <div className="h-16 bg-gradient-to-r from-[var(--color-brand-hover)] to-[var(--color-brand)] shadow-lg flex justify-around items-center">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
+
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex flex-col items-center justify-center relative transition-colors duration-200 ${
-                isActive ? "text-white" : "text-gray-200 hover:text-white"
-              }`}
+              className="relative flex flex-col items-center justify-center w-full"
             >
-              <div className="relative">
+              {/* 🔥 Spotlight Glow */}
+              {isActive && (
+                <span
+                  className="
+                    absolute -top-3
+                    w-14 h-14
+                    rounded-full
+                    bg-white/30
+                    blur-2xl
+                    transition-all
+                    duration-300
+                  "
+                />
+              )}
+
+              {/* Icon */}
+              <div
+                className={`relative z-10 transition-colors duration-200 ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-200 hover:text-white"
+                }`}
+              >
                 {item.icon}
+
+                {/* 🛒 Cart Badge */}
                 {item.name === "cart" && cartCount > 0 && (
-                  // Resolved conflict: Using red background and white text for high visibility badge
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white font-bold text-[10px] w-4 h-4 flex items-center justify-center rounded-full ring-2 ring-white">
                     {cartCount}
                   </span>
                 )}
               </div>
-              <span className="text-xs mt-1 font-medium">{item.label}</span>
+
+              {/* Label */}
+              <span
+                className={`text-xs mt-1 font-medium relative z-10 ${
+                  isActive ? "text-white" : "text-gray-200"
+                }`}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
       </div>
-    </>
+    </nav>
   );
 }

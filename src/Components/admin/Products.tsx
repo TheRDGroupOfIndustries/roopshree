@@ -18,7 +18,7 @@ interface Product {
   id: string;
   title: string;
   description: string;
-  stock: Stock[];
+  stock: number; // ✅ Changed from Stock[] to number
   images: string[];
   price: number;
   oldPrice: number;
@@ -35,7 +35,6 @@ export const Products = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // ConfirmDialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
@@ -45,7 +44,7 @@ export const Products = () => {
       setLoading(true);
       try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        const timeout = setTimeout(() => controller.abort(), 10000);
 
         const res = await fetch("/api/products", { signal: controller.signal });
         clearTimeout(timeout);
@@ -53,6 +52,8 @@ export const Products = () => {
         if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
 
         const data = await res.json();
+        console.log("✅ Fetched products:", data); // Debug log
+
         let fetchedProducts: Product[] = [];
 
         if (Array.isArray(data)) fetchedProducts = data;
@@ -76,29 +77,24 @@ export const Products = () => {
     fetchProducts();
   }, []);
 
-  // Filter products by category
   const filteredProducts = products.filter((product) =>
     product.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get unique categories
   const uniqueCategories = [
     ...new Set(products.map((p) => p.category).filter(Boolean)),
   ];
 
-  const getTotalStock = (stock: Stock[] | Stock | undefined) => {
-    if (!stock) return 0;
-    const stockArray = Array.isArray(stock) ? stock : [stock];
-    return stockArray.reduce((acc, s) => acc + (s.currentStock || 0), 0);
+  // ✅ Fixed: stock is now a number, not an array
+  const getTotalStock = (stock: number | undefined) => {
+    return stock || 0;
   };
 
-  // Open ConfirmDialog
   const handleDelete = (id: string) => {
     setPendingDeleteId(id);
     setIsDialogOpen(true);
   };
 
-  // Confirm deletion
   const confirmDelete = async () => {
     if (!pendingDeleteId) return;
     const id = pendingDeleteId;
@@ -132,7 +128,6 @@ export const Products = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header - FIXED FOR MOBILE */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Product Management</h2>
         <button
@@ -156,7 +151,6 @@ export const Products = () => {
           />
         </div>
 
-        {/* Category Filters */}
         {uniqueCategories.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-2">
@@ -177,14 +171,12 @@ export const Products = () => {
         )}
       </div>
 
-      {/* Loading */}
       {loading ? (
         <div className="text-center py-8 text-gray-500 text-sm">
           Loading products...
         </div>
       ) : (
         <>
-          {/* Results Header */}
           {searchTerm && (
             <div className="flex justify-between items-center">
               <h3 className="font-semibold text-lg text-gray-900">
@@ -442,7 +434,6 @@ export const Products = () => {
         </>
       )}
 
-      {/* ConfirmDialog */}
       <ConfirmDialog
         isOpen={isDialogOpen}
         onConfirm={confirmDelete}
@@ -452,4 +443,4 @@ export const Products = () => {
       />
     </div>
   );
-};
+}

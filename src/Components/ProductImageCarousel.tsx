@@ -1,173 +1,44 @@
-// import Image from "next/image";
-// import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-// import { useState, useRef } from "react";
-// import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-// import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
-// import toast from "react-hot-toast";
-
-// interface ProductImageCarouselProps {
-//   images: string[];
-//   id: string;
-// }
-
-// export default function ProductImageCarousel({ images, id }: ProductImageCarouselProps) {
-//   const [current, setCurrent] = useState(0);
-//   const [isWishlisted, setIsWishlisted] = useState(false); 
-//   const startX = useRef<number | null>(null);
-
-//   const nextSlide = () => setCurrent((prev) => (prev + 1) % images.length);
-//   const prevSlide = () => setCurrent((prev) => (prev - 1 + images.length) % images.length);
-
-//   const handleTouchStart = (e: React.TouchEvent | React.PointerEvent) => {
-//     if ("touches" in e) {
-//       startX.current = e.touches[0].clientX;
-//     } else {
-//       startX.current = e.clientX;
-//     }
-//   };
-
-//   const handleTouchEnd = (e: React.TouchEvent | React.PointerEvent) => {
-//     if (startX.current == null) return;
-
-//     let endX;
-//     if ("changedTouches" in e) {
-//       endX = e.changedTouches[0].clientX;
-//     } else {
-//       endX = e.clientX;
-//     }
-
-//     const delta = endX - startX.current;
-//     if (delta > 50) {
-//       prevSlide();
-//     } else if (delta < -50) {
-//       nextSlide();
-//     }
-//     startX.current = null;
-//   };
-
-//   const handleWishlistToggle = async () => {
-//     if (isWishlisted) {
-//       try {
-//         const res = await removeFromWishlist(id);
-//         toast.success(res.message || "Removed from wishlist");
-//         setIsWishlisted(false);
-//       } catch (error: any) {
-//         toast.error(error.response?.data?.error || "Something went wrong");
-//       }
-//     } else {
-//       try {
-//         const res = await addToWishlist(id);
-//         toast.success(res.message || "Added to wishlist");
-//         setIsWishlisted(true);
-//       } catch (error: any) {
-//         toast.error(error.response?.data?.error || "Something went wrong");
-//       }
-//     }
-//   };
-
-//   return (
-//     <div
-//       className="relative w-full h-56 bg-white mt-1 overflow-hidden rounded-md"
-//       onTouchStart={handleTouchStart}
-//       onTouchEnd={handleTouchEnd}
-//       onPointerDown={handleTouchStart}
-//       onPointerUp={handleTouchEnd}
-//     >
-//       {/* Product Images */}
-//       <div
-//         className="flex transition-transform duration-500 ease-in-out"
-//         style={{ transform: `translateX(-${current * 100}%)` }}
-//       >
-//         {images.map((img, index) => (
-//           <div key={index} className="relative w-full h-56 flex-shrink-0">
-//             <Image src={img} alt={`Product image ${index + 1}`} fill className="object-contain" />
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Wishlist Button */}
-//       <button
-//         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-//         className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
-//         onClick={handleWishlistToggle}
-//       >
-//         {isWishlisted ? (
-//           <AiFillHeart className="text-xl text-red-500" />
-//         ) : (
-//           <AiOutlineHeart className="text-xl text-gray-600" />
-//         )}
-//       </button>
-
-//       {/* Left / Right Arrows */}
-//       {images.length > 1 && (
-//         <>
-//           <button
-//             onClick={prevSlide}
-//             className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-1 rounded-full shadow hover:bg-white"
-//           >
-//             <FaChevronLeft />
-//           </button>
-//           <button
-//             onClick={nextSlide}
-//             className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-1 rounded-full shadow hover:bg-white"
-//           >
-//             <FaChevronRight />
-//           </button>
-//         </>
-//       )}
-
-//       {/* Dots */}
-//       {images.length > 1 && (
-//         <div className="absolute bottom-2 w-full flex justify-center space-x-1">
-//           {images.map((_, index) => (
-//             <button
-//               key={index}
-//               onClick={() => setCurrent(index)}
-//               className={`w-2 h-2 rounded-full transition-all ${
-//                 current === index ? "bg-[var(--color-brand)] w-3" : "bg-gray-300"
-//               }`}
-//             />
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-
-
-
+'use client';
 
 import Image from "next/image";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useState, useRef } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import SmallLoadingSpinner from "./SmallLoadingSpinner";
+import { FaChevronLeft, FaChevronRight, FaPlay } from "react-icons/fa";
 
 interface ProductImageCarouselProps {
   images: string[];
+  video?: string | null;
   id: string;
   isWishlisted: boolean;
   onWishlistToggle: () => void;
   loadingWishlist?: boolean;
-  isOpen: boolean; // Add isOpen prop
-  setIsOpen: (isOpen: boolean) => void; // Add setIsOpen prop
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 export default function ProductImageCarousel({
   images,
+  video,
   id,
   isWishlisted,
   onWishlistToggle,
   loadingWishlist,
-  isOpen, // Destructure isOpen
-  setIsOpen, // Destructure setIsOpen
+  isOpen,
+  setIsOpen,
 }: ProductImageCarouselProps) {
+  const mediaItems = [
+    ...images.map((url) => ({ type: "image" as const, url })),
+    ...(video ? [{ type: "video" as const, url: video! }] : []),
+  ];
+
   const [current, setCurrent] = useState(0);
   const startX = useRef<number | null>(null);
 
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % images.length);
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + images.length) % images.length);
+  const currentMedia = mediaItems[current];
+
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % mediaItems.length);
+  const prevSlide = () =>
+    setCurrent((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
 
   const handleTouchStart = (e: React.TouchEvent | React.PointerEvent) => {
     if ("touches" in e) startX.current = e.touches[0].clientX;
@@ -176,7 +47,8 @@ export default function ProductImageCarousel({
 
   const handleTouchEnd = (e: React.TouchEvent | React.PointerEvent) => {
     if (startX.current == null) return;
-    const endX = "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX;
+    const endX =
+      "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX;
     const delta = endX - startX.current;
     if (delta > 50) prevSlide();
     else if (delta < -50) nextSlide();
@@ -185,7 +57,7 @@ export default function ProductImageCarousel({
 
   return (
     <>
-      {/* Main Product Image Carousel */}
+      {/* Main Carousel */}
       <div
         className="relative w-full h-56 mt-1 overflow-hidden rounded-md"
         onTouchStart={handleTouchStart}
@@ -193,15 +65,30 @@ export default function ProductImageCarousel({
         onPointerDown={handleTouchStart}
         onPointerUp={handleTouchEnd}
       >
-        {/* Product Images (clickable for full screen) */}
         <div
-          className="flex transition-transform duration-500 ease-in-out cursor-pointer" // Added cursor-pointer
+          className="flex transition-transform duration-500 ease-in-out cursor-pointer"
           style={{ transform: `translateX(-${current * 100}%)` }}
-          onClick={() => setIsOpen(true)} // Click handler to open full screen
+          onClick={() => setIsOpen(true)}
         >
-          {images.map((img, index) => (
+          {mediaItems.map((item, index) => (
             <div key={index} className="relative w-full h-56 flex-shrink-0">
-              <Image src={img} alt={`Product image ${index + 1}`} fill className="object-contain" />
+              {item.type === "image" ? (
+                <Image
+                  src={item.url}
+                  alt={`Product image ${index + 1}`}
+                  fill
+                  className="object-contain"
+                />
+              ) : (
+                <div className="relative w-full h-full bg-black flex items-center justify-center">
+                  <video
+                    src={item.url}
+                    className="w-full h-full object-contain"
+                    controls
+                    playsInline
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -209,31 +96,40 @@ export default function ProductImageCarousel({
         {/* Wishlist Button */}
         <button
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute top-4 right-4 p-2 rounded-full shadow-md "
-          onClick={onWishlistToggle}
+          className="absolute top-4 right-4 p-2 rounded-full shadow-md bg-white"
+          onClick={(e) => {
+            e.stopPropagation();
+            onWishlistToggle();
+          }}
           disabled={loadingWishlist}
         >
           {loadingWishlist ? (
-            <SmallLoadingSpinner />
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
           ) : isWishlisted ? (
-            <AiFillHeart className=" text-red-500" />
+            <AiFillHeart className="text-red-500 w-5 h-5" />
           ) : (
-            <AiOutlineHeart className=" text-gray-600" />
+            <AiOutlineHeart className="text-gray-600 w-5 h-5" />
           )}
         </button>
 
-        {/* Left / Right Arrows */}
-        {images.length > 1 && (
+        {/* Navigation Arrows */}
+        {mediaItems.length > 1 && (
           <>
             <button
-              onClick={(e) => { e.stopPropagation(); prevSlide(); }} // Stop propagation to prevent opening modal
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full shadow hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                prevSlide();
+              }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100"
             >
               <FaChevronLeft />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); nextSlide(); }} // Stop propagation to prevent opening modal
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full shadow hover:bg-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextSlide();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100"
             >
               <FaChevronRight />
             </button>
@@ -241,73 +137,86 @@ export default function ProductImageCarousel({
         )}
 
         {/* Dots */}
-        {images.length > 1 && (
+        {mediaItems.length > 1 && (
           <div className="absolute bottom-2 w-full flex justify-center space-x-1">
-            {images.map((_, index) => (
+            {mediaItems.map((item, index) => (
               <button
                 key={index}
-                onClick={(e) => { e.stopPropagation(); setCurrent(index); }} // Stop propagation
-                className={`w-2 h-2 rounded-full transition-all ${
-                  current === index ? "bg-[var(--color-brand)] w-3" : "bg-gray-300"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrent(index);
+                }}
+                className={`transition-all rounded-full ${
+                  current === index
+                    ? "bg-[var(--color-brand)] w-3 h-2"
+                    : "bg-gray-300 w-2 h-2"
                 }`}
-              />
+              >
+                {item.type === "video" && current === index && (
+                  <FaPlay className="w-2 h-2 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                )}
+              </button>
             ))}
           </div>
         )}
       </div>
 
-      {/* Full-Screen Image Modal (Lightbox) */}
+      {/* Fullscreen Modal */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
-          {/* Close Button */}
+        <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[100]">
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 text-white text-4xl p-2 z-[101]"
-            aria-label="Close full screen image"
+            className="absolute top-4 right-4 text-white text-4xl p-2 z-[101] hover:bg-white/10 rounded-full"
+            aria-label="Close"
           >
             &times;
           </button>
 
-          {/* Full-screen Image */}
-          <div className="relative w-full h-full flex items-center justify-center">
-            <Image
-              src={images[current]} // Display the current image
-              alt={`Full screen product image ${current + 1}`}
-              fill
-              className="object-contain"
-            />
+          <div className="relative w-full h-full flex items-center justify-center p-4">
+            {currentMedia.type === "image" ? (
+              <Image
+                src={currentMedia.url}
+                alt={`Full screen ${current + 1}`}
+                fill
+                className="object-contain"
+              />
+            ) : (
+              <video
+                src={currentMedia.url}
+                controls
+                autoPlay
+                className="max-w-full max-h-full"
+              />
+            )}
 
-            {/* Navigation Arrows for Full Screen */}
-            {images.length > 1 && (
+            {/* Fullscreen Arrows */}
+            {mediaItems.length > 1 && (
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl p-2 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
-                  aria-label="Previous image"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl p-3 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
                 >
                   <FaChevronLeft />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl p-2 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
-                  aria-label="Next image"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl p-3 bg-black/50 rounded-full hover:bg-black/70 z-[101]"
                 >
                   <FaChevronRight />
                 </button>
               </>
             )}
 
-            {/* Dots for Full Screen */}
-            {images.length > 1 && (
+            {/* Fullscreen Dots */}
+            {mediaItems.length > 1 && (
               <div className="absolute bottom-4 w-full flex justify-center space-x-2 z-[101]">
-                {images.map((_, index) => (
+                {mediaItems.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrent(index)}
                     className={`w-3 h-3 rounded-full transition-all ${
                       current === index ? "bg-[var(--color-brand)]" : "bg-gray-400"
                     }`}
-                    aria-label={`View image ${index + 1}`}
                   />
                 ))}
               </div>

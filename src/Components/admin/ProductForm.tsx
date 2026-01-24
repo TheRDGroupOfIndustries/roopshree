@@ -2,11 +2,12 @@
 
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Upload, Video } from "lucide-react";
 import Image from "next/image";
 import CategoryDropdown from "@/Components/CategoryDropdown";
 import validator from "validator";
 import { toast } from "react-hot-toast";
+
 interface PreviewImage {
   id: string;
   url: string;
@@ -21,17 +22,15 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
-  const [items, setItems] = useState<string[]>([""]); // initial input
-  const [colour, setColour] = useState<string[]>([""]); // initial input
+  const [items, setItems] = useState<string[]>([""]);
+  const [colour, setColour] = useState<string[]>([""]);
+  const [video, setVideo] = useState<{ url: string; file?: File; serverId?: string } | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
-
-  
   const handleChange = (index: number, value: string) => {
     const newItems = [...items];
     newItems[index] = value;
     setItems(newItems);
-
-    // If typing in the last box and it has value, add a new empty box
     if (index === items.length - 1 && value.trim() !== "") {
       setItems([...newItems, ""]);
     }
@@ -42,8 +41,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setItems(newItems.length ? newItems : [""]);
   };
 
-  
-  // ✅ Separate handlers for colour
   const handleColourChange = (index: number, value: string) => {
     const newColours = [...colour];
     newColours[index] = value;
@@ -53,25 +50,21 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       setColour([...newColours, ""]);
     }
 
-    // Show error only when not empty and invalid
     if (value && !validator.isHexColor(value)) {
       toast.error("Invalid HEX color (e.g., #FF5733 or #FFF)");
     }
   };
 
-  
   const handleColourRemove = (index: number) => {
     const newColours = colour.filter((_, i) => i !== index);
     setColour(newColours.length ? newColours : [""]);
   };
 
-  // ✅ Final clean HEX array — only valid HEX codes as strings
   const finalHexColours: string[] = colour
     .map((c) => c.trim())
     .filter((c) => validator.isHexColor(c))
-    .map((c) => String(c)); // ensure they are strings
+    .map((c) => String(c));
 
-  // Product form
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -95,7 +88,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setTimeout(() => setMessage(null), 5000);
   };
 
-  // Populate fields for update
   useEffect(() => {
     if (!isUpdateMode || !product) return;
 
@@ -118,14 +110,22 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       }));
       setImages(serverImages);
     }
+
+    // Load existing video
+    if (product.video) {
+      setVideo({
+        url: product.video,
+        serverId: product.video,
+      });
+    }
   }, [id, isUpdateMode, product]);
 
-  // Cleanup object URLs
   useEffect(() => {
     return () => {
       images.forEach((img) => img.file && URL.revokeObjectURL(img.url));
+      if (video?.file) URL.revokeObjectURL(video.url);
     };
-  }, [images]);
+  }, [images, video]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -144,6 +144,35 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       if (imgToRemove?.file) URL.revokeObjectURL(imgToRemove.url);
       return prev.filter((i) => i.id !== imgId);
     });
+  };
+
+  // Handle video upload
+  const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate video file
+    const validTypes = ["video/mp4", "video/webm", "video/ogg"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a valid video file (MP4, WebM, or OGG)");
+      return;
+    }
+
+    // Check file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("Video file size should be less than 50MB");
+      return;
+    }
+
+    setVideo({
+      url: URL.createObjectURL(file),
+      file,
+    });
+  };
+
+  const handleRemoveVideo = () => {
+    if (video?.file) URL.revokeObjectURL(video.url);
+    setVideo(null);
   };
 
   const uploadImages = async (productId: string): Promise<string[]> => {
@@ -173,12 +202,38 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     return uploadedUrls;
   };
 
-  // CREATE product
+  const uploadVideo = async (productId: string): Promise<string | null> => {
+    if (!video?.file) return null;
+
+    setUploadingVideo(true);
+    try {
+      const formData = new FormData();
+      formData.append("files", video.file);
+      formData.append("type", "video");
+      formData.append("productId", productId);
+
+      const res = await fetch("/api/upload-images", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok && (data.urls?.[0] || data.url)) {
+        return data.urls?.[0] || data.url;
+      } else {
+        throw new Error(data.error || "Video upload failed");
+      }
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   const handleCreate = async () => {
     if (
       !title ||
       !description ||
-      !stock ||
+      stock === undefined ||
       !price ||
       !oldPrice ||
       !category ||
@@ -200,7 +255,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         body: JSON.stringify({
           title,
           description,
-          images: [], // Upload separately
+          images: [],
           details,
           insideBox: items.filter((i) => i.trim() !== ""),
           initialStock: stock,
@@ -208,7 +263,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           oldPrice,
           exclusive: exclusive || undefined,
           category,
-          colour: finalHexColours, // Upload separately
+          colour: finalHexColours,
+          video: null, // Will be updated after upload
         }),
       });
 
@@ -226,11 +282,17 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
+      // Upload images
       const uploadedImageUrls = await uploadImages(productId);
       if (!uploadedImageUrls.length) {
         showMessage("Image upload failed. Please try again.", true);
         setLoading(false);
         return;
+      }
+
+      // Upload video if present
+      if (video?.file) {
+        await uploadVideo(productId);
       }
 
       showMessage("Product created successfully!");
@@ -243,12 +305,11 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     }
   };
 
-  // UPDATE product
   const handleUpdate = async () => {
     if (
       !title ||
       !description ||
-      !stock ||
+      stock === undefined ||
       !price ||
       !oldPrice ||
       !id ||
@@ -275,8 +336,9 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         exclusive,
         category,
         details,
-        colour: finalHexColours, // Upload separately
+        colour: finalHexColours,
         insideBox: items.filter((i) => i.trim() !== ""),
+        video: video?.serverId || null,
       };
 
       const res = await fetch(`/api/products/${id}`, {
@@ -301,6 +363,11 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       }
 
       if (newImages.length > 0) await uploadImages(productId);
+      
+      // Upload new video if changed
+      if (video?.file) {
+        await uploadVideo(productId);
+      }
 
       showMessage("Product updated successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);
@@ -336,7 +403,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           </div>
         )}
 
-        {/* title */}
+        {/* Title */}
         <div>
           <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             Title <span className="text-red-500">*</span>
@@ -351,7 +418,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           />
         </div>
 
-        {/* sub title */}
+        {/* Subtitle */}
         <div>
           <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             SubTitle <span className="text-red-500">*</span>
@@ -366,6 +433,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           />
         </div>
 
+        {/* Description */}
         <div>
           <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
             Description <span className="text-red-500">*</span>
@@ -382,7 +450,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
 
         {/* Pricing Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          {/* Price */}
           <div>
             <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Price <span className="text-red-500">*</span>
@@ -397,7 +464,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             />
           </div>
 
-          {/* Old Price */}
           <div>
             <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Old Price <span className="text-red-500">*</span>
@@ -412,7 +478,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             />
           </div>
 
-          {/* Exclusive */}
           <div>
             <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Exclusive
@@ -432,9 +497,8 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           </div>
         </div>
 
-        {/* Stock */}
+        {/* Stock & Category */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-end">
-          {/* Stock Input */}
           <div className="flex-1 flex flex-col">
             <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Stock <span className="text-red-500">*</span>
@@ -449,7 +513,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             />
           </div>
 
-          {/* Category Dropdown */}
           <div className="flex-1 flex flex-col">
             <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
               Category <span className="text-red-500">*</span>
@@ -463,62 +526,52 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         </div>
 
         {/* Colour */}
-
         <div className="space-y-2">
-      <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
-        Colour <span className="text-gray-400 text-xs">(optional)</span>
-      </label>
+          <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
+            Colour <span className="text-gray-400 text-xs">(optional)</span>
+          </label>
 
-      {colour.map((col, index) => (
-        <div
-          key={index}
-          className="rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3"
-        >
-          <div className="flex items-center gap-2 w-full">
-            <input
-              type="text"
-              value={col}
-              onChange={(e) => handleColourChange(index, e.target.value.trim())}
-              placeholder="#FF5733 (optional)"
-              className={`flex-1 outline-none p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border focus:ring-2 ${
-                col
-                  ? validator.isHexColor(col)
-                    ? "focus:ring-green-400 border-green-400"
-                    : "focus:ring-red-400 border-gray-300"
-                  : "focus:ring-yellow-200 border-gray-300"
-              }`}
-            />
-            {validator.isHexColor(col) && (
-              <div
-                className="w-8 h-8 rounded-md border"
-                style={{ backgroundColor: col }}
-              />
-            )}
-          </div>
-
-          {colour.length > 1 && (
-            <button
-              onClick={() => handleColourRemove(index)}
-              className="text-red-500 font-bold px-3 py-2 text-sm sm:text-base border rounded-lg hover:bg-red-200 whitespace-nowrap"
+          {colour.map((col, index) => (
+            <div
+              key={index}
+              className="rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3"
             >
-              Remove
-            </button>
-          )}
-        </div>
-      ))}
+              <div className="flex items-center gap-2 w-full">
+                <input
+                  type="text"
+                  value={col}
+                  onChange={(e) => handleColourChange(index, e.target.value.trim())}
+                  placeholder="#FF5733 (optional)"
+                  className={`flex-1 outline-none p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border focus:ring-2 ${
+                    col
+                      ? validator.isHexColor(col)
+                        ? "focus:ring-green-400 border-green-400"
+                        : "focus:ring-red-400 border-gray-300"
+                      : "focus:ring-yellow-200 border-gray-300"
+                  }`}
+                />
+                {validator.isHexColor(col) && (
+                  <div
+                    className="w-8 h-8 rounded-md border"
+                    style={{ backgroundColor: col }}
+                  />
+                )}
+              </div>
 
-      {/* Optional: display final string array */}
-      {finalHexColours.length > 0 && (
-        <div className="text-sm text-gray-600 mt-2">
-          <strong>Final HEX Colours:</strong>{" "}
-          {JSON.stringify(finalHexColours, null, 2)}
+              {colour.length > 1 && (
+                <button
+                  onClick={() => handleColourRemove(index)}
+                  className="text-red-500 font-bold px-3 py-2 text-sm sm:text-base border rounded-lg hover:bg-red-200 whitespace-nowrap"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
         </div>
-      )}
-    </div>
 
-        {/* inside box */}
+        {/* Inside box */}
         <div className="space-y-2">
-          {/* Single label at the top */}
           <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
             Inside box <span className="text-red-500">*</span>
           </label>
@@ -603,13 +656,59 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           )}
         </div>
 
+        {/* Video Upload */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base">
+            Product Video <span className="text-gray-400 text-xs">(optional)</span>
+          </label>
+          
+          {video ? (
+            <div className="relative w-full max-w-md">
+              <div className="w-full rounded-lg overflow-hidden border border-gray-200 bg-black">
+                <video
+                  src={video.url}
+                  controls
+                  className="w-full h-48 object-contain"
+                />
+              </div>
+              <button
+                type="button"
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition"
+                onClick={handleRemoveVideo}
+                disabled={loading || uploadingVideo}
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <label
+              className={`w-full max-w-md h-32 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer transition ${
+                loading
+                  ? "border-gray-200 text-gray-400"
+                  : "border-gray-300 hover:border-[#fcd34d]"
+              }`}
+            >
+              <Video className="w-8 h-8 text-gray-400 mb-2" />
+              <span className="text-gray-400 text-sm">Upload Video</span>
+              <span className="text-gray-400 text-xs mt-1">MP4, WebM, OGG (Max 50MB)</span>
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/ogg"
+                className="hidden"
+                onChange={handleVideoChange}
+                disabled={loading}
+              />
+            </label>
+          )}
+        </div>
+
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end pt-2 sm:pt-4">
           <button
             type="button"
-            onClick={() => router.push("/manage")}
+            onClick={() => router.push("/manage/products")}
             className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-            disabled={loading}
+            disabled={loading || uploadingVideo}
           >
             Cancel
           </button>
@@ -617,9 +716,15 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             type="button"
             onClick={handleSubmit}
             className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition disabled:opacity-50"
-            disabled={loading}
+            disabled={loading || uploadingVideo}
           >
-            {loading ? "Saving..." : isUpdateMode ? "Update" : "Create"}
+            {loading || uploadingVideo
+              ? uploadingVideo
+                ? "Uploading Video..."
+                : "Saving..."
+              : isUpdateMode
+              ? "Update"
+              : "Create"}
           </button>
         </div>
       </div>

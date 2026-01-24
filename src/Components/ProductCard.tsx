@@ -3,12 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BiHeart } from "react-icons/bi";
-import { IoStarSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { addToWishlist, removeFromWishlist } from "@/services/wishlistService";
 import toast from "react-hot-toast";
 import SmallLoadingSpinner from "./SmallLoadingSpinner";
+import { FaPlay } from "react-icons/fa";
 
 interface ProductCardProps {
   id: string;
@@ -17,6 +17,8 @@ interface ProductCardProps {
   price: number;
   oldPrice?: number;
   image: string;
+  video?: string | null;
+  stock?: number; // optional
   reviews?: { rating: number; comment: string }[];
   refreshWishlist?: () => void;
 }
@@ -25,9 +27,11 @@ export default function ProductCard({
   id,
   name,
   description,
+  video,
   price,
   oldPrice,
   image,
+  stock, // ✅ remove default 0
   reviews,
   refreshWishlist,
 }: ProductCardProps) {
@@ -38,7 +42,6 @@ export default function ProductCard({
 
   useEffect(() => {
     if (!user) return;
-
     const wishlistExists = user.wishlist?.some(
       (item: any) => item.productId === id
     );
@@ -64,7 +67,7 @@ export default function ProductCard({
         toast.success("Added to wishlist");
       }
 
-      refreshUser(); // background refresh
+      refreshUser();
     } catch (err) {
       console.error(err);
       setIsInWishlist((prev) => !prev);
@@ -74,16 +77,29 @@ export default function ProductCard({
     }
   };
 
+  {/* Video Badge */}
+{video && (
+  <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-md z-10 flex items-center gap-1">
+    <FaPlay className="w-2.5 h-2.5" />
+    <span>Video</span>
+  </div>
+)}
+
   const avgRating =
     reviews && reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
+  // ✅ stock check fix
+  const isOutOfStock = stock !== undefined && stock === 0;
+  const isLowStock = stock !== undefined && stock > 0 && stock <= 5;
+
   return (
     <Link href={`/product/${id}`}>
       <div className="rounded-2xl overflow-hidden bg-white text-black shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-lg transition duration-300">
-        {/* Image + Wishlist */}
+        {/* Image + Badges */}
         <div className="relative">
+          {/* Wishlist Button */}
           <button
             className={`absolute top-2 right-2 rounded-full p-1.5 shadow-md z-10
               ${
@@ -101,7 +117,25 @@ export default function ProductCard({
             )}
           </button>
 
-          <div className="w-full h-48 sm:h-56 flex items-center justify-center">
+          {/* Out of Stock Badge */}
+          {isOutOfStock && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+              Out of Stock
+            </div>
+          )}
+
+          {/* Low Stock Badge */}
+          {isLowStock && (
+            <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+              Only {stock} left
+            </div>
+          )}
+
+          <div
+            className={`w-full h-48 sm:h-56 flex items-center justify-center ${
+              isOutOfStock ? "opacity-60" : ""
+            }`}
+          >
             <Image
               src={image}
               alt={name}
@@ -120,14 +154,16 @@ export default function ProductCard({
           {/* Rating */}
           <div className="flex items-center gap-0.5 mb-2">
             {[...Array(5)].map((_, i) => (
-              <IoStarSharp
+              <span
                 key={i}
                 className={`${
                   i < Math.round(avgRating)
                     ? "text-yellow-400"
                     : "text-gray-300"
                 } text-xs`}
-              />
+              >
+                ★
+              </span>
             ))}
             <span className="text-sm text-gray-500 ml-1">
               ({reviews?.length || 0})
@@ -146,6 +182,11 @@ export default function ProductCard({
                 </span>
               )}
             </div>
+            {isOutOfStock && (
+              <p className="text-xs text-red-500 font-semibold mt-1">
+                Currently Unavailable
+              </p>
+            )}
           </div>
         </div>
       </div>

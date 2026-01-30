@@ -1,26 +1,38 @@
-// export const runtime = "nodejs"; // Keep this if needed, but try removing it first
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyJwt } from "@/lib/jwt";
 
-// ... your config ...
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true, // ✅ Add this
+  secure: true,
 });
 
 export async function POST(req: NextRequest) {
-  const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE || "5242880"); // 5MB default
-const ALLOWED_TYPES = process.env.ALLOWED_IMAGE_TYPES?.split(",") || ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const BANNER_DIMENSIONS = { 
-  width: parseInt(process.env.BANNER_WIDTH || "1280"), 
-  height: parseInt(process.env.BANNER_HEIGHT || "1280") 
-};
+  const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE || "52428800"); // 50MB (video safe)
+
+  const ALLOWED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+
+  const ALLOWED_VIDEO_TYPES = [
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+  ];
+
+  const BANNER_DIMENSIONS = {
+    width: parseInt(process.env.BANNER_WIDTH || "1280"),
+    height: parseInt(process.env.BANNER_HEIGHT || "1280"),
+  };
+
   try {
+    // 🔐 Auth
     const token = req.cookies.get("token")?.value;
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -33,99 +45,120 @@ const BANNER_DIMENSIONS = {
     const files = formData.getAll("files") as File[];
     const type = formData.get("type")?.toString();
 
-    if (!type || !["profile", "product", "banner"].includes(type)) {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+    // ✅ FIX 1: type validation
+    const VALID_TYPES = ["profile", "product", "banner", "video"];
+    if (!type || !VALID_TYPES.includes(type)) {
+      return NextResponse.json(
+        { error: `Invalid type: ${type}` },
+        { status: 400 }
+      );
     }
 
-    if (!files || files.length === 0)
-      return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
+    if (!files || files.length === 0) {
+      return NextResponse.json(
+        { error: "No files uploaded" },
+        { status: 400 }
+      );
+    }
 
+    // 📁 Folder mapping
     let uploadFolder = "";
+    let resourceType: "image" | "video" = "image";
 
-    if (type === "profile") {
-      uploadFolder = "RoopShree/ProfileImages";
-    } else if (type === "product") {
-      uploadFolder = "RoopShree/ProductImages";
-    } else if (type === "banner") {
-      uploadFolder = "RoopShree/BannerImages";
+    switch (type) {
+      case "profile":
+        uploadFolder = "RoopShree/ProfileImages";
+        break;
+      case "product":
+        uploadFolder = "RoopShree/ProductImages";
+        break;
+      case "banner":
+        uploadFolder = "RoopShree/BannerImages";
+        break;
+      case "video":
+        uploadFolder = "RoopShree/Videos";
+        resourceType = "video";
+        break;
     }
 
     const uploadedUrls: string[] = [];
 
     for (const file of files) {
-      if (!(file instanceof File))
+      if (!(file instanceof File)) {
         return NextResponse.json({ error: "Invalid file" }, { status: 400 });
-      if (!ALLOWED_TYPES.includes(file.type))
-        return NextResponse.json(
-          { error: `Invalid file type ${file.type}` },
-          { status: 400 }
-        );
-      if (file.size > MAX_FILE_SIZE)
+      }
+
+      // ✅ FIX 2: MIME validation
+      if (resourceType === "image") {
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+          return NextResponse.json(
+            { error: `Invalid image type: ${file.type}` },
+            { status: 400 }
+          );
+        }
+      } else {
+        if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+          return NextResponse.json(
+            { error: `Invalid video type: ${file.type}` },
+            { status: 400 }
+          );
+        }
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
         return NextResponse.json(
           { error: `File too large: ${file.name}` },
           { status: 400 }
         );
+      }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const base64 = buffer.toString("base64");
+      const dataUri = `data:${file.type};base64,${base64}`;
 
-      // ✅ NEW: Validate banner dimensions using Image API (browser-compatible)
+      // 🎯 Banner dimension check
       if (type === "banner") {
-        // Let Cloudinary handle dimension validation using transformation
-        const base64 = buffer.toString("base64");
-        const dataUri = `data:${file.type};base64,${base64}`;
+        const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+          folder: uploadFolder,
+          resource_type: "image",
+        });
 
-        // First, check dimensions by uploading and checking metadata
-        const uploadResponse = await cloudinary.uploader.unsigned_upload(
-          dataUri,
-          "unsigned_upload",
-          {
-            folder: uploadFolder,
-            secure: true,
-          }
-        );
-
-        // Check dimensions from Cloudinary response
         if (
           uploadResponse.width !== BANNER_DIMENSIONS.width ||
           uploadResponse.height !== BANNER_DIMENSIONS.height
         ) {
-          // Delete the uploaded image since dimensions are wrong
           await cloudinary.uploader.destroy(uploadResponse.public_id);
-          
+
           return NextResponse.json(
             {
-              error: `Banner image must be exactly ${BANNER_DIMENSIONS.width}x${BANNER_DIMENSIONS.height}px. Uploaded image is ${uploadResponse.width}x${uploadResponse.height}px`,
+              error: `Banner must be ${BANNER_DIMENSIONS.width}x${BANNER_DIMENSIONS.height}px`,
             },
             { status: 400 }
           );
         }
 
         uploadedUrls.push(uploadResponse.secure_url);
-        continue; // Skip the normal upload below since we already uploaded
+        continue;
       }
 
-      // Normal upload for non-banner images
-      const base64 = buffer.toString("base64");
-      const dataUri = `data:${file.type};base64,${base64}`;
+      // 🚀 Normal upload (image / video)
+      const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+        folder: uploadFolder,
+        resource_type: resourceType,
+      });
 
-      const uploadResponse = await cloudinary.uploader.unsigned_upload(
-        dataUri,
-        "unsigned_upload",
-        {
-          folder: uploadFolder,
-        }
-      );
       uploadedUrls.push(uploadResponse.secure_url);
     }
 
-    // --- Update DB ---
+    // 🧠 DB updates
     if (type === "profile") {
       await prisma.user.update({
         where: { id: payload.userId },
         data: { profileImage: uploadedUrls[0] },
       });
-    } else if (type === "product") {
+    }
+
+    if (type === "product") {
       const productId = formData.get("productId")?.toString();
       if (!productId)
         return NextResponse.json(
@@ -137,7 +170,9 @@ const BANNER_DIMENSIONS = {
         where: { id: productId },
         data: { images: { push: uploadedUrls } },
       });
-    } else if (type === "banner") {
+    }
+
+    if (type === "banner") {
       const bannerId = formData.get("bannerId")?.toString();
       if (!bannerId)
         return NextResponse.json(
@@ -151,17 +186,18 @@ const BANNER_DIMENSIONS = {
       });
     }
 
-    return NextResponse.json({ success: true, urls: uploadedUrls });
+    return NextResponse.json({
+      success: true,
+      urls: uploadedUrls,
+    });
   } catch (err) {
-  console.error("Upload Error:", err);
-  console.error("Error stack:", err instanceof Error ? err.stack : "No stack");
-  return NextResponse.json(
-    {
-      error: "Upload failed",
-      details: err instanceof Error ? err.message : "Unknown",
-      stack: err instanceof Error ? err.stack : undefined,
-    },
-    { status: 500 }
-  );
-}
+    console.error("Upload Error:", err);
+    return NextResponse.json(
+      {
+        error: "Upload failed",
+        details: err instanceof Error ? err.message : "Unknown",
+      },
+      { status: 500 }
+    );
+  }
 }

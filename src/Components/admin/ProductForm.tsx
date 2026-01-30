@@ -26,6 +26,7 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   const [colour, setColour] = useState<string[]>([""]);
   const [video, setVideo] = useState<{ url: string; file?: File; serverId?: string } | null>(null);
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [isSpotlight, setIsSpotlight] = useState(false);
 
   const handleChange = (index: number, value: string) => {
     const newItems = [...items];
@@ -94,13 +95,14 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     setTitle(product.title || "");
     setDetails(product.details || "");
     setDescription(product.description || "");
-    setStock(product.stock?.currentStock || 0);
+    setStock(product.stock?.currentStock || product.stock || 0);
     setPrice(product.price || 0);
     setOldPrice(product.oldPrice || 0);
     setExclusive(product.exclusive || undefined);
     setCategory(product.category || "");
     setItems(product.insideBox?.length ? product.insideBox : [""]);
     setColour(product.colour?.length ? [...product.colour, ""] : [""]);
+    setIsSpotlight(product.isSpotlight || false);
 
     if (product.images?.length) {
       const serverImages = product.images.map((img: any) => ({
@@ -111,7 +113,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       setImages(serverImages);
     }
 
-    // Load existing video
     if (product.video) {
       setVideo({
         url: product.video,
@@ -146,19 +147,16 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
     });
   };
 
-  // Handle video upload
   const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate video file
     const validTypes = ["video/mp4", "video/webm", "video/ogg"];
     if (!validTypes.includes(file.type)) {
       toast.error("Please upload a valid video file (MP4, WebM, or OGG)");
       return;
     }
 
-    // Check file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
       toast.error("Video file size should be less than 50MB");
       return;
@@ -230,12 +228,11 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
   };
 
   const handleCreate = async () => {
+    // Validation - spotlight products don't need price
     if (
       !title ||
       !description ||
       stock === undefined ||
-      !price ||
-      !oldPrice ||
       !category ||
       images.length === 0
     ) {
@@ -243,6 +240,12 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         "Please fill all required fields and upload at least one image",
         true
       );
+      return;
+    }
+
+    // Only check price for non-spotlight products
+    if (!isSpotlight && (!price || !oldPrice)) {
+      showMessage("Please enter price and old price", true);
       return;
     }
 
@@ -259,12 +262,13 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           details,
           insideBox: items.filter((i) => i.trim() !== ""),
           initialStock: stock,
-          price,
-          oldPrice,
+          price: isSpotlight ? 0 : price,
+          oldPrice: isSpotlight ? 0 : oldPrice,
           exclusive: exclusive || undefined,
           category,
           colour: finalHexColours,
-          video: null, // Will be updated after upload
+          video: null,
+          isSpotlight,
         }),
       });
 
@@ -282,7 +286,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      // Upload images
       const uploadedImageUrls = await uploadImages(productId);
       if (!uploadedImageUrls.length) {
         showMessage("Image upload failed. Please try again.", true);
@@ -290,15 +293,44 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         return;
       }
 
-      // Upload video if present
+      let videoUrl = null;
       if (video?.file) {
-        await uploadVideo(productId);
+        videoUrl = await uploadVideo(productId);
+      }
+
+      const updateRes = await fetch(`/api/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title,
+          description,
+          images: uploadedImageUrls,
+          video: videoUrl,
+          details,
+          insideBox: items.filter((i) => i.trim() !== ""),
+          stock,
+          price: isSpotlight ? 0 : price,
+          oldPrice: isSpotlight ? 0 : oldPrice,
+          exclusive,
+          category,
+          colour: finalHexColours,
+          isSpotlight,
+        }),
+      });
+
+      const updateData = await updateRes.json();
+      if (!updateRes.ok) {
+        console.error("❌ Update failed:", updateData);
+        showMessage("Product created but update failed", true);
+        setLoading(false);
+        return;
       }
 
       showMessage("Product created successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);
     } catch (err) {
-      console.error("Error:", err);
+      console.error("❌ Error:", err);
       showMessage("Something went wrong. Please try again.", true);
     } finally {
       setLoading(false);
@@ -310,12 +342,16 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       !title ||
       !description ||
       stock === undefined ||
-      !price ||
-      !oldPrice ||
       !id ||
       !category
     ) {
       showMessage("Fill all required fields", true);
+      return;
+    }
+
+    // Only check price for non-spotlight products
+    if (!isSpotlight && (!price || !oldPrice)) {
+      showMessage("Please enter price and old price", true);
       return;
     }
 
@@ -326,19 +362,26 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
         .map((i) => i.serverId!);
       const newImages = images.filter((i) => i.file);
 
+      let videoUrl = video?.serverId || null;
+      if (video?.file) {
+        const uploadedVideoUrl = await uploadVideo(id);
+        if (uploadedVideoUrl) videoUrl = uploadedVideoUrl;
+      }
+
       const payload = {
         title,
         description,
         stock,
         images: existingImages,
-        price,
-        oldPrice,
+        price: isSpotlight ? 0 : price,
+        oldPrice: isSpotlight ? 0 : oldPrice,
         exclusive,
         category,
         details,
         colour: finalHexColours,
         insideBox: items.filter((i) => i.trim() !== ""),
-        video: video?.serverId || null,
+        video: videoUrl,
+        isSpotlight,
       };
 
       const res = await fetch(`/api/products/${id}`, {
@@ -363,11 +406,6 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
       }
 
       if (newImages.length > 0) await uploadImages(productId);
-      
-      // Upload new video if changed
-      if (video?.file) {
-        await uploadVideo(productId);
-      }
 
       showMessage("Product updated successfully!");
       setTimeout(() => router.push("/manage/products"), 1000);
@@ -402,6 +440,26 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
             {message.text}
           </div>
         )}
+
+        {/* Spotlight Toggle */}
+        <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+          <input
+            type="checkbox"
+            id="spotlight"
+            checked={isSpotlight}
+            onChange={(e) => setIsSpotlight(e.target.checked)}
+            className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+            disabled={loading}
+          />
+          <label htmlFor="spotlight" className="flex-1 cursor-pointer">
+            <span className="block text-gray-800 font-medium text-sm sm:text-base">
+              Add to Spotlight
+            </span>
+            <span className="text-xs text-gray-600">
+              This product will only appear on the Spotlight page for users
+            </span>
+          </label>
+        </div>
 
         {/* Title */}
         <div>
@@ -448,54 +506,56 @@ const ProductForm = ({ id, mode = "create", product }: ProductFormProps) => {
           />
         </div>
 
-        {/* Pricing Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          <div>
-            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
-              Price <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              value={price || ""}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              placeholder="0"
-              className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
-              disabled={loading}
-            />
-          </div>
+        {/* Pricing Section - Only show if NOT spotlight */}
+        {!isSpotlight && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
+                Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                value={price || ""}
+                onChange={(e) => setPrice(Number(e.target.value))}
+                placeholder="0"
+                className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
+                disabled={loading}
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
-              Old Price <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              value={oldPrice || ""}
-              onChange={(e) => setOldPrice(Number(e.target.value))}
-              placeholder="0"
-              className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
-              disabled={loading}
-            />
-          </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
+                Old Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                value={oldPrice || ""}
+                onChange={(e) => setOldPrice(Number(e.target.value))}
+                placeholder="0"
+                className="w-full outline-none p-2.5 sm:p-3 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
+                disabled={loading}
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
-              Exclusive
-            </label>
-            <input
-              type="number"
-              value={exclusive || ""}
-              onChange={(e) =>
-                setExclusive(
-                  e.target.value ? Number(e.target.value) : undefined
-                )
-              }
-              placeholder="Optional"
-              className="w-full p-2.5 sm:p-3 text-sm sm:text-base outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
-              disabled={loading}
-            />
+            <div>
+              <label className="block text-gray-700 font-medium mb-1 text-sm sm:text-base">
+                Exclusive
+              </label>
+              <input
+                type="number"
+                value={exclusive || ""}
+                onChange={(e) =>
+                  setExclusive(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+                placeholder="Optional"
+                className="w-full p-2.5 sm:p-3 text-sm sm:text-base outline-none border rounded-lg focus:ring-2 focus:ring-[#fcd34d]"
+                disabled={loading}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Stock & Category */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-end">

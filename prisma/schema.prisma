@@ -61,6 +61,8 @@ model Products {
   category    String
   colour      String[]   @default([])
   size        String[]   @default([])
+  isSpotlight Boolean  @default(false)
+  spotlightAt DateTime?
   cart        CartItem[]
   orders      Order[]
   user        User       @relation("UserProducts", fields: [userId], references: [id])

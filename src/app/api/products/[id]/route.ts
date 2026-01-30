@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
 type Params = { params: { id: string } };
-// Cloudinary config
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -24,17 +24,16 @@ export async function GET(
     where: { id },
     include: { 
       reviews: true,
-      stock: true // ✅ Stock include kiya
+      stock: true
     },
   });
 
   if (!product)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // ✅ Stock value ko product object mein add karo
   const productWithStock = {
     ...product,
-    stock: product.stock?.currentStock || 0, // Default 0 if no stock record
+    stock: product.stock?.currentStock || 0,
   };
 
   return NextResponse.json(productWithStock);
@@ -45,7 +44,7 @@ interface updateProductBody {
   title: string;
   description: string;
   images: string[];
-  video?: string; 
+  video?: string | null; // ✅ YEH ADD HUA
   details: string;
   insideBox: string[];
   userId?: string;
@@ -55,6 +54,7 @@ interface updateProductBody {
   exclusive?: number;
   category: string;
   colour?: string[];
+  isSpotlight?: boolean;
 }
 
 export async function PUT(
@@ -89,6 +89,7 @@ export async function PUT(
       title,
       description,
       images,
+      video,
       details,
       insideBox,
       stock,
@@ -96,16 +97,17 @@ export async function PUT(
       oldPrice,
       exclusive,
       colour,
+      isSpotlight,
     } = body;
 
-    // ✅ Update product details
+    // ✅ FIX: Add isSpotlight to update query
     const updated = await prisma.products.update({
       where: { id },
       data: {
         title,
         description,
         images,
-        
+        video: video || null,
         details,
         insideBox,
         price,
@@ -113,17 +115,17 @@ export async function PUT(
         exclusive,
         category: body.category,
         colour,
+        isSpotlight: isSpotlight !== undefined ? isSpotlight : product.isSpotlight,  // ✅ NEW
+        spotlightAt: isSpotlight && !product.isSpotlight ? new Date() : product.spotlightAt,  // ✅ NEW
       },
     });
 
-    // ✅ Update stock if provided
     if (stock !== undefined) {
       const curStock = await prisma.stock.findUnique({
         where: { productId: id },
       });
 
       if (curStock) {
-        // Update existing stock
         await prisma.stock.update({
           where: { productId: id },
           data: {
@@ -138,7 +140,6 @@ export async function PUT(
           },
         });
       } else {
-        // Create new stock record if doesn't exist
         await prisma.stock.create({
           data: {
             productId: id,
@@ -155,7 +156,6 @@ export async function PUT(
       }
     }
 
-    // ✅ Fetch updated product with stock
     const finalProduct = await prisma.products.findUnique({
       where: { id },
       include: {
@@ -201,7 +201,6 @@ export async function DELETE(
     if (!payload || !payload.role.includes("ADMIN"))
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // ✅ Delete image from Cloudinary
     try {
       const images = Array.isArray(product.images)
         ? product.images
@@ -219,24 +218,32 @@ export async function DELETE(
           });
         }
       }
+
+      // ✅ YEH ADD HUA - Video delete
+      if (product.video) {
+        const videoPublicId = extractPublicId(product.video);
+        if (videoPublicId) {
+          console.log("🎥 Deleting video:", videoPublicId);
+          await cloudinary.uploader.destroy(videoPublicId, {
+            invalidate: true,
+            resource_type: "video",
+          });
+        }
+      }
     } catch (cloudErr: any) {
       console.error("Cloudinary delete error:", cloudErr);
     }
 
-    // ✅ Delete stock first (foreign key constraint)
     await prisma.stock.deleteMany({ where: { productId: id } });
-
-    // ✅ Delete product from DB
     await prisma.products.delete({ where: { id } });
 
-    return NextResponse.json({ message: "Product & image deleted" });
+    return NextResponse.json({ message: "Product, images & video deleted" });
   } catch (error: any) {
     console.error("Delete error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// 🔹 Improved extractor (handles any folder depth correctly)
 function extractPublicId(url: string): string {
   try {
     const urlObj = new URL(url);

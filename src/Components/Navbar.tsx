@@ -3,10 +3,10 @@
 import { useAuth } from "@/context/AuthProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BiCategory } from "react-icons/bi";
 import { FiSearch, FiShoppingCart } from "react-icons/fi";
 import { GoPerson } from "react-icons/go";
 import { RiHomeFill } from "react-icons/ri";
+import { HiSparkles } from "react-icons/hi"; // ✅ NEW ICON for Spotlight
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -38,8 +38,8 @@ export default function Navbar() {
     },
     {
       name: "spotlight",
-      label: "spotlight",
-      icon: <GoPerson size={22} />,
+      label: "Spotlight", // ✅ Fixed capitalization
+      icon: <HiSparkles size={22} />, // ✅ NEW ICON
       href: "/spotlight",
     },
     {
@@ -48,7 +48,6 @@ export default function Navbar() {
       icon: <GoPerson size={22} />,
       href: "/profile",
     },
-    
   ];
 
   return (

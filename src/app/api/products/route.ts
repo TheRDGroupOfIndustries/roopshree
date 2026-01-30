@@ -12,7 +12,6 @@ export async function GET() {
     },
   });
 
-  // ✅ Transform products to include stock value
   const productsWithStock = products.map(product => ({
     ...product,
     stock: product.stock?.currentStock || 0,
@@ -26,7 +25,7 @@ interface CreateProductBody {
   title: string;
   description: string;
   images: string[];
-  video?: string;
+  video?: string | null;
   details: string;
   insideBox: string[];
   userId: string;
@@ -36,6 +35,7 @@ interface CreateProductBody {
   exclusive?: number;
   category: string;
   colour?: string[];
+  isSpotlight?: boolean;
 }
 
 export async function POST(req: Request) {
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     const requestCookies = cookies();
     const body = (await req.json()) as CreateProductBody;
     const token = (await requestCookies).get("token")?.value;
+    
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -59,62 +60,88 @@ export async function POST(req: Request) {
     }
 
     const userId = payload.userId.toString();
-    const { title, description, images, details, insideBox, initialStock, colour } =
-      body;
+    const { 
+      title, 
+      description, 
+      images, 
+      video,
+      details, 
+      insideBox, 
+      initialStock, 
+      colour,
+      isSpotlight
+    } = body;
+    
+    // ✅ FIXED VALIDATION - Allow stock to be 0
     if (
       !title ||
       !description ||
       !images ||
       !details ||
       !insideBox ||
-      !initialStock
+      !body.category ||
+      initialStock === undefined ||
+      initialStock === null ||
+      initialStock < 0
     ) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields or invalid stock value" },
         { status: 400 }
       );
     }
 
+    // ✅ Only check price for non-spotlight products
+    if (!isSpotlight) {
+      if (!body.price || !body.oldPrice) {
+        return NextResponse.json(
+          { error: "Price and old price are required for non-spotlight products" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // ✅ CREATE PRODUCT WITH STOCK IN ONE TRANSACTION
     const product = await prisma.products.create({
       data: {
         title,
         description,
         images,
-        
+        video: video || null,
         details,
         userId,
         insideBox,
-        price: body.price,
-        oldPrice: body.oldPrice,
+        price: isSpotlight ? 0 : body.price,
+        oldPrice: isSpotlight ? 0 : body.oldPrice,
         exclusive: body.exclusive,
         category: body.category,
-        colour
-      },
-    });
-
-    if (!product) {
-      return NextResponse.json(
-        { error: "Product creation failed" },
-        { status: 500 }
-      );
-    }
-
-    await prisma.stock.create({
-      data: {
-        productId: product.id,
-        currentStock: initialStock,
-        history: {
+        colour: colour || [],
+        isSpotlight: isSpotlight || false,
+        spotlightAt: isSpotlight ? new Date() : null,
+        // ✅ CREATE STOCK RELATION HERE
+        stock: {
           create: {
-            fromQuantity: 0,
-            toQuantity: initialStock,
-            updatedBy: userId,
+            currentStock: initialStock,
+            history: {
+              create: {
+                fromQuantity: 0,
+                toQuantity: initialStock,
+                updatedBy: userId,
+              },
+            },
           },
         },
+      },
+      include: {
+        stock: true,
       },
     });
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("❌ Product creation error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to create product" },
+      { status: 500 }
+    );
   }
 }
